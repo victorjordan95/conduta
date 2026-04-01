@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
+const sessionsRoutes = require('./routes/sessions');
 
 const app = express();
 
@@ -16,5 +17,6 @@ app.get('/health', (req, res) => {
 
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
+app.use('/sessions', sessionsRoutes);
 
 module.exports = app;
