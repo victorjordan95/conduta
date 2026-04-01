@@ -52,11 +52,12 @@ router.get('/:id', async (req, res) => {
     }
 
     const messagesResult = await pool.query(
-      `SELECT id, role, content, created_at
-       FROM messages
-       WHERE session_id = $1
-       ORDER BY created_at ASC`,
-      [req.params.id]
+      `SELECT m.id, m.role, m.content, m.created_at
+       FROM messages m
+       JOIN sessions s ON s.id = m.session_id
+       WHERE m.session_id = $1 AND s.user_id = $2
+       ORDER BY m.created_at ASC`,
+      [req.params.id, req.userId]
     );
 
     res.json({
