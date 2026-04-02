@@ -6,7 +6,8 @@
     "dev": "node --watch src/index.js",
     "start": "node src/index.js",
     "test": "jest --runInBand",
-    "migrate": "node src/db/migrate.js"
+    "migrate": "node src/db/migrate.js",
+    "seed:neo4j": "node src/db/seed-neo4j.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
