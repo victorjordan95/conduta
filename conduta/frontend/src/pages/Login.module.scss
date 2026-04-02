@@ -1,0 +1,96 @@
+@use '../styles/variables' as *;
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-sidebar;
+}
+
+.card {
+  background: $color-surface;
+  border-radius: $border-radius;
+  padding: 40px 48px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: $shadow-md;
+}
+
+.brand {
+  text-align: center;
+  margin-bottom: 32px;
+
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: $color-accent;
+    text-transform: uppercase;
+  }
+
+  p {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+}
+
+.field {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid $color-border;
+    border-radius: $border-radius;
+    font-size: $font-size-base;
+    color: $color-text-primary;
+    transition: border-color 0.15s;
+
+    &:focus {
+      outline: none;
+      border-color: $color-accent;
+    }
+  }
+}
+
+.button {
+  width: 100%;
+  padding: 11px;
+  background: $color-accent;
+  color: white;
+  border-radius: $border-radius;
+  font-size: $font-size-base;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: background 0.15s;
+  margin-top: 8px;
+
+  &:hover {
+    background: $color-accent-hover;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.error {
+  font-size: $font-size-sm;
+  color: $color-danger;
+  margin-top: 12px;
+  text-align: center;
+}
