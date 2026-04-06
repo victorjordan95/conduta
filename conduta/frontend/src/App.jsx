@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import AdminKnowledge from './pages/AdminKnowledge';
 
 function PrivateRoute({ children }) {
   const { token } = useAuth();
@@ -22,6 +23,7 @@ export default function App() {
               </PrivateRoute>
             }
           />
+          <Route path="/admin/knowledge" element={<AdminKnowledge />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
