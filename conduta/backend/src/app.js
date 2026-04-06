@@ -4,8 +4,10 @@ const cors = require('cors');
 
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
+const adminKnowledgeRoutes = require('./routes/admin-knowledge');
 const sessionsRoutes = require('./routes/sessions');
 const analyzeRoutes = require('./routes/analyze');
+const feedbackRoutes = require('./routes/feedback');
 
 const app = express();
 
@@ -18,7 +20,9 @@ app.get('/health', (req, res) => {
 
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
+app.use('/admin/knowledge', adminKnowledgeRoutes);
 app.use('/sessions', sessionsRoutes);
 app.use('/analyze', analyzeRoutes);
+app.use('/feedback', feedbackRoutes);
 
 module.exports = app;
