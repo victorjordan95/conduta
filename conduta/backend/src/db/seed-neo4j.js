@@ -40,7 +40,8 @@ async function seed() {
       await session.run(
         `MERGE (d:Diagnostico {nome: $nome})
          SET d.cid = $cid,
-             d.sinonimos = $sinonimos`,
+             d.sinonimos = $sinonimos,
+             d.status = 'verified'`,
         { nome: d.nome, cid: d.cid || '', sinonimos: d.sinonimos || [] }
       );
 
@@ -48,6 +49,7 @@ async function seed() {
       for (const rf of d.redFlags || []) {
         await session.run(
           `MERGE (r:RedFlag {descricao: $descricao})
+           SET r.status = 'verified'
            WITH r
            MATCH (d:Diagnostico {nome: $nome})
            MERGE (d)-[:TEM_RED_FLAG]->(r)`,
@@ -77,7 +79,8 @@ async function seed() {
         `MERGE (m:Medicamento {nome: $nome})
          SET m.classe = $classe,
              m.apresentacoes = $apresentacoes,
-             m.viaAdmin = $viaAdmin`,
+             m.viaAdmin = $viaAdmin,
+             m.status = 'verified'`,
         {
           nome: m.nome,
           classe: m.classe || '',
@@ -95,16 +98,24 @@ async function seed() {
     let totalRel = 0;
     for (const rel of relacoes) {
       for (const med of rel.medicamentos) {
+        // Suporta tanto formato string legado quanto objeto com posologia
+        const medNome  = typeof med === 'string' ? med : med.nome;
+        const medDose  = typeof med === 'string' ? '' : (med.dose  || '');
+        const medLinha = typeof med === 'string' ? '' : (med.linha || '');
+        const medObs   = typeof med === 'string' ? '' : (med.obs   || '');
+
         const result = await session.run(
           `MATCH (d:Diagnostico {nome: $diagnostico})
            MATCH (m:Medicamento {nome: $medicamento})
-           MERGE (d)-[:TRATA_COM]->(m)
+           MERGE (d)-[r:TRATA_COM]->(m)
+           SET r.dose = $dose, r.linha = $linha, r.obs = $obs, r.status = 'verified'
            RETURN d.nome, m.nome`,
-          { diagnostico: rel.diagnostico, medicamento: med }
+          { diagnostico: rel.diagnostico, medicamento: medNome,
+            dose: medDose, linha: medLinha, obs: medObs }
         );
 
         if (result.records.length === 0) {
-          console.warn(`  ⚠ Não encontrado: "${rel.diagnostico}" → "${med}"`);
+          console.warn(`  ⚠ Não encontrado: "${rel.diagnostico}" → "${medNome}"`);
         } else {
           totalRel++;
         }
