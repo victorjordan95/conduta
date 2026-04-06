@@ -15,17 +15,24 @@ async function searchClinicalContext(text) {
       .filter((w) => w.length >= 4)
       .map((w) => w.toLowerCase().replace(/[^a-záéíóúãõâêîôûç]/gi, ''))
       .filter(Boolean)
-      .slice(0, 10);
+      .slice(0, 12);
 
     if (terms.length === 0) return null;
 
     const result = await session.run(
       `MATCH (d:Diagnostico)
-       WHERE any(t IN $terms WHERE toLower(d.nome) CONTAINS t OR any(s IN d.sinonimos WHERE toLower(s) CONTAINS t))
-       OPTIONAL MATCH (d)-[:TRATA_COM]->(m:Medicamento)
-       OPTIONAL MATCH (d)-[:EXIGE_EXCLUSAO]->(dd:Diagnostico)
-       RETURN d.nome AS diagnostico, d.cid AS cid,
-              collect(DISTINCT m.nome) AS medicamentos,
+       WHERE d.status = 'verified'
+         AND any(t IN $terms WHERE
+           toLower(d.nome) CONTAINS t OR
+           any(s IN d.sinonimos WHERE toLower(s) CONTAINS t)
+         )
+       OPTIONAL MATCH (d)-[rel:TRATA_COM {status: 'verified'}]->(m:Medicamento {status: 'verified'})
+       OPTIONAL MATCH (d)-[:TEM_RED_FLAG]->(r:RedFlag {status: 'verified'})
+       OPTIONAL MATCH (d)-[:EXIGE_EXCLUSAO]->(dd:Diagnostico {status: 'verified'})
+       RETURN d.nome AS diagnostico,
+              d.cid AS cid,
+              collect(DISTINCT {nome: m.nome, dose: rel.dose, linha: rel.linha, obs: rel.obs}) AS medicamentos,
+              collect(DISTINCT r.descricao) AS redFlags,
               collect(DISTINCT dd.nome) AS exclusoes
        LIMIT 5`,
       { terms }
@@ -36,18 +43,29 @@ async function searchClinicalContext(text) {
     const lines = result.records.map((r) => {
       const diag = r.get('diagnostico');
       const cid = r.get('cid') || '';
-      const meds = r.get('medicamentos').filter(Boolean);
+
+      const meds = r.get('medicamentos')
+        .filter((m) => m && m.nome)
+        .sort((a, b) => (Number(a.linha) || 99) - (Number(b.linha) || 99))
+        .map((m) => {
+          let str = m.nome;
+          if (m.dose) str += ` — ${m.dose}`;
+          if (m.obs) str += ` (${m.obs})`;
+          return str;
+        });
+
+      const redFlags = r.get('redFlags').filter(Boolean).slice(0, 3);
       const excl = r.get('exclusoes').filter(Boolean);
 
-      let line = `- ${diag}${cid ? ` (${cid})` : ''}`;
-      if (meds.length > 0) line += ` → trata com: ${meds.join(', ')}`;
-      if (excl.length > 0) line += ` → excluir: ${excl.join(', ')}`;
-      return line;
+      const parts = [`**${diag}${cid ? ` (${cid})` : ''}**`];
+      if (meds.length > 0) parts.push(`  Tratamento: ${meds.join(' | ')}`);
+      if (redFlags.length > 0) parts.push(`  Red flags: ${redFlags.join('; ')}`);
+      if (excl.length > 0) parts.push(`  Excluir: ${excl.join(', ')}`);
+      return parts.join('\n');
     });
 
-    return `Diagnósticos relacionados encontrados na base:\n${lines.join('\n')}`;
+    return `Diagnósticos relevantes na base clínica:\n\n${lines.join('\n\n')}`;
   } catch (err) {
-    // Neo4j vazio ou indisponível não deve quebrar o fluxo principal
     console.error('Neo4j search error (non-fatal):', err.message);
     return null;
   } finally {
