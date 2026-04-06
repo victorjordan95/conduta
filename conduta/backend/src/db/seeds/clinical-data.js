@@ -3,7 +3,7 @@
  * Fontes: RENAME 2023, PCDT/CONITEC, Cadernos de Atenção Básica (MS),
  *         Diretrizes SBC / SBD / SBP / FEBRASGO / SBR, CID-10
  *
- * v2.0 — base expandida (~48 diagnósticos, ~95 medicamentos)
+ * v3.0 — base expandida (~75 diagnósticos, ~129 medicamentos) + emergências UPA
  *         relações TRATA_COM com posologia (dose, linha, obs)
  */
 
@@ -580,7 +580,7 @@ const diagnosticos = [
     redFlags: [
       'SpO2 < 90% em ar ambiente (emergência)',
       'FR > 30 irpm + uso intenso de musculatura acessória',
-      'Ortopneia + crepitações bibasais + esteatorreia rósea (EAP franco)',
+      'Ortopneia + crepitações bibasais + expectoração rósea espumosa (EAP franco)',
       'PA sistólica < 90 mmHg (choque cardiogênico — prognóstico grave)',
     ],
     excluir: ['TEP maciço', 'Pneumonia grave / SDRA', 'Crise asmática grave', 'Tamponamento cardíaco'],
@@ -1232,6 +1232,7 @@ const relacoes = [
       { nome: 'Carvedilol',  dose: '6,25-25mg VO 2x/dia (controle de frequência + IC)', linha: '1ª' },
       { nome: 'Ácido Acetilsalicílico', dose: '100mg/dia (CHA₂DS₂-VASc = 1 masculino)', linha: 'antitrombótico', obs: 'avaliar risco-benefício' },
       { nome: 'Enoxaparina', dose: '1mg/kg SC 12/12h (anticoagulação inicial ou ponte)', linha: 'anticoagulação' },
+      { nome: 'Rivaroxabana', dose: '20mg VO 1x/dia com a refeição (CHA₂DS₂-VASc ≥ 2 masculino / ≥ 3 feminino)', linha: 'anticoagulação oral', obs: 'NOAC de escolha em FA não valvular — dose ajustar para 15mg se ClCr 15-50 mL/min' },
     ],
   },
   // Anemia ferropriva
