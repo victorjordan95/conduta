@@ -59,6 +59,8 @@ async function extractAndPersist(responseText, sessionId) {
     const { diagnosticos = [], medicamentos = [], relacoes = [] } = extracted;
     const now = new Date().toISOString();
 
+    let createdDiag = 0, createdMed = 0, createdRel = 0;
+
     // Persist pending Diagnostico nodes
     for (const d of diagnosticos) {
       if (!d.nome) continue;
@@ -66,7 +68,7 @@ async function extractAndPersist(responseText, sessionId) {
         `MATCH (n:Diagnostico {nome: $nome}) RETURN n.status AS status LIMIT 1`,
         { nome: d.nome }
       );
-      if (exists.records.length > 0) continue; // already exists (verified or pending)
+      if (exists.records.length > 0) continue;
 
       await session.run(
         `CREATE (n:Diagnostico {
@@ -81,6 +83,7 @@ async function extractAndPersist(responseText, sessionId) {
           createdAt: now,
         }
       );
+      createdDiag++;
     }
 
     // Persist pending Medicamento nodes
@@ -105,18 +108,20 @@ async function extractAndPersist(responseText, sessionId) {
           createdAt: now,
         }
       );
+      createdMed++;
     }
 
     // Persist pending TRATA_COM relationships (only if both nodes exist)
     for (const rel of relacoes) {
       if (!rel.diagnostico || !rel.medicamento) continue;
-      await session.run(
+      const result = await session.run(
         `MATCH (d:Diagnostico {nome: $diagnostico})
          MATCH (m:Medicamento {nome: $medicamento})
          MERGE (d)-[r:TRATA_COM]->(m)
          ON CREATE SET r.dose = $dose, r.linha = $linha, r.obs = $obs,
                        r.status = 'pending', r.sourceSessionId = $sourceSessionId, r.createdAt = $createdAt
-         ON MATCH SET r.status = CASE WHEN r.status IS NULL THEN 'pending' ELSE r.status END`,
+         ON MATCH SET r.status = CASE WHEN r.status IS NULL THEN 'pending' ELSE r.status END
+         RETURN r.status AS status`,
         {
           diagnostico: rel.diagnostico,
           medicamento: rel.medicamento,
@@ -127,11 +132,12 @@ async function extractAndPersist(responseText, sessionId) {
           createdAt: now,
         }
       );
+      if (result.records.length > 0) createdRel++;
     }
 
-    const total = diagnosticos.length + medicamentos.length + relacoes.length;
+    const total = createdDiag + createdMed + createdRel;
     if (total > 0) {
-      console.log(`[extractor] session ${sessionId}: ${diagnosticos.length} diagnósticos, ${medicamentos.length} medicamentos, ${relacoes.length} relações pendentes criados.`);
+      console.log(`[extractor] session ${sessionId}: ${createdDiag} diagnósticos, ${createdMed} medicamentos, ${createdRel} relações pendentes criados.`);
     }
   } catch (err) {
     console.error('[extractor] Erro (non-fatal):', err.message);

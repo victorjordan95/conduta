@@ -61,6 +61,7 @@ async function seed() {
       for (const excluir of d.excluir || []) {
         await session.run(
           `MERGE (dd:Diagnostico {nome: $excluirNome})
+           SET dd.status = 'verified'
            WITH dd
            MATCH (d:Diagnostico {nome: $nome})
            MERGE (d)-[:EXIGE_EXCLUSAO]->(dd)`,

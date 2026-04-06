@@ -23,7 +23,14 @@ export default function App() {
               </PrivateRoute>
             }
           />
-          <Route path="/admin/knowledge" element={<AdminKnowledge />} />
+          <Route
+            path="/admin/knowledge"
+            element={
+              <PrivateRoute>
+                <AdminKnowledge />
+              </PrivateRoute>
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
