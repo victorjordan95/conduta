@@ -1,0 +1,160 @@
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Inter', 'IBM Plex Sans', sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a2332;
+    margin: 0;
+  }
+}
+
+.badge {
+  background: #e8f0fe;
+  color: #1a56db;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+.refreshBtn {
+  margin-left: auto;
+  padding: 0.4rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.875rem;
+
+  &:hover:not(:disabled) {
+    background: #f3f4f6;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+
+  th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    background: #f9fafb;
+    border-bottom: 2px solid #e5e7eb;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  td {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid #f0f0f0;
+    color: #1f2937;
+  }
+
+  tr:hover td {
+    background: #fafafa;
+  }
+}
+
+.dimmed td {
+  opacity: 0.4;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &.diagnostico {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.medicamento {
+    background: #d1fae5;
+    color: #065f46;
+  }
+}
+
+.nome {
+  font-weight: 500;
+}
+
+.cid, .session {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.date {
+  white-space: nowrap;
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.approveBtn, .rejectBtn {
+  padding: 0.3rem 0.75rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.approveBtn {
+  background: #065f46;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #047857;
+  }
+}
+
+.rejectBtn {
+  background: #fee2e2;
+  color: #991b1b;
+
+  &:hover:not(:disabled) {
+    background: #fecaca;
+  }
+}
+
+.info {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.error {
+  color: #991b1b;
+  background: #fee2e2;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
