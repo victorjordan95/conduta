@@ -9,6 +9,14 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+function checkUnauthorized(res) {
+  if (res.status === 401) {
+    window.dispatchEvent(new Event('conduta:unauthorized'));
+    throw new Error('Sessão expirada. Faça login novamente.');
+  }
+  return res;
+}
+
 export async function login(email, senha) {
   const res = await fetch(`${BASE_URL}/auth/login`, {
     method: 'POST',
@@ -24,6 +32,7 @@ export async function getSessions() {
   const res = await fetch(`${BASE_URL}/sessions`, {
     headers: authHeaders(),
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao buscar sessões.');
   return res.json();
 }
@@ -34,6 +43,7 @@ export async function createSession(titulo) {
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ titulo }),
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao criar sessão.');
   return res.json();
 }
@@ -42,6 +52,7 @@ export async function getSession(id) {
   const res = await fetch(`${BASE_URL}/sessions/${id}`, {
     headers: authHeaders(),
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao buscar sessão.');
   return res.json();
 }
@@ -51,16 +62,18 @@ export async function deleteSession(id) {
     method: 'DELETE',
     headers: authHeaders(),
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao deletar sessão.');
   return res.json();
 }
 
-export async function submitFeedback(messageId, feedback) {
+export async function submitFeedback(messageId, feedback, note) {
   const res = await fetch(`${BASE_URL}/feedback`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
-    body: JSON.stringify({ message_id: messageId, feedback }),
+    body: JSON.stringify({ message_id: messageId, feedback, note: note || undefined }),
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao enviar feedback.');
   return res.json();
 }
@@ -76,6 +89,7 @@ export async function analyzeCase(sessionId, content, onChunk) {
     body: JSON.stringify({ session_id: sessionId, content }),
   });
 
+  checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao processar análise.');
 
   const reader = res.body.getReader();
@@ -102,17 +116,13 @@ export async function analyzeCase(sessionId, content, onChunk) {
 }
 
 // ── Admin Knowledge ────────────────────────────────────────────
-
-const ADMIN_SECRET = import.meta.env.VITE_ADMIN_SECRET || '';
-
-function adminHeaders() {
-  return { 'x-admin-secret': ADMIN_SECRET };
-}
+// Rotas admin exigem JWT com role = 'admin' (Bearer token normal).
 
 export async function getPendingKnowledge() {
   const res = await fetch(`${BASE_URL}/admin/knowledge/pending`, {
-    headers: adminHeaders(),
+    headers: authHeaders(),
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao buscar pendentes.');
   return res.json();
 }
@@ -120,9 +130,10 @@ export async function getPendingKnowledge() {
 export async function approveKnowledge(elementId) {
   const res = await fetch(`${BASE_URL}/admin/knowledge/${elementId}/approve`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...adminHeaders() },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ approvedBy: 'admin' }),
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao aprovar.');
   return res.json();
 }
@@ -130,8 +141,9 @@ export async function approveKnowledge(elementId) {
 export async function rejectKnowledge(elementId) {
   const res = await fetch(`${BASE_URL}/admin/knowledge/${elementId}`, {
     method: 'DELETE',
-    headers: adminHeaders(),
+    headers: authHeaders(),
   });
+  checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao rejeitar.');
   return res.json();
 }

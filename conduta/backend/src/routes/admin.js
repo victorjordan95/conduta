@@ -1,18 +1,11 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const pool = require('../db/pg');
+const adminMiddleware = require('../middleware/admin');
 
 const router = express.Router();
 
-function adminAuth(req, res, next) {
-  const key = req.headers['x-admin-secret'];
-  if (key !== process.env.ADMIN_SECRET) {
-    return res.status(403).json({ error: 'Acesso negado.' });
-  }
-  next();
-}
-
-router.post('/users', adminAuth, async (req, res) => {
+router.post('/users', adminMiddleware, async (req, res) => {
   const { email, nome, senha } = req.body;
 
   if (!email || !nome || !senha) {

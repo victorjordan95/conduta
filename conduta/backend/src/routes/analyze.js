@@ -15,6 +15,10 @@ router.post('/', authMiddleware, async (req, res) => {
     return res.status(400).json({ error: 'session_id e content são obrigatórios.' });
   }
 
+  if (content.length > 8000) {
+    return res.status(400).json({ error: 'Conteúdo não pode exceder 8000 caracteres.' });
+  }
+
   try {
     // Verifica que a sessão pertence ao usuário autenticado
     const sessionCheck = await pool.query(
@@ -77,6 +81,10 @@ router.post('/', authMiddleware, async (req, res) => {
   } catch (err) {
     console.error('Erro no /analyze:', err.message);
     if (!res.headersSent) {
+      const status = err?.status ?? err?.response?.status;
+      if (status === 429) {
+        return res.status(429).json({ error: 'Serviço temporariamente sobrecarregado. Tente novamente em alguns segundos.' });
+      }
       res.status(500).json({ error: 'Erro ao processar análise.' });
     }
   }

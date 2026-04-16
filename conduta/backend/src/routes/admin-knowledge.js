@@ -1,20 +1,14 @@
 const express = require('express');
 const driver = require('../db/neo4j');
+const adminMiddleware = require('../middleware/admin');
 
 const router = express.Router();
-
-function adminAuth(req, res, next) {
-  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
-    return res.status(403).json({ error: 'Acesso negado.' });
-  }
-  next();
-}
 
 /**
  * GET /admin/knowledge/pending
  * Returns all pending Diagnostico and Medicamento nodes.
  */
-router.get('/pending', adminAuth, async (req, res) => {
+router.get('/pending', adminMiddleware, async (req, res) => {
   const session = driver.session();
   try {
     const result = await session.run(`
@@ -56,7 +50,7 @@ router.get('/pending', adminAuth, async (req, res) => {
  * Approves a pending node (sets status to 'verified').
  * Body: { approvedBy: string }
  */
-router.post('/:elementId/approve', adminAuth, async (req, res) => {
+router.post('/:elementId/approve', adminMiddleware, async (req, res) => {
   const { elementId } = req.params;
   const { approvedBy } = req.body;
   const session = driver.session();
@@ -91,7 +85,7 @@ router.post('/:elementId/approve', adminAuth, async (req, res) => {
  * DELETE /admin/knowledge/:elementId
  * Rejects (deletes) a pending node.
  */
-router.delete('/:elementId', adminAuth, async (req, res) => {
+router.delete('/:elementId', adminMiddleware, async (req, res) => {
   const { elementId } = req.params;
   const session = driver.session();
 

@@ -5,7 +5,7 @@ const client = new OpenAI({
   baseURL: 'https://openrouter.ai/api/v1',
   apiKey: process.env.OPENROUTER_API_KEY,
   defaultHeaders: {
-    'HTTP-Referer': 'http://localhost:5173',
+    'HTTP-Referer': process.env.APP_URL || 'http://localhost:5173',
     'X-Title': 'Conduta',
   },
 });
@@ -34,16 +34,33 @@ async function streamAnalysis(history, newMessage, neo4jContext, res) {
 
   messages.push({ role: 'user', content: newMessage });
 
+  // Cria o stream antes de abrir SSE para poder retornar erro HTTP em caso de 429/falha
+  const MAX_RETRIES = 3;
+  let stream;
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      stream = await client.chat.completions.create({
+        model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct:free',
+        messages,
+        stream: true,
+      });
+      break; // sucesso
+    } catch (err) {
+      const status = err?.status ?? err?.response?.status;
+      if (status === 429 && attempt < MAX_RETRIES) {
+        const delay = attempt * 2000; // 2s, 4s
+        console.warn(`[openrouter] 429 rate limit, tentativa ${attempt}/${MAX_RETRIES}, aguardando ${delay}ms…`);
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      throw err; // repassa erro para o caller tratar
+    }
+  }
+
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
   res.flushHeaders();
-
-  const stream = await client.chat.completions.create({
-    model: process.env.OPENROUTER_MODEL || 'anthropic/claude-sonnet-4-5',
-    messages,
-    stream: true,
-  });
 
   let fullContent = '';
 
