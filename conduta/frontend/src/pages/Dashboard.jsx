@@ -2,16 +2,28 @@ import { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import CaseInput from '../components/CaseInput';
 import AnalysisResult from '../components/AnalysisResult';
+import { getSession, submitFeedback } from '../services/api';
 import styles from './Dashboard.module.scss';
 
 export default function Dashboard() {
   const [activeSessionId, setActiveSessionId] = useState(null);
-  const [analysis, setAnalysis] = useState('');
-  const [analyzing, setAnalyzing] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [streaming, setStreaming] = useState(false);
+  const [loadingHistory, setLoadingHistory] = useState(false);
 
-  function handleSelectSession(id) {
+  async function handleSelectSession(id) {
     setActiveSessionId(id);
-    setAnalysis('');
+    setMessages([]);
+    setStreaming(false);
+    setLoadingHistory(true);
+    try {
+      const data = await getSession(id);
+      setMessages(data.messages.map((m) => ({ id: m.id, role: m.role, content: m.content, feedback: m.feedback })));
+    } catch (err) {
+      console.error('Erro ao carregar histórico:', err.message);
+    } finally {
+      setLoadingHistory(false);
+    }
   }
 
   return (
@@ -29,15 +41,52 @@ export default function Dashboard() {
           </div>
         ) : (
           <>
-            <AnalysisResult content={analysis} analyzing={analyzing} />
+            <AnalysisResult
+              messages={messages}
+              streaming={streaming}
+              loading={loadingHistory}
+              onFeedback={async (messageId, feedback) => {
+                await submitFeedback(messageId, feedback);
+                setMessages((prev) =>
+                  prev.map((m) => (m.id === messageId ? { ...m, feedback } : m))
+                );
+              }}
+            />
             <CaseInput
               sessionId={activeSessionId}
-              onAnalysisStart={() => {
-                setAnalysis('');
-                setAnalyzing(true);
+              onAnalysisStart={(userContent) => {
+                setMessages((prev) => [
+                  ...prev,
+                  { role: 'user', content: userContent },
+                  { role: 'assistant', content: '', id: null },
+                ]);
+                setStreaming(true);
               }}
-              onChunk={(chunk) => setAnalysis((prev) => prev + chunk)}
-              onAnalysisDone={() => setAnalyzing(false)}
+              onChunk={(chunk) => {
+                setMessages((prev) => {
+                  const updated = [...prev];
+                  const last = updated[updated.length - 1];
+                  updated[updated.length - 1] = { ...last, content: last.content + chunk };
+                  return updated;
+                });
+              }}
+              onAnalysisDone={() => {
+                setStreaming(false);
+                // Recarrega para obter o id da mensagem salva (necessário para feedback)
+                getSession(activeSessionId)
+                  .then((data) => {
+                    const msgs = data.messages;
+                    if (msgs.length > 0) {
+                      const last = msgs[msgs.length - 1];
+                      setMessages((prev) => {
+                        const updated = [...prev];
+                        updated[updated.length - 1] = { ...updated[updated.length - 1], id: last.id };
+                        return updated;
+                      });
+                    }
+                  })
+                  .catch(console.error);
+              }}
             />
           </>
         )}

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext(null);
 
@@ -22,6 +22,12 @@ export function AuthProvider({ children }) {
     setToken(null);
     setUser(null);
   }
+
+  useEffect(() => {
+    const handler = () => clearAuth();
+    window.addEventListener('conduta:unauthorized', handler);
+    return () => window.removeEventListener('conduta:unauthorized', handler);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ token, user, saveAuth, clearAuth }}>

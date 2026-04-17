@@ -92,6 +92,142 @@
   }
 }
 
+.userMessage {
+  margin-bottom: 8px;
+  padding: 12px 16px;
+  background: #eaf2f3;
+  border-left: 3px solid $color-accent;
+  border-radius: 0 $border-radius $border-radius 0;
+  max-width: 780px;
+}
+
+.userLabel {
+  display: block;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $color-accent;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.userContent {
+  color: $color-text-primary;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.assistantMessage {
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid $color-border;
+  max-width: 780px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.feedback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.feedbackLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.feedbackBtn {
+  background: none;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: #eaf2f3;
+    border-color: $color-accent;
+  }
+}
+
+.feedbackDone {
+  margin-top: 12px;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.feedbackNote {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 560px;
+}
+
+.feedbackNoteLabel {
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $color-text-primary;
+  margin: 0;
+}
+
+.feedbackNoteInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  resize: vertical;
+  background: #fff;
+  line-height: 1.5;
+
+  &:focus {
+    outline: none;
+    border-color: $color-accent;
+  }
+}
+
+.feedbackNoteActions {
+  display: flex;
+  gap: 8px;
+}
+
+.feedbackNoteSubmit {
+  padding: 6px 14px;
+  background: $color-accent;
+  color: #fff;
+  border: none;
+  border-radius: $border-radius;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover:not(:disabled) { background: $color-accent-hover; }
+  &:disabled { opacity: 0.6; cursor: default; }
+}
+
+.feedbackNoteSkip {
+  padding: 6px 14px;
+  background: none;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  cursor: pointer;
+
+  &:hover:not(:disabled) { border-color: $color-text-secondary; }
+  &:disabled { opacity: 0.6; cursor: default; }
+}
+
 .cursor {
   display: inline-block;
   width: 2px;

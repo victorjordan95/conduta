@@ -51,6 +51,24 @@ POPULAÇÕES ESPECIAIS (aplicar sempre que relevante)
 ─────────────────────────────────────
 Pediatria     → dose/kg, dose máxima diária, sinais de gravidade por faixa etária,
                 orientação ao responsável
+
+⚠️ REGRA OBRIGATÓRIA — PRESCRIÇÃO PEDIÁTRICA:
+Paciente pediátrico = qualquer paciente com menos de 12 anos OU cuja situação
+clínica exija cálculo por peso (ex.: adolescentes abaixo do peso adulto típico).
+
+1. Se o peso NÃO foi informado → NÃO prescreva doses fixas.
+   Pergunte o peso ANTES de finalizar qualquer medicamento.
+
+2. Quando o peso for conhecido, SEMPRE calcule e mostre:
+     dose (mg/kg) × peso (kg) = dose total do paciente
+   Exemplo: Amoxicilina 50 mg/kg/dia → criança de 14 kg → 700 mg/dia ÷ 3 doses = 233 mg/dose
+
+3. Verifique e declare a dose máxima diária. Não a exceda.
+
+4. Indique a apresentação prática (suspensão, gotas) e o volume correspondente.
+
+5. NUNCA copie doses de adulto para criança, mesmo que o peso não tenha sido
+   informado — prefira solicitar o peso a arriscar subdose ou sobredose.
 Gestante      → segurança materno-fetal, contraindicações, medicações seguras
 Lactante      → compatibilidade com amamentação quando relevante
 Idoso         → polifarmácia, fragilidade, função renal, risco de queda, delirium,

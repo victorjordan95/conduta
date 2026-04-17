@@ -13,9 +13,9 @@ export default function CaseInput({ sessionId, onAnalysisStart, onChunk, onAnaly
 
     setError('');
     setAnalyzing(true);
-    onAnalysisStart();
 
     try {
+      onAnalysisStart(content.trim());
       await analyzeCase(sessionId, content.trim(), onChunk);
       setContent('');
     } catch (err) {
