@@ -46,6 +46,31 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.post('/register', async (req, res) => {
+  const { email, nome, senha } = req.body;
+
+  if (!email || !nome || !senha) {
+    return res.status(400).json({ error: 'email, nome e senha são obrigatórios.' });
+  }
+
+  try {
+    const senhaHash = await bcrypt.hash(senha, 10);
+    const result = await pool.query(
+      `INSERT INTO users (email, nome, senha_hash)
+       VALUES ($1, $2, $3)
+       RETURNING id, email, nome, created_at`,
+      [email, nome, senhaHash]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    if (err.code === '23505') {
+      return res.status(409).json({ error: 'Email já cadastrado.' });
+    }
+    console.error('Erro ao registrar:', err.message);
+    res.status(500).json({ error: 'Erro interno.' });
+  }
+});
+
 router.post('/logout', (req, res) => {
   res.json({ message: 'Logout realizado.' });
 });
