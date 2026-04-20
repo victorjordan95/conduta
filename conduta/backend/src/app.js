@@ -13,18 +13,29 @@ const feedbackRoutes = require('./routes/feedback');
 const app = express();
 
 const ALLOWED_ORIGINS = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(',').map((s) => s.trim())
+  ? process.env.CORS_ORIGIN.split(',').map((s) => s.trim().replace(/\/$/, ''))
   : ['http://localhost:5173'];
 
-app.use(cors({
+console.log(`[CORS] Allowed origins: ${ALLOWED_ORIGINS.join(', ')}`);
+
+const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+    const normalized = (origin || '').replace(/\/$/, '');
+    if (!origin || ALLOWED_ORIGINS.includes(normalized)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.warn(`[CORS] Blocked origin: "${origin}" | allowed: ${ALLOWED_ORIGINS.join(', ')}`);
+      callback(new Error(`CORS: origin "${origin}" not allowed`));
     }
   },
-}));
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+// Preflight explícito antes de qualquer middleware
+app.options('*', cors(corsOptions));
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
