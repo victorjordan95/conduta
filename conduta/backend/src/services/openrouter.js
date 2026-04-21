@@ -1,14 +1,19 @@
 const OpenAI = require('openai');
 const SYSTEM_PROMPT = require('../config/system-prompt');
 
-const client = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY,
-  defaultHeaders: {
-    'HTTP-Referer': process.env.APP_URL || 'http://localhost:5173',
-    'X-Title': 'Conduta',
-  },
-});
+function getClient() {
+  if (!process.env.OPENROUTER_API_KEY) {
+    throw new Error('[openrouter] OPENROUTER_API_KEY não definido');
+  }
+  return new OpenAI({
+    baseURL: 'https://openrouter.ai/api/v1',
+    apiKey: process.env.OPENROUTER_API_KEY,
+    defaultHeaders: {
+      'HTTP-Referer': process.env.APP_URL || 'http://localhost:5173',
+      'X-Title': 'Conduta',
+    },
+  });
+}
 
 /**
  * Faz streaming de análise clínica via SSE.
@@ -35,6 +40,7 @@ async function streamAnalysis(history, newMessage, neo4jContext, res) {
   messages.push({ role: 'user', content: newMessage });
 
   // Cria o stream antes de abrir SSE para poder retornar erro HTTP em caso de 429/falha
+  const client = getClient();
   const MAX_RETRIES = 3;
   let stream;
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {

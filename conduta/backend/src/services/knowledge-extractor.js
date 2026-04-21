@@ -9,14 +9,16 @@
 const OpenAI = require('openai');
 const driver = require('../db/neo4j');
 
-const client = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY,
-  defaultHeaders: {
-    'HTTP-Referer': 'http://localhost:5173',
-    'X-Title': 'Conduta',
-  },
-});
+function getClient() {
+  return new OpenAI({
+    baseURL: 'https://openrouter.ai/api/v1',
+    apiKey: process.env.OPENROUTER_API_KEY || 'missing',
+    defaultHeaders: {
+      'HTTP-Referer': 'http://localhost:5173',
+      'X-Title': 'Conduta',
+    },
+  });
+}
 
 const EXTRACTION_SYSTEM = `Você é um extrator de entidades clínicas.
 Dado um texto clínico em português, extraia APENAS entidades que sejam realmente novas informações clínicas — diagnósticos, medicamentos e relações de tratamento.
@@ -38,6 +40,7 @@ Se não houver entidades novas, retorne {"diagnosticos":[],"medicamentos":[],"re
 async function extractAndPersist(responseText, sessionId) {
   if (!driver) return;
   const session = driver.session();
+  const client = getClient();
   try {
     const completion = await client.chat.completions.create({
       model: process.env.OPENROUTER_MODEL || 'anthropic/claude-sonnet-4-5',
