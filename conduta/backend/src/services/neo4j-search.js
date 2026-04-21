@@ -7,6 +7,7 @@ const driver = require('../db/neo4j');
  * @returns {Promise<string|null>}
  */
 async function searchClinicalContext(text) {
+  if (!driver) return null;
   const session = driver.session();
 
   try {

@@ -36,6 +36,7 @@ Se não houver entidades novas, retorne {"diagnosticos":[],"medicamentos":[],"re
  * @param {string} sessionId    - PostgreSQL session ID (for traceability)
  */
 async function extractAndPersist(responseText, sessionId) {
+  if (!driver) return;
   const session = driver.session();
   try {
     const completion = await client.chat.completions.create({

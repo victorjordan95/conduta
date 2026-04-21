@@ -9,6 +9,7 @@ const router = express.Router();
  * Returns all pending Diagnostico and Medicamento nodes.
  */
 router.get('/pending', adminMiddleware, async (req, res) => {
+  if (!driver) return res.status(503).json({ error: 'Neo4j não configurado.' });
   const session = driver.session();
   try {
     const result = await session.run(`
@@ -51,6 +52,7 @@ router.get('/pending', adminMiddleware, async (req, res) => {
  * Body: { approvedBy: string }
  */
 router.post('/:elementId/approve', adminMiddleware, async (req, res) => {
+  if (!driver) return res.status(503).json({ error: 'Neo4j não configurado.' });
   const { elementId } = req.params;
   const { approvedBy } = req.body;
   const session = driver.session();
@@ -86,6 +88,7 @@ router.post('/:elementId/approve', adminMiddleware, async (req, res) => {
  * Rejects (deletes) a pending node.
  */
 router.delete('/:elementId', adminMiddleware, async (req, res) => {
+  if (!driver) return res.status(503).json({ error: 'Neo4j não configurado.' });
   const { elementId } = req.params;
   const session = driver.session();
 

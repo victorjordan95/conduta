@@ -48,6 +48,7 @@ router.post('/', authMiddleware, async (req, res) => {
  * Negativo → remove nós pendentes + cria Correcao node com keywords da nota.
  */
 async function applyKnowledgeFeedback(sessionId, feedback, note) {
+  if (!driver) return;
   const session = driver.session();
   try {
     if (feedback === 'positive') {
