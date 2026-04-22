@@ -10,6 +10,7 @@ export default function Dashboard() {
   const [messages, setMessages] = useState([]);
   const [streaming, setStreaming] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   async function handleSelectSession(id) {
     setActiveSessionId(id);
@@ -30,10 +31,32 @@ export default function Dashboard() {
     <div className={styles.layout}>
       <Sidebar
         activeSessionId={activeSessionId}
-        onSelectSession={handleSelectSession}
+        onSelectSession={(id) => {
+          handleSelectSession(id);
+          setSidebarOpen(false);
+        }}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
 
+      {sidebarOpen && (
+        <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
+      )}
+
       <main className={styles.main}>
+        <header className={styles.mobileHeader}>
+          <button
+            className={styles.hamburger}
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Abrir menu"
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+          <span className={styles.mobileBrand}>Conduta</span>
+        </header>
+
         {!activeSessionId ? (
           <div className={styles.empty}>
             <p>Selecione ou inicie um caso</p>

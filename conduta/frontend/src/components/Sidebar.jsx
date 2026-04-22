@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { getSessions, createSession } from '../services/api';
 import styles from './Sidebar.module.scss';
 
-export default function Sidebar({ activeSessionId, onSelectSession }) {
+export default function Sidebar({ activeSessionId, onSelectSession, isOpen, onClose }) {
   const { user, clearAuth } = useAuth();
   const [sessions, setSessions] = useState([]);
 
@@ -28,10 +28,17 @@ export default function Sidebar({ activeSessionId, onSelectSession }) {
   }
 
   return (
-    <aside className={styles.sidebar}>
+    <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
       <div className={styles.header}>
-        <h1>Conduta</h1>
-        <p>Apoio clínico</p>
+        <div className={styles.headerTop}>
+          <div>
+            <h1>Conduta</h1>
+            <p>Apoio clínico</p>
+          </div>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Fechar menu">
+            &#x2715;
+          </button>
+        </div>
       </div>
 
       <button className={styles.newCase} onClick={handleNewCase}>
