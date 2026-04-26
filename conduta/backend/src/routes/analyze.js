@@ -6,6 +6,7 @@ const { searchClinicalContext } = require('../services/neo4j-search');
 const { searchSimilarCases } = require('../services/case-search');
 const { extractAndPersist } = require('../services/knowledge-extractor');
 const { generateAndSave } = require('../services/session-summarizer');
+const { embed } = require('../services/embeddings');
 
 const router = express.Router();
 
@@ -86,7 +87,14 @@ router.post('/', authMiddleware, async (req, res) => {
       }
     }
 
-    void userMessageId;
+    embed(content)
+      .then((embedding) =>
+        pool.query(
+          'UPDATE messages SET embedding = $1 WHERE id = $2',
+          [JSON.stringify(embedding), userMessageId]
+        )
+      )
+      .catch((err) => console.error('[analyze] embed fire-and-forget error:', err.message));
   } catch (err) {
     console.error('Erro no /analyze:', err.message);
     if (!res.headersSent) {
