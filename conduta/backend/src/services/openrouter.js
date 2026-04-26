@@ -15,15 +15,7 @@ function getClient() {
   });
 }
 
-/**
- * Faz streaming de análise clínica via SSE.
- * @param {Array<{role: string, content: string}>} history
- * @param {string} newMessage
- * @param {string|null} neo4jContext
- * @param {import('express').Response} res
- * @returns {Promise<string>} fullContent acumulado
- */
-async function streamAnalysis(history, newMessage, neo4jContext, res) {
+async function streamAnalysis(history, newMessage, neo4jContext, sessionSummary, res) {
   const messages = [{ role: 'system', content: SYSTEM_PROMPT }];
 
   if (neo4jContext) {
@@ -33,13 +25,20 @@ async function streamAnalysis(history, newMessage, neo4jContext, res) {
     });
   }
 
+  if (sessionSummary) {
+    const alertas = (sessionSummary.alertas || []).join('; ') || 'Nenhum';
+    messages.push({
+      role: 'system',
+      content: `Contexto clínico desta sessão:\n• Hipótese principal: ${sessionSummary.hipotese}\n• Conduta definida: ${sessionSummary.conduta}\n• Alertas ativos: ${alertas}\n\nResponda DIRETAMENTE a pergunta do médico com base neste contexto.`,
+    });
+  }
+
   for (const msg of history) {
     messages.push({ role: msg.role, content: msg.content });
   }
 
   messages.push({ role: 'user', content: newMessage });
 
-  // Cria o stream antes de abrir SSE para poder retornar erro HTTP em caso de 429/falha
   const client = getClient();
   const MAX_RETRIES = 3;
   let stream;
@@ -50,16 +49,16 @@ async function streamAnalysis(history, newMessage, neo4jContext, res) {
         messages,
         stream: true,
       });
-      break; // sucesso
+      break;
     } catch (err) {
       const status = err?.status ?? err?.response?.status;
       if (status === 429 && attempt < MAX_RETRIES) {
-        const delay = attempt * 2000; // 2s, 4s
+        const delay = attempt * 2000;
         console.warn(`[openrouter] 429 rate limit, tentativa ${attempt}/${MAX_RETRIES}, aguardando ${delay}ms…`);
         await new Promise((r) => setTimeout(r, delay));
         continue;
       }
-      throw err; // repassa erro para o caller tratar
+      throw err;
     }
   }
 
