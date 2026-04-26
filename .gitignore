@@ -4,3 +4,4 @@ node_modules/
 .worktrees/
 conduta/setup.sh
 coverage/
+conduta/deploy_hibrido.pdf
