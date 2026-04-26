@@ -1,6 +1,17 @@
 const express = require('express');
 const driver = require('../db/neo4j');
 const adminMiddleware = require('../middleware/admin');
+const multer = require('multer');
+const { ingestPDF, listDocuments } = require('../services/pdf-ingestor');
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 20 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype === 'application/pdf') cb(null, true);
+    else cb(new Error('Apenas PDFs são aceitos'));
+  },
+});
 
 const router = express.Router();
 
@@ -105,6 +116,30 @@ router.delete('/:elementId', adminMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Erro interno.' });
   } finally {
     await session.close();
+  }
+});
+
+router.get('/documents', adminMiddleware, async (req, res) => {
+  try {
+    const docs = await listDocuments();
+    res.json(docs);
+  } catch (err) {
+    console.error('[admin] listDocuments error:', err.message);
+    res.status(500).json({ error: 'Erro ao listar documentos.' });
+  }
+});
+
+router.post('/documents', adminMiddleware, upload.single('pdf'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'PDF não enviado.' });
+  const { fonte } = req.body;
+  if (!fonte?.trim()) return res.status(400).json({ error: 'Nome da fonte é obrigatório.' });
+
+  try {
+    const result = await ingestPDF(req.file.buffer, fonte.trim());
+    res.json(result);
+  } catch (err) {
+    console.error('[admin] ingestPDF error:', err.message);
+    res.status(500).json({ error: 'Erro ao processar PDF: ' + err.message });
   }
 });
 
