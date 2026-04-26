@@ -12,6 +12,7 @@ jest.mock('../db/pg', () => ({ query: mockQuery }));
 const { generateAndSave } = require('../services/session-summarizer');
 
 beforeEach(() => {
+  process.env.OPENROUTER_API_KEY = 'test-key';
   mockCreate.mockClear();
   mockQuery.mockClear();
 });

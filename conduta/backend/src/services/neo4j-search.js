@@ -34,7 +34,6 @@ async function searchDocumentChunks(text) {
 
 async function searchClinicalContext(text) {
   if (!driver) return null;
-  const session = driver.session();
 
   try {
     const terms = text
@@ -47,33 +46,47 @@ async function searchClinicalContext(text) {
     if (terms.length === 0) return null;
 
     const [keywordResult, docContext, corrResult] = await Promise.all([
-      session.run(
-        `MATCH (d:Diagnostico)
-         WHERE d.status = 'verified'
-           AND any(t IN $terms WHERE
-             toLower(d.nome) CONTAINS t OR
-             any(s IN d.sinonimos WHERE toLower(s) CONTAINS t)
-           )
-         OPTIONAL MATCH (d)-[rel:TRATA_COM {status: 'verified'}]->(m:Medicamento {status: 'verified'})
-         OPTIONAL MATCH (d)-[:TEM_RED_FLAG]->(r:RedFlag {status: 'verified'})
-         OPTIONAL MATCH (d)-[:EXIGE_EXCLUSAO]->(dd:Diagnostico {status: 'verified'})
-         RETURN d.nome AS diagnostico,
-                d.cid AS cid,
-                collect(DISTINCT {nome: m.nome, dose: rel.dose, linha: rel.linha, obs: rel.obs}) AS medicamentos,
-                collect(DISTINCT r.descricao) AS redFlags,
-                collect(DISTINCT dd.nome) AS exclusoes
-         LIMIT 5`,
-        { terms }
-      ),
+      (async () => {
+        const s = driver.session();
+        try {
+          return await s.run(
+            `MATCH (d:Diagnostico)
+             WHERE d.status = 'verified'
+               AND any(t IN $terms WHERE
+                 toLower(d.nome) CONTAINS t OR
+                 any(s IN d.sinonimos WHERE toLower(s) CONTAINS t)
+               )
+             OPTIONAL MATCH (d)-[rel:TRATA_COM {status: 'verified'}]->(m:Medicamento {status: 'verified'})
+             OPTIONAL MATCH (d)-[:TEM_RED_FLAG]->(r:RedFlag {status: 'verified'})
+             OPTIONAL MATCH (d)-[:EXIGE_EXCLUSAO]->(dd:Diagnostico {status: 'verified'})
+             RETURN d.nome AS diagnostico,
+                    d.cid AS cid,
+                    collect(DISTINCT {nome: m.nome, dose: rel.dose, linha: rel.linha, obs: rel.obs}) AS medicamentos,
+                    collect(DISTINCT r.descricao) AS redFlags,
+                    collect(DISTINCT dd.nome) AS exclusoes
+             LIMIT 5`,
+            { terms }
+          );
+        } finally {
+          await s.close();
+        }
+      })(),
       searchDocumentChunks(text),
-      session.run(
-        `MATCH (c:Correcao {status: 'active'})
-         WHERE any(k IN c.keywords WHERE any(t IN $terms WHERE k CONTAINS t OR t CONTAINS k))
-         RETURN c.nota AS nota
-         ORDER BY c.createdAt DESC
-         LIMIT 3`,
-        { terms }
-      ),
+      (async () => {
+        const s = driver.session();
+        try {
+          return await s.run(
+            `MATCH (c:Correcao {status: 'active'})
+             WHERE any(k IN c.keywords WHERE any(t IN $terms WHERE k CONTAINS t OR t CONTAINS k))
+             RETURN c.nota AS nota
+             ORDER BY c.createdAt DESC
+             LIMIT 3`,
+            { terms }
+          );
+        } finally {
+          await s.close();
+        }
+      })(),
     ]);
 
     const parts = [];
@@ -123,8 +136,6 @@ async function searchClinicalContext(text) {
   } catch (err) {
     console.error('Neo4j search error (non-fatal):', err.message);
     return null;
-  } finally {
-    await session.close();
   }
 }
 

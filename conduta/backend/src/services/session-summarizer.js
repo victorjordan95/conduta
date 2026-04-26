@@ -2,9 +2,12 @@ const OpenAI = require('openai');
 const pool = require('../db/pg');
 
 function getClient() {
+  if (!process.env.OPENROUTER_API_KEY) {
+    throw new Error('[summarizer] OPENROUTER_API_KEY não definido');
+  }
   return new OpenAI({
     baseURL: 'https://openrouter.ai/api/v1',
-    apiKey: process.env.OPENROUTER_API_KEY || 'missing',
+    apiKey: process.env.OPENROUTER_API_KEY,
     defaultHeaders: {
       'HTTP-Referer': process.env.APP_URL || 'http://localhost:5173',
       'X-Title': 'Conduta',

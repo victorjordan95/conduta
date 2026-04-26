@@ -12,6 +12,7 @@ async function searchSimilarCases(content, userId) {
        WHERE m.role = 'user'
          AND m.embedding IS NOT NULL
          AND s.user_id != $1
+         AND (1 - (m.embedding <=> $2::vector)) > 0.75
          AND NOT EXISTS (
            SELECT 1 FROM messages m2
            WHERE m2.session_id = m.session_id
