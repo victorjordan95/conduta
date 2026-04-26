@@ -1,31 +1,35 @@
-/**
- * Verifies that searchClinicalContext only queries verified nodes.
- * Mocks the Neo4j driver to inspect the Cypher query used.
- */
-
 const mockRun = jest.fn().mockResolvedValue({ records: [] });
 const mockClose = jest.fn().mockResolvedValue(undefined);
+const mockEmbed = jest.fn().mockResolvedValue(new Array(1536).fill(0.1));
 
 jest.mock('../db/neo4j', () => ({
   session: jest.fn(() => ({ run: mockRun, close: mockClose })),
 }));
 
+jest.mock('../services/embeddings', () => ({ embed: mockEmbed }));
+
 const { searchClinicalContext } = require('../services/neo4j-search');
 
 beforeEach(() => {
   mockRun.mockClear();
+  mockEmbed.mockClear();
 });
 
 describe('searchClinicalContext', () => {
-  it('includes status = verified filter in Cypher query', async () => {
+  it('inclui filtro status = verified na query de diagnósticos', async () => {
     await searchClinicalContext('dor no peito paciente diabético');
-    expect(mockRun).toHaveBeenCalledTimes(1);
-    const [query] = mockRun.mock.calls[0];
-    expect(query).toContain("status = 'verified'");
+    const queries = mockRun.mock.calls.map(([q]) => q);
+    const keywordQuery = queries.find((q) => q.includes('Diagnostico'));
+    expect(keywordQuery).toContain("status = 'verified'");
   });
 
-  it('returns null when no records found', async () => {
+  it('retorna null quando não há registros', async () => {
     const result = await searchClinicalContext('xyzabc123');
     expect(result).toBeNull();
+  });
+
+  it('chama embed para busca vetorial nos DocumentoChunk', async () => {
+    await searchClinicalContext('dor no peito');
+    expect(mockEmbed).toHaveBeenCalledWith('dor no peito');
   });
 });
