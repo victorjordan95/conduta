@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
+const pool = require('../db/pg');
 
-function authMiddleware(req, res, next) {
+async function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -11,6 +12,19 @@ function authMiddleware(req, res, next) {
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
+
+    if (payload.sv === undefined) {
+      return res.status(401).json({ error: 'Token inválido ou expirado.' });
+    }
+
+    const result = await pool.query('SELECT session_version FROM users WHERE id = $1', [payload.sub]);
+    if (!result.rows.length || result.rows[0].session_version !== payload.sv) {
+      return res.status(401).json({
+        error: 'Sua sessão foi encerrada pois outro acesso foi iniciado.',
+        code: 'SESSION_KICKED',
+      });
+    }
+
     req.userId = payload.sub;
     req.userRole = payload.role || 'user';
     next();

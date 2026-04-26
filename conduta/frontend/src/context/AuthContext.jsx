@@ -8,12 +8,14 @@ export function AuthProvider({ children }) {
     const stored = localStorage.getItem('conduta_user');
     return stored ? JSON.parse(stored) : null;
   });
+  const [kickMessage, setKickMessage] = useState(null);
 
   function saveAuth(newToken, newUser) {
     localStorage.setItem('conduta_token', newToken);
     localStorage.setItem('conduta_user', JSON.stringify(newUser));
     setToken(newToken);
     setUser(newUser);
+    setKickMessage(null);
   }
 
   function clearAuth() {
@@ -24,13 +26,16 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    const handler = () => clearAuth();
+    const handler = (e) => {
+      setKickMessage(e.detail?.message || null);
+      clearAuth();
+    };
     window.addEventListener('conduta:unauthorized', handler);
     return () => window.removeEventListener('conduta:unauthorized', handler);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token, user, saveAuth, clearAuth }}>
+    <AuthContext.Provider value={{ token, user, kickMessage, saveAuth, clearAuth }}>
       {children}
     </AuthContext.Provider>
   );

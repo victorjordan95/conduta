@@ -9,10 +9,15 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-function checkUnauthorized(res) {
+async function checkUnauthorized(res) {
   if (res.status === 401) {
-    window.dispatchEvent(new Event('conduta:unauthorized'));
-    throw new Error('Sessão expirada. Faça login novamente.');
+    let message = 'Sessão expirada. Faça login novamente.';
+    try {
+      const data = await res.json();
+      if (data.code === 'SESSION_KICKED') message = data.error;
+    } catch {}
+    window.dispatchEvent(new CustomEvent('conduta:unauthorized', { detail: { message } }));
+    throw new Error(message);
   }
   return res;
 }
@@ -32,7 +37,7 @@ export async function getSessions() {
   const res = await fetch(`${BASE_URL}/sessions`, {
     headers: authHeaders(),
   });
-  checkUnauthorized(res);
+  await checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao buscar sessões.');
   return res.json();
 }
@@ -43,7 +48,7 @@ export async function createSession(titulo) {
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ titulo }),
   });
-  checkUnauthorized(res);
+  await checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao criar sessão.');
   return res.json();
 }
@@ -52,7 +57,7 @@ export async function getSession(id) {
   const res = await fetch(`${BASE_URL}/sessions/${id}`, {
     headers: authHeaders(),
   });
-  checkUnauthorized(res);
+  await checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao buscar sessão.');
   return res.json();
 }
@@ -62,7 +67,7 @@ export async function deleteSession(id) {
     method: 'DELETE',
     headers: authHeaders(),
   });
-  checkUnauthorized(res);
+  await checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao deletar sessão.');
   return res.json();
 }
@@ -73,7 +78,7 @@ export async function submitFeedback(messageId, feedback, note) {
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ message_id: messageId, feedback, note: note || undefined }),
   });
-  checkUnauthorized(res);
+  await checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao enviar feedback.');
   return res.json();
 }
@@ -89,7 +94,7 @@ export async function analyzeCase(sessionId, content, onChunk) {
     body: JSON.stringify({ session_id: sessionId, content }),
   });
 
-  checkUnauthorized(res);
+  await checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao processar análise.');
 
   const reader = res.body.getReader();
@@ -122,7 +127,7 @@ export async function getPendingKnowledge() {
   const res = await fetch(`${BASE_URL}/admin/knowledge/pending`, {
     headers: authHeaders(),
   });
-  checkUnauthorized(res);
+  await checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao buscar pendentes.');
   return res.json();
 }
@@ -133,7 +138,7 @@ export async function approveKnowledge(elementId) {
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ approvedBy: 'admin' }),
   });
-  checkUnauthorized(res);
+  await checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao aprovar.');
   return res.json();
 }
@@ -143,7 +148,7 @@ export async function rejectKnowledge(elementId) {
     method: 'DELETE',
     headers: authHeaders(),
   });
-  checkUnauthorized(res);
+  await checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao rejeitar.');
   return res.json();
 }
@@ -152,7 +157,7 @@ export async function listDocuments() {
   const res = await fetch(`${BASE_URL}/admin/knowledge/documents`, {
     headers: authHeaders(),
   });
-  checkUnauthorized(res);
+  await checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao listar documentos.');
   return res.json();
 }
@@ -166,7 +171,7 @@ export async function uploadDocument(file, fonte) {
     headers: authHeaders(),
     body: formData,
   });
-  checkUnauthorized(res);
+  await checkUnauthorized(res);
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     throw new Error(data.error || 'Erro ao importar PDF.');

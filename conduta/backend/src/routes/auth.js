@@ -44,13 +44,19 @@ router.post('/login', async (req, res) => {
       return res.status(500).json({ error: 'Erro interno.' });
     }
 
+    const svResult = await pool.query(
+      'UPDATE users SET session_version = session_version + 1 WHERE id = $1 RETURNING session_version',
+      [user.id]
+    );
+    const sv = svResult.rows[0].session_version;
+
     const token = jwt.sign(
-      { sub: user.id, role: user.role },
+      { sub: user.id, role: user.role, sv },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
     );
 
-    console.log(`[AUTH] LOGIN success | userId=${user.id} email=${email} role=${user.role} ip=${ip}`);
+    console.log(`[AUTH] LOGIN success | userId=${user.id} email=${email} role=${user.role} sv=${sv} ip=${ip}`);
     res.json({
       token,
       user: { id: user.id, email: user.email, nome: user.nome, role: user.role },

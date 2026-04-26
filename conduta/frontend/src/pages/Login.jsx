@@ -9,7 +9,7 @@ export default function Login() {
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
-  const { saveAuth } = useAuth();
+  const { saveAuth, kickMessage } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -69,6 +69,7 @@ export default function Login() {
             {loading ? 'Verificando...' : 'Entrar'}
           </button>
 
+          {kickMessage && !erro && <p className={styles.warning}>{kickMessage}</p>}
           {erro && <p className={styles.error}>{erro}</p>}
         </form>
       </div>
