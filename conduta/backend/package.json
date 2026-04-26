@@ -8,6 +8,7 @@
     "test": "jest --runInBand",
     "migrate": "node src/db/migrate.js",
     "migrate:neo4j": "node src/db/migrate-neo4j-status.js",
+    "migrate:neo4j-vector": "node src/db/migrate-neo4j-vector.js",
     "seed:neo4j": "node src/db/seed-neo4j.js"
   },
   "dependencies": {
