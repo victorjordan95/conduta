@@ -54,11 +54,17 @@ router.post('/', authMiddleware, async (req, res) => {
       [session_id, 'user', content]
     );
 
-    // Busca contexto clínico (Neo4j + casos validados pelo médico) — non-fatal se falhar
-    const [neo4jContext, similarCases] = await Promise.all([
-      searchClinicalContext(content),
-      searchSimilarCases(content, req.userId),
-    ]);
+    // Busca contexto clínico apenas na primeira mensagem da sessão.
+    // Em perguntas de follow-up, o histórico já contém o contexto necessário;
+    // re-injetar contexto Neo4j com o texto da pergunta causa o modelo a repetir
+    // a análise completa em vez de responder pontualmente.
+    const isFirstMessage = history.length === 0;
+    const [neo4jContext, similarCases] = isFirstMessage
+      ? await Promise.all([
+          searchClinicalContext(content),
+          searchSimilarCases(content, req.userId),
+        ])
+      : [null, null];
 
     const contextParts = [neo4jContext, similarCases].filter(Boolean);
     const context = contextParts.length > 0 ? contextParts.join('\n\n---\n\n') : null;
