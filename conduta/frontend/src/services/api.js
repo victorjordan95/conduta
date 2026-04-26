@@ -147,3 +147,29 @@ export async function rejectKnowledge(elementId) {
   if (!res.ok) throw new Error('Erro ao rejeitar.');
   return res.json();
 }
+
+export async function listDocuments() {
+  const res = await fetch(`${BASE_URL}/admin/knowledge/documents`, {
+    headers: authHeaders(),
+  });
+  checkUnauthorized(res);
+  if (!res.ok) throw new Error('Erro ao listar documentos.');
+  return res.json();
+}
+
+export async function uploadDocument(file, fonte) {
+  const formData = new FormData();
+  formData.append('pdf', file);
+  formData.append('fonte', fonte);
+  const res = await fetch(`${BASE_URL}/admin/knowledge/documents`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: formData,
+  });
+  checkUnauthorized(res);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao importar PDF.');
+  }
+  return res.json();
+}

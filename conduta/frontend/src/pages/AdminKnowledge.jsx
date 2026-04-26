@@ -1,6 +1,105 @@
 import { useEffect, useState } from 'react';
-import { getPendingKnowledge, approveKnowledge, rejectKnowledge } from '../services/api';
+import { getPendingKnowledge, approveKnowledge, rejectKnowledge, listDocuments, uploadDocument } from '../services/api';
 import styles from './AdminKnowledge.module.scss';
+
+function DocumentsPanel() {
+  const [docs, setDocs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [fonte, setFonte] = useState('');
+  const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const [uploadSuccess, setUploadSuccess] = useState('');
+
+  useEffect(() => { loadDocs(); }, []);
+
+  async function loadDocs() {
+    setLoading(true);
+    try {
+      const data = await listDocuments();
+      setDocs(data);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleUpload(e) {
+    e.preventDefault();
+    if (!file || !fonte.trim()) return;
+    setUploading(true);
+    setUploadError('');
+    setUploadSuccess('');
+    try {
+      const result = await uploadDocument(file, fonte.trim());
+      setUploadSuccess(`${result.chunks} chunks importados de "${result.fonte}".`);
+      setFonte('');
+      setFile(null);
+      e.target.reset();
+      loadDocs();
+    } catch (err) {
+      setUploadError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <section className={styles.docsPanel}>
+      <h2 className={styles.sectionTitle}>Documentos Clínicos (RAG)</h2>
+
+      <form className={styles.uploadForm} onSubmit={handleUpload}>
+        <input
+          className={styles.uploadInput}
+          type="text"
+          placeholder="Nome da fonte (ex: PCDT Asma 2023)"
+          value={fonte}
+          onChange={(e) => setFonte(e.target.value)}
+          disabled={uploading}
+        />
+        <input
+          className={styles.fileInput}
+          type="file"
+          accept="application/pdf"
+          onChange={(e) => setFile(e.target.files[0] || null)}
+          disabled={uploading}
+        />
+        <button
+          className={styles.uploadBtn}
+          type="submit"
+          disabled={uploading || !file || !fonte.trim()}
+        >
+          {uploading ? 'Importando...' : 'Importar PDF'}
+        </button>
+      </form>
+
+      {uploadError && <p className={styles.error}>{uploadError}</p>}
+      {uploadSuccess && <p className={styles.success}>{uploadSuccess}</p>}
+
+      {loading ? (
+        <p className={styles.info}>Carregando documentos...</p>
+      ) : docs.length === 0 ? (
+        <p className={styles.info}>Nenhum documento importado ainda.</p>
+      ) : (
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Fonte</th>
+              <th>Chunks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {docs.map((d) => (
+              <tr key={d.fonte}>
+                <td className={styles.nome}>{d.fonte}</td>
+                <td>{d.chunks}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </section>
+  );
+}
 
 export default function AdminKnowledge() {
   const [items, setItems] = useState([]);
@@ -8,9 +107,7 @@ export default function AdminKnowledge() {
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(new Set());
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
 
   async function load() {
     setLoading(true);
@@ -114,6 +211,8 @@ export default function AdminKnowledge() {
           </tbody>
         </table>
       )}
+
+      <DocumentsPanel />
     </div>
   );
 }
