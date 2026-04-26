@@ -9,6 +9,13 @@ function PrivateRoute({ children }) {
   return token ? children : <Navigate to="/login" replace />;
 }
 
+function AdminRoute({ children }) {
+  const { token, user } = useAuth();
+  if (!token) return <Navigate to="/login" replace />;
+  if (user?.role !== 'admin') return <Navigate to="/" replace />;
+  return children;
+}
+
 export default function App() {
   return (
     <AuthProvider>
@@ -26,9 +33,9 @@ export default function App() {
           <Route
             path="/admin/knowledge"
             element={
-              <PrivateRoute>
+              <AdminRoute>
                 <AdminKnowledge />
-              </PrivateRoute>
+              </AdminRoute>
             }
           />
           <Route path="*" element={<Navigate to="/" replace />} />

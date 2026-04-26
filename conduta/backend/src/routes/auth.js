@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('../db/pg');
+const adminMiddleware = require('../middleware/admin');
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ router.post('/login', async (req, res) => {
   try {
     console.log(`[AUTH] DB query for email=${email}`);
     const result = await pool.query(
-      'SELECT id, email, nome, senha_hash FROM users WHERE email = $1',
+      'SELECT id, email, nome, senha_hash, role FROM users WHERE email = $1',
       [email]
     );
 
@@ -44,36 +45,43 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      { sub: user.id },
+      { sub: user.id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
     );
 
-    console.log(`[AUTH] LOGIN success | userId=${user.id} email=${email} ip=${ip}`);
+    console.log(`[AUTH] LOGIN success | userId=${user.id} email=${email} role=${user.role} ip=${ip}`);
     res.json({
       token,
-      user: { id: user.id, email: user.email, nome: user.nome },
+      user: { id: user.id, email: user.email, nome: user.nome, role: user.role },
     });
   } catch (err) {
-    console.error(`[AUTH] LOGIN error | email=${email} ip=${ip} stack=${err.stack}`);
+    const detail = process.env.NODE_ENV === 'production' ? err.message : err.stack;
+    console.error(`[AUTH] LOGIN error | email=${email} ip=${ip} | ${detail}`);
     res.status(500).json({ error: 'Erro interno.' });
   }
 });
 
-router.post('/register', async (req, res) => {
-  const { email, nome, senha } = req.body;
+router.post('/register', adminMiddleware, async (req, res) => {
+  const { email, nome, senha, role } = req.body;
 
   if (!email || !nome || !senha) {
     return res.status(400).json({ error: 'email, nome e senha são obrigatórios.' });
   }
 
+  if (senha.length < 8) {
+    return res.status(400).json({ error: 'Senha deve ter ao menos 8 caracteres.' });
+  }
+
+  const roleValida = ['user', 'admin'].includes(role) ? role : 'user';
+
   try {
     const senhaHash = await bcrypt.hash(senha, 10);
     const result = await pool.query(
-      `INSERT INTO users (email, nome, senha_hash)
-       VALUES ($1, $2, $3)
-       RETURNING id, email, nome, created_at`,
-      [email, nome, senhaHash]
+      `INSERT INTO users (email, nome, senha_hash, role)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, email, nome, role, created_at`,
+      [email, nome, senhaHash, roleValida]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {

@@ -1,6 +1,5 @@
 const express = require('express');
 const pool = require('../db/pg');
-const authMiddleware = require('../middleware/auth');
 const { streamAnalysis } = require('../services/openrouter');
 const { searchClinicalContext } = require('../services/neo4j-search');
 const { searchSimilarCases } = require('../services/case-search');
@@ -10,7 +9,7 @@ const { embed } = require('../services/embeddings');
 
 const router = express.Router();
 
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', async (req, res) => {
   const { session_id, content } = req.body;
 
   if (!session_id || !content) {

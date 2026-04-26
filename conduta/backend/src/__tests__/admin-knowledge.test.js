@@ -1,4 +1,5 @@
 const request = require('supertest');
+const jwt = require('jsonwebtoken');
 
 const mockRun = jest.fn();
 const mockClose = jest.fn().mockResolvedValue(undefined);
@@ -7,18 +8,39 @@ jest.mock('../db/neo4j', () => ({
   session: jest.fn(() => ({ run: mockRun, close: mockClose })),
 }));
 
+jest.mock('../db/pg', () => ({
+  query: jest.fn(),
+}));
+
+const pool = require('../db/pg');
 const app = require('../app');
 
-const ADMIN_SECRET = 'test-admin-secret';
-process.env.ADMIN_SECRET = ADMIN_SECRET;
+const JWT_SECRET = 'test-secret';
+process.env.JWT_SECRET = JWT_SECRET;
+
+function makeAdminToken() {
+  return jwt.sign({ sub: 'admin-user-id', role: 'admin' }, JWT_SECRET, { expiresIn: '1h' });
+}
 
 beforeEach(() => {
   mockRun.mockReset();
+  pool.query.mockReset();
+  // adminMiddleware faz SELECT role FROM users WHERE id = $1
+  pool.query.mockResolvedValue({ rows: [{ role: 'admin' }] });
 });
 
 describe('GET /admin/knowledge/pending', () => {
-  it('retorna 403 sem header de admin', async () => {
+  it('retorna 401 sem token', async () => {
     const res = await request(app).get('/admin/knowledge/pending');
+    expect(res.status).toBe(401);
+  });
+
+  it('retorna 403 com token de user comum', async () => {
+    const userToken = jwt.sign({ sub: 'user-id', role: 'user' }, JWT_SECRET, { expiresIn: '1h' });
+    pool.query.mockResolvedValueOnce({ rows: [{ role: 'user' }] });
+    const res = await request(app)
+      .get('/admin/knowledge/pending')
+      .set('Authorization', `Bearer ${userToken}`);
     expect(res.status).toBe(403);
   });
 
@@ -40,7 +62,7 @@ describe('GET /admin/knowledge/pending', () => {
 
     const res = await request(app)
       .get('/admin/knowledge/pending')
-      .set('x-admin-secret', ADMIN_SECRET);
+      .set('Authorization', `Bearer ${makeAdminToken()}`);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
@@ -49,9 +71,9 @@ describe('GET /admin/knowledge/pending', () => {
 });
 
 describe('POST /admin/knowledge/:elementId/approve', () => {
-  it('retorna 403 sem header de admin', async () => {
+  it('retorna 401 sem token', async () => {
     const res = await request(app).post('/admin/knowledge/elem-1/approve');
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(401);
   });
 
   it('aprova o item e retorna 200', async () => {
@@ -60,7 +82,7 @@ describe('POST /admin/knowledge/:elementId/approve', () => {
 
     const res = await request(app)
       .post('/admin/knowledge/elem-abc/approve')
-      .set('x-admin-secret', ADMIN_SECRET)
+      .set('Authorization', `Bearer ${makeAdminToken()}`)
       .send({ approvedBy: 'user-1' });
 
     expect(res.status).toBe(200);
@@ -69,9 +91,9 @@ describe('POST /admin/knowledge/:elementId/approve', () => {
 });
 
 describe('DELETE /admin/knowledge/:elementId', () => {
-  it('retorna 403 sem header de admin', async () => {
+  it('retorna 401 sem token', async () => {
     const res = await request(app).delete('/admin/knowledge/elem-1');
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(401);
   });
 
   it('rejeita (remove) o item e retorna 200', async () => {
@@ -79,7 +101,7 @@ describe('DELETE /admin/knowledge/:elementId', () => {
 
     const res = await request(app)
       .delete('/admin/knowledge/elem-abc')
-      .set('x-admin-secret', ADMIN_SECRET);
+      .set('Authorization', `Bearer ${makeAdminToken()}`);
 
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({ rejected: true });

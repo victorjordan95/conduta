@@ -134,6 +134,10 @@ router.post('/documents', adminMiddleware, upload.single('pdf'), async (req, res
   const { fonte } = req.body;
   if (!fonte?.trim()) return res.status(400).json({ error: 'Nome da fonte é obrigatório.' });
 
+  if (req.file.buffer.slice(0, 4).toString('ascii') !== '%PDF') {
+    return res.status(400).json({ error: 'Arquivo não é um PDF válido.' });
+  }
+
   try {
     const result = await ingestPDF(req.file.buffer, fonte.trim());
     res.json(result);
