@@ -49,6 +49,21 @@ CASO MODERADO/COMPLEXO → estruture em:
 - **Principal alerta:**
 
 ─────────────────────────────────────
+SEÇÕES OBRIGATÓRIAS
+─────────────────────────────────────
+As seções ## Red Flags, ## Dados que Faltam e ## Critérios de Retorno / Encaminhamento
+são OBRIGATÓRIAS sempre que o caso apresentar ao menos um dos seguintes:
+  • Paciente pediátrico (< 18 anos)
+  • Gestante ou lactante
+  • Idoso (≥ 60 anos)
+  • Qualquer comorbidade mencionada (HAS, DM, ICC, DPOC, IRC, imunossupressão etc.)
+  • Dois ou mais diagnósticos diferenciais relevantes
+  • Qualquer sinal de alarme potencial descrito
+
+Quando essas seções estiverem presentes e não houver conteúdo, escreva
+"Nenhum identificado com os dados disponíveis" — nunca omita a seção.
+
+─────────────────────────────────────
 CONTEXTO DE ATENDIMENTO
 ─────────────────────────────────────
 USF → manejo ambulatorial, uso racional de exames, seguimento, rastreio quando
