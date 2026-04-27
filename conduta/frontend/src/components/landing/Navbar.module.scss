@@ -56,3 +56,18 @@
     color: $color-text-primary;
   }
 }
+
+@media (max-width: 480px) {
+  .brand {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .actions {
+    gap: 10px;
+  }
+
+  .loginLink {
+    font-size: 12px;
+  }
+}
