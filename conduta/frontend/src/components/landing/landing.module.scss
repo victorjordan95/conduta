@@ -1,0 +1,74 @@
+// frontend/src/components/landing/landing.module.scss
+@use '../../styles/variables' as *;
+
+.section {
+  padding: 80px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: $color-accent;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  font-size: 32px;
+  font-weight: 800;
+  color: $color-text-primary;
+  line-height: 1.25;
+  margin-bottom: 12px;
+
+  @media (max-width: 640px) {
+    font-size: 24px;
+  }
+}
+
+.sectionSubtitle {
+  font-size: 16px;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  max-width: 560px;
+}
+
+.ctaButton {
+  display: inline-block;
+  background: $color-accent;
+  color: white;
+  padding: 14px 32px;
+  border-radius: $border-radius;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  transition: background 0.15s;
+
+  &:hover {
+    background: $color-accent-hover;
+  }
+}
+
+.ctaButtonDark {
+  display: inline-block;
+  background: $color-sidebar;
+  color: white;
+  padding: 14px 32px;
+  border-radius: $border-radius;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  transition: background 0.15s;
+
+  &:hover {
+    background: $color-sidebar-hover;
+  }
+}
+
+.ctaMeta {
+  font-size: 13px;
+  color: $color-text-secondary;
+  margin-top: 12px;
+}
