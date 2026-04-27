@@ -35,7 +35,7 @@ const PLANO_PRO = {
   ],
 };
 
-function ItemPlano({ item }) {
+function ItemPlano({ item, pro = false }) {
   if (!item.ativo) {
     return (
       <li className={styles.itemInativo}>
@@ -43,8 +43,10 @@ function ItemPlano({ item }) {
       </li>
     );
   }
+  const baseClass = pro ? styles.itemPro : styles.item;
+  const destaqueClass = item.destaque ? (pro ? styles.itemDestaquePro : styles.itemDestaque) : '';
   return (
-    <li className={`${styles.item} ${item.destaque ? styles.itemDestaque : ''}`}>
+    <li className={`${baseClass} ${destaqueClass}`}>
       <span className={styles.check}>✓</span> {item.texto}
     </li>
   );
@@ -85,7 +87,7 @@ export default function PrecosSection() {
               {PLANO_PRO.cta}
             </Link>
             <ul className={styles.lista}>
-              {PLANO_PRO.itens.map((i) => <ItemPlano key={i.texto} item={i} />)}
+              {PLANO_PRO.itens.map((i) => <ItemPlano key={i.texto} item={i} pro />)}
             </ul>
           </div>
         </div>
