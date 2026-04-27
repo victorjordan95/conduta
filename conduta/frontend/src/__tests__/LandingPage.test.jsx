@@ -28,4 +28,10 @@ describe('LandingPage', () => {
     expect(links.length).toBeGreaterThan(0);
     expect(links[0]).toHaveAttribute('href', '/login');
   });
+
+  it('exibe os dois planos de preço', () => {
+    renderLanding();
+    expect(screen.getByText(/gratuito/i)).toBeInTheDocument();
+    expect(screen.getByText(/R\$39,90/)).toBeInTheDocument();
+  });
 });
