@@ -22,6 +22,12 @@ function EyeIcon({ visible }) {
   );
 }
 
+const REQUISITOS = [
+  { id: 'len',   label: 'Mínimo 8 caracteres',      test: (s) => s.length >= 8 },
+  { id: 'upper', label: 'Uma letra maiúscula',        test: (s) => /[A-Z]/.test(s) },
+  { id: 'num',   label: 'Um número',                  test: (s) => /[0-9]/.test(s) },
+];
+
 export default function Register() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -29,16 +35,25 @@ export default function Register() {
   const [confirmar, setConfirmar] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
+  const [senhaFocada, setSenhaFocada] = useState(false);
   const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
   const { saveAuth } = useAuth();
   const navigate = useNavigate();
 
+  const senhaValida = REQUISITOS.every((r) => r.test(senha));
+  const coincidem = confirmar.length > 0 && senha === confirmar;
+  const naoCoincide = confirmar.length > 0 && senha !== confirmar;
+
   async function handleSubmit(e) {
     e.preventDefault();
     setErro('');
 
-    if (senha !== confirmar) {
+    if (!senhaValida) {
+      setErro('A senha não atende aos requisitos.');
+      return;
+    }
+    if (!coincidem) {
       setErro('As senhas não coincidem.');
       return;
     }
@@ -97,8 +112,8 @@ export default function Register() {
                 type={mostrarSenha ? 'text' : 'password'}
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
+                onFocus={() => setSenhaFocada(true)}
                 placeholder="Mínimo 8 caracteres"
-                minLength={8}
                 required
               />
               <button
@@ -110,6 +125,19 @@ export default function Register() {
                 <EyeIcon visible={mostrarSenha} />
               </button>
             </div>
+
+            {(senhaFocada || senha.length > 0) && (
+              <ul className={styles.requisitos}>
+                {REQUISITOS.map((r) => {
+                  const ok = r.test(senha);
+                  return (
+                    <li key={r.id} className={ok ? styles.reqOk : styles.reqFail}>
+                      {ok ? '✓' : '✗'} {r.label}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
 
           <div className={styles.field}>
@@ -132,6 +160,12 @@ export default function Register() {
                 <EyeIcon visible={mostrarConfirmar} />
               </button>
             </div>
+
+            {confirmar.length > 0 && (
+              <p className={coincidem ? styles.matchOk : styles.matchFail}>
+                {coincidem ? '✓ Senhas coincidem' : '✗ Senhas não coincidem'}
+              </p>
+            )}
           </div>
 
           <button

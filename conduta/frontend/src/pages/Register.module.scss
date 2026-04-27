@@ -114,6 +114,36 @@
   }
 }
 
+.requisitos {
+  list-style: none;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reqOk {
+  font-size: 11px;
+  color: $color-success;
+}
+
+.reqFail {
+  font-size: 11px;
+  color: $color-danger;
+}
+
+.matchOk {
+  font-size: 11px;
+  color: $color-success;
+  margin-top: 6px;
+}
+
+.matchFail {
+  font-size: 11px;
+  color: $color-danger;
+  margin-top: 6px;
+}
+
 .error {
   font-size: $font-size-sm;
   color: $color-danger;
