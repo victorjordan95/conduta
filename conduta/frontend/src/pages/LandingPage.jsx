@@ -1,3 +1,4 @@
+// frontend/src/pages/LandingPage.jsx
 import styles from './LandingPage.module.scss';
 import Navbar from '../components/landing/Navbar';
 import HeroSection from '../components/landing/HeroSection';
@@ -7,6 +8,7 @@ import FeaturesSection from '../components/landing/FeaturesSection';
 import ProvaSection from '../components/landing/ProvaSection';
 import PrecosSection from '../components/landing/PrecosSection';
 import FaqSection from '../components/landing/FaqSection';
+import CtaFinalSection from '../components/landing/CtaFinalSection';
 
 export default function LandingPage() {
   return (
@@ -19,6 +21,7 @@ export default function LandingPage() {
       <ProvaSection />
       <PrecosSection />
       <FaqSection />
+      <CtaFinalSection />
     </div>
   );
 }
