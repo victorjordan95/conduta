@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AdminKnowledge from './pages/AdminKnowledge';
+import LandingPage from './pages/LandingPage';
 
 function PrivateRoute({ children }) {
   const { token } = useAuth();
@@ -16,20 +17,18 @@ function AdminRoute({ children }) {
   return children;
 }
 
+function RootRoute() {
+  const { token } = useAuth();
+  return token ? <Dashboard /> : <LandingPage />;
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<RootRoute />} />
           <Route path="/login" element={<Login />} />
-          <Route
-            path="/"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
-          />
           <Route
             path="/admin/knowledge"
             element={
