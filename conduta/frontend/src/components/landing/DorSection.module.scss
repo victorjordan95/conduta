@@ -1,0 +1,64 @@
+// frontend/src/components/landing/DorSection.module.scss
+@use '../../styles/variables' as *;
+
+.section {
+  background: $color-surface;
+  border-top: 1px solid $color-border;
+  border-bottom: 1px solid $color-border;
+}
+
+.momentos {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 32px 0;
+  max-width: 600px;
+}
+
+.momento {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.emoji {
+  font-size: 28px;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.momentoTitulo {
+  font-size: 15px;
+  font-weight: 700;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.momentoDesc {
+  font-size: 14px;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.resolucao {
+  background: $color-bg;
+  border-left: 4px solid $color-success;
+  border-radius: 0 8px 8px 0;
+  padding: 20px 24px;
+  max-width: 560px;
+
+  strong {
+    font-size: 15px;
+    color: $color-text-primary;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  p {
+    font-size: 14px;
+    color: $color-text-secondary;
+    line-height: 1.6;
+  }
+}
