@@ -1,5 +1,6 @@
 // frontend/src/__tests__/LandingPage.test.jsx
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import LandingPage from '../pages/LandingPage';
 
@@ -33,5 +34,13 @@ describe('LandingPage', () => {
     renderLanding();
     expect(screen.getByText(/gratuito/i)).toBeInTheDocument();
     expect(screen.getByText(/R\$39,90/)).toBeInTheDocument();
+  });
+
+  it('FAQ — abre resposta ao clicar na pergunta', async () => {
+    renderLanding();
+    const pergunta = screen.getByText(/substitui o médico/i);
+    expect(screen.queryByText(/ferramenta de apoio à decisão/i)).not.toBeInTheDocument();
+    await userEvent.click(pergunta);
+    expect(screen.getByText(/ferramenta de apoio à decisão/i)).toBeInTheDocument();
   });
 });

@@ -1,0 +1,60 @@
+// frontend/src/components/landing/FaqSection.module.scss
+@use '../../styles/variables' as *;
+
+.section {
+  background: $color-surface;
+  border-top: 1px solid $color-border;
+}
+
+.lista {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 680px;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.item {
+  border-bottom: 1px solid $color-border;
+
+  &:last-child { border-bottom: none; }
+}
+
+.aberto .pergunta {
+  color: $color-accent;
+}
+
+.pergunta {
+  width: 100%;
+  text-align: left;
+  padding: 18px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-text-primary;
+  background: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: color 0.15s;
+
+  &:hover { color: $color-accent; }
+}
+
+.icon {
+  font-size: 18px;
+  font-weight: 300;
+  flex-shrink: 0;
+  color: $color-text-secondary;
+}
+
+.resposta {
+  padding: 0 20px 18px;
+  font-size: 13px;
+  color: $color-text-secondary;
+  line-height: 1.7;
+}

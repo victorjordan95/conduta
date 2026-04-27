@@ -6,6 +6,7 @@ import DemoSection from '../components/landing/DemoSection';
 import FeaturesSection from '../components/landing/FeaturesSection';
 import ProvaSection from '../components/landing/ProvaSection';
 import PrecosSection from '../components/landing/PrecosSection';
+import FaqSection from '../components/landing/FaqSection';
 
 export default function LandingPage() {
   return (
@@ -17,6 +18,7 @@ export default function LandingPage() {
       <FeaturesSection />
       <ProvaSection />
       <PrecosSection />
+      <FaqSection />
     </div>
   );
 }
