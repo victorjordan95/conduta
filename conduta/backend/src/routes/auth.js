@@ -99,6 +99,51 @@ router.post('/register', adminMiddleware, async (req, res) => {
   }
 });
 
+router.post('/signup', async (req, res) => {
+  const { email, nome, senha } = req.body;
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
+  if (!email || !nome || !senha) {
+    return res.status(400).json({ error: 'Nome, email e senha são obrigatórios.' });
+  }
+
+  if (senha.length < 8) {
+    return res.status(400).json({ error: 'Senha deve ter ao menos 8 caracteres.' });
+  }
+
+  try {
+    const senhaHash = await bcrypt.hash(senha, 10);
+    const result = await pool.query(
+      `INSERT INTO users (email, nome, senha_hash, role)
+       VALUES ($1, $2, $3, 'user')
+       RETURNING id, email, nome, role`,
+      [email, nome, senhaHash]
+    );
+    const user = result.rows[0];
+
+    const svResult = await pool.query(
+      'UPDATE users SET session_version = session_version + 1 WHERE id = $1 RETURNING session_version',
+      [user.id]
+    );
+    const sv = svResult.rows[0].session_version;
+
+    const token = jwt.sign(
+      { sub: user.id, role: user.role, sv },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
+    );
+
+    console.log(`[AUTH] SIGNUP success | userId=${user.id} email=${email} ip=${ip}`);
+    res.status(201).json({ token, user });
+  } catch (err) {
+    if (err.code === '23505') {
+      return res.status(409).json({ error: 'Email já cadastrado.' });
+    }
+    console.error(`[AUTH] SIGNUP error | email=${email} | ${err.message}`);
+    res.status(500).json({ error: 'Erro interno.' });
+  }
+});
+
 router.post('/logout', (req, res) => {
   res.json({ message: 'Logout realizado.' });
 });

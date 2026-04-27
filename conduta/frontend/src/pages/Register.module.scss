@@ -92,22 +92,6 @@
   }
 }
 
-.registerLink {
-  margin-top: 20px;
-  text-align: center;
-  font-size: $font-size-sm;
-  color: $color-text-secondary;
-
-  a {
-    color: $color-accent;
-    font-weight: 600;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
-
 .button {
   width: 100%;
   padding: 11px;
@@ -137,9 +121,18 @@
   text-align: center;
 }
 
-.warning {
-  font-size: $font-size-sm;
-  color: $color-warning;
-  margin-top: 12px;
+.loginLink {
+  margin-top: 20px;
   text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+
+  a {
+    color: $color-accent;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }

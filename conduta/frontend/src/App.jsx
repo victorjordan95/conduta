@@ -1,18 +1,19 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import AdminKnowledge from './pages/AdminKnowledge';
 import LandingPage from './pages/LandingPage';
 
 function PrivateRoute({ children }) {
   const { token } = useAuth();
-  return token ? children : <Navigate to="/login" replace />;
+  return token ? children : <Navigate to="/" replace />;
 }
 
 function AdminRoute({ children }) {
   const { token, user } = useAuth();
-  if (!token) return <Navigate to="/login" replace />;
+  if (!token) return <Navigate to="/" replace />;
   if (user?.role !== 'admin') return <Navigate to="/" replace />;
   return children;
 }
@@ -29,6 +30,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<RootRoute />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/cadastro" element={<Register />} />
           <Route
             path="/admin/knowledge"
             element={

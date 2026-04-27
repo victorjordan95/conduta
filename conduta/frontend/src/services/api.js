@@ -22,6 +22,20 @@ async function checkUnauthorized(res) {
   return res;
 }
 
+export async function register(nome, email, senha) {
+  const res = await fetch(`${BASE_URL}/auth/signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nome, email, senha }),
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao criar conta.');
+  }
+  return res.json();
+}
+
 export async function login(email, senha) {
   const res = await fetch(`${BASE_URL}/auth/login`, {
     method: 'POST',

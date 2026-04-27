@@ -21,7 +21,7 @@ describe('Login', () => {
   it('renderiza campos de email e senha', () => {
     renderLogin();
     expect(screen.getByLabelText(/e-mail/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/senha/i)).toBeInTheDocument();
+    expect(screen.getByLabelText('Senha')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /entrar/i })).toBeInTheDocument();
   });
 
@@ -32,7 +32,7 @@ describe('Login', () => {
     fireEvent.change(screen.getByLabelText(/e-mail/i), {
       target: { value: 'errado@teste.com' },
     });
-    fireEvent.change(screen.getByLabelText(/senha/i), {
+    fireEvent.change(screen.getByLabelText('Senha'), {
       target: { value: 'errada' },
     });
     fireEvent.click(screen.getByRole('button', { name: /entrar/i }));

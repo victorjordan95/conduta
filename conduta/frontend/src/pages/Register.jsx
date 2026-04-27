@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { login } from '../services/api';
-import styles from './Login.module.scss';
+import { register } from '../services/api';
+import styles from './Register.module.scss';
 
 function EyeIcon({ visible }) {
   if (visible) {
@@ -22,22 +22,30 @@ function EyeIcon({ visible }) {
   );
 }
 
-export default function Login() {
+export default function Register() {
+  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [confirmar, setConfirmar] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
   const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
-  const { saveAuth, kickMessage } = useAuth();
+  const { saveAuth } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
     setErro('');
-    setLoading(true);
 
+    if (senha !== confirmar) {
+      setErro('As senhas não coincidem.');
+      return;
+    }
+
+    setLoading(true);
     try {
-      const data = await login(email, senha);
+      const data = await register(nome, email, senha);
       saveAuth(data.token, data.user);
       navigate('/');
     } catch (err) {
@@ -52,10 +60,23 @@ export default function Login() {
       <div className={styles.card}>
         <div className={styles.brand}>
           <h1>Conduta</h1>
-          <p>Apoio ao raciocínio clínico</p>
+          <p>Crie sua conta gratuita</p>
         </div>
 
         <form onSubmit={handleSubmit}>
+          <div className={styles.field}>
+            <label htmlFor="nome">Nome</label>
+            <input
+              id="nome"
+              type="text"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              placeholder="Seu nome completo"
+              required
+              autoFocus
+            />
+          </div>
+
           <div className={styles.field}>
             <label htmlFor="email">E-mail</label>
             <input
@@ -65,7 +86,6 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="medico@exemplo.com"
               required
-              autoFocus
             />
           </div>
 
@@ -77,6 +97,8 @@ export default function Login() {
                 type={mostrarSenha ? 'text' : 'password'}
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
+                placeholder="Mínimo 8 caracteres"
+                minLength={8}
                 required
               />
               <button
@@ -90,21 +112,42 @@ export default function Login() {
             </div>
           </div>
 
+          <div className={styles.field}>
+            <label htmlFor="confirmar">Confirmar senha</label>
+            <div className={styles.passwordWrapper}>
+              <input
+                id="confirmar"
+                type={mostrarConfirmar ? 'text' : 'password'}
+                value={confirmar}
+                onChange={(e) => setConfirmar(e.target.value)}
+                placeholder="Repita a senha"
+                required
+              />
+              <button
+                type="button"
+                className={styles.eyeButton}
+                onClick={() => setMostrarConfirmar((v) => !v)}
+                aria-label={mostrarConfirmar ? 'Ocultar senha' : 'Mostrar senha'}
+              >
+                <EyeIcon visible={mostrarConfirmar} />
+              </button>
+            </div>
+          </div>
+
           <button
             type="submit"
             className={styles.button}
             disabled={loading}
           >
-            {loading ? 'Verificando...' : 'Entrar'}
+            {loading ? 'Criando conta...' : 'Criar conta grátis'}
           </button>
 
-          {kickMessage && !erro && <p className={styles.warning}>{kickMessage}</p>}
           {erro && <p className={styles.error}>{erro}</p>}
         </form>
 
-        <p className={styles.registerLink}>
-          Não tem conta?{' '}
-          <Link to="/cadastro">Criar conta grátis</Link>
+        <p className={styles.loginLink}>
+          Já tem conta?{' '}
+          <Link to="/login">Entrar</Link>
         </p>
       </div>
     </div>
