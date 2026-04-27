@@ -4,6 +4,7 @@ import HeroSection from '../components/landing/HeroSection';
 import DorSection from '../components/landing/DorSection';
 import DemoSection from '../components/landing/DemoSection';
 import FeaturesSection from '../components/landing/FeaturesSection';
+import ProvaSection from '../components/landing/ProvaSection';
 
 export default function LandingPage() {
   return (
@@ -13,6 +14,7 @@ export default function LandingPage() {
       <DorSection />
       <DemoSection />
       <FeaturesSection />
+      <ProvaSection />
     </div>
   );
 }
