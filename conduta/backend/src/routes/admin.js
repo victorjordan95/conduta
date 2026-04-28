@@ -30,4 +30,26 @@ router.post('/users', adminMiddleware, async (req, res) => {
   }
 });
 
+router.put('/users/:id/plan', adminMiddleware, async (req, res) => {
+  const { plan } = req.body;
+
+  if (!['free', 'pro'].includes(plan)) {
+    return res.status(400).json({ error: 'Plano inválido. Use "free" ou "pro".' });
+  }
+
+  try {
+    const result = await pool.query(
+      'UPDATE users SET plan = $1 WHERE id = $2 RETURNING id, email, nome, role, plan',
+      [plan, req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Erro ao atualizar plano:', err.message);
+    res.status(500).json({ error: 'Erro interno.' });
+  }
+});
+
 module.exports = router;
