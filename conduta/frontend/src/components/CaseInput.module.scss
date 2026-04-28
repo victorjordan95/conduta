@@ -75,3 +75,28 @@
   color: $color-accent;
   font-style: italic;
 }
+
+.limitBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  background: #fff5f5;
+  border: 1px solid #f5c6c6;
+  border-radius: $border-radius;
+  font-size: $font-size-sm;
+  color: $color-danger;
+}
+
+.upgradeLink {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: $color-accent;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
