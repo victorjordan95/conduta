@@ -109,6 +109,13 @@ export async function analyzeCase(sessionId, content, onChunk) {
   });
 
   await checkUnauthorized(res);
+  if (res.status === 429) {
+    const data = await res.json().catch(() => ({}));
+    const err = new Error(data.error || 'Limite de análises atingido.');
+    err.code = 'USAGE_LIMIT';
+    err.usage = { used: data.used, limit: data.limit, plan: data.plan };
+    throw err;
+  }
   if (!res.ok) throw new Error('Erro ao processar análise.');
 
   const reader = res.body.getReader();
@@ -132,6 +139,15 @@ export async function analyzeCase(sessionId, content, onChunk) {
       }
     }
   }
+}
+
+export async function getUsage() {
+  const res = await fetch(`${BASE_URL}/usage`, {
+    headers: authHeaders(),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) throw new Error('Erro ao buscar uso.');
+  return res.json();
 }
 
 // ── Admin Knowledge ────────────────────────────────────────────
