@@ -1,16 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import CaseInput from '../components/CaseInput';
 import AnalysisResult from '../components/AnalysisResult';
-import { getSession, submitFeedback } from '../services/api';
+import UsageCounter from '../components/UsageCounter';
+import { getSession, submitFeedback, getUsage } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import styles from './Dashboard.module.scss';
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [activeSessionId, setActiveSessionId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [streaming, setStreaming] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [usage, setUsage] = useState(null);
+
+  useEffect(() => {
+    if (user?.plan === 'free') {
+      getUsage().then(setUsage).catch(() => {});
+    }
+  }, [user]);
+
+  async function refreshUsage() {
+    if (user?.plan === 'free') {
+      getUsage().then(setUsage).catch(() => {});
+    }
+  }
 
   async function handleSelectSession(id) {
     setActiveSessionId(id);
@@ -57,6 +73,8 @@ export default function Dashboard() {
           <span className={styles.mobileBrand}>Conduta</span>
         </header>
 
+        {usage && <UsageCounter used={usage.used} limit={usage.limit} />}
+
         {!activeSessionId ? (
           <div className={styles.empty}>
             <p>Selecione ou inicie um caso</p>
@@ -77,6 +95,8 @@ export default function Dashboard() {
             />
             <CaseInput
               sessionId={activeSessionId}
+              usage={usage}
+              onUsageUpdate={(updatedUsage) => setUsage(updatedUsage)}
               onAnalysisStart={(userContent) => {
                 setMessages((prev) => [
                   ...prev,
@@ -95,7 +115,7 @@ export default function Dashboard() {
               }}
               onAnalysisDone={() => {
                 setStreaming(false);
-                // Recarrega para obter o id da mensagem salva (necessário para feedback)
+                refreshUsage();
                 getSession(activeSessionId)
                   .then((data) => {
                     const msgs = data.messages;
