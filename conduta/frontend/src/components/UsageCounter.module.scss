@@ -1,0 +1,32 @@
+@use '../styles/variables' as *;
+
+.container {
+  padding: 10px 16px;
+  border-bottom: 1px solid $color-border;
+  background: $color-surface;
+}
+
+.label {
+  display: block;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: 6px;
+}
+
+.track {
+  height: 4px;
+  background: $color-border;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  background: $color-accent;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.barDanger {
+  background: $color-danger;
+}
