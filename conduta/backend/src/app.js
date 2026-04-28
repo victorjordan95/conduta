@@ -11,6 +11,8 @@ const adminKnowledgeRoutes = require('./routes/admin-knowledge');
 const sessionsRoutes = require('./routes/sessions');
 const analyzeRoutes = require('./routes/analyze');
 const feedbackRoutes = require('./routes/feedback');
+const { usageCheck } = require('./middleware/usageCheck');
+const usageRoutes = require('./routes/usage');
 
 const app = express();
 
@@ -70,7 +72,8 @@ app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/admin/knowledge', adminKnowledgeRoutes);
 app.use('/sessions', sessionsRoutes);
-app.use('/analyze', authMiddleware, analyzeLimiter, analyzeRoutes);
+app.use('/analyze', authMiddleware, usageCheck, analyzeLimiter, analyzeRoutes);
+app.use('/usage', authMiddleware, usageRoutes);
 app.use('/feedback', feedbackRoutes);
 
 module.exports = app;
