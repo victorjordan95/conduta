@@ -20,7 +20,7 @@ router.post('/login', async (req, res) => {
   try {
     console.log(`[AUTH] DB query for email=${email}`);
     const result = await pool.query(
-      'SELECT id, email, nome, senha_hash, role FROM users WHERE email = $1',
+      'SELECT id, email, nome, senha_hash, role, plan FROM users WHERE email = $1',
       [email]
     );
 
@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
     console.log(`[AUTH] LOGIN success | userId=${user.id} email=${email} role=${user.role} sv=${sv} ip=${ip}`);
     res.json({
       token,
-      user: { id: user.id, email: user.email, nome: user.nome, role: user.role },
+      user: { id: user.id, email: user.email, nome: user.nome, role: user.role, plan: user.plan },
     });
   } catch (err) {
     const detail = process.env.NODE_ENV === 'production' ? err.message : err.stack;
@@ -116,7 +116,7 @@ router.post('/signup', async (req, res) => {
     const result = await pool.query(
       `INSERT INTO users (email, nome, senha_hash, role)
        VALUES ($1, $2, $3, 'user')
-       RETURNING id, email, nome, role`,
+       RETURNING id, email, nome, role, plan`,
       [email, nome, senhaHash]
     );
     const user = result.rows[0];
