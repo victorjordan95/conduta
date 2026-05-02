@@ -6,7 +6,7 @@ const router = express.Router();
 
 // GET /admin/feedbacks — lista Correcao nodes (ativas e inativas)
 router.get('/', adminMiddleware, async (req, res) => {
-  if (!driver) return res.json({ corrections: [] });
+  if (!driver) return res.status(503).json({ error: 'Neo4j indisponível.' });
   const session = driver.session();
   try {
     const result = await session.run(
