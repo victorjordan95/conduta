@@ -208,3 +208,32 @@ export async function uploadDocument(file, fonte) {
   }
   return res.json();
 }
+
+// ─────── ADMIN FEEDBACKS ──────────────
+export async function getAdminFeedbacks() {
+  const res = await fetch(`${BASE_URL}/admin/feedbacks`, {
+    headers: { ...authHeaders() },
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) throw new Error('Erro ao buscar correções.');
+  return res.json();
+}
+
+export async function deactivateAdminFeedback(nodeId) {
+  const res = await fetch(`${BASE_URL}/admin/feedbacks/${encodeURIComponent(nodeId)}`, {
+    method: 'DELETE',
+    headers: { ...authHeaders() },
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) throw new Error('Erro ao desativar correção.');
+  return res.json();
+}
+
+export async function getFeedbackStats() {
+  const res = await fetch(`${BASE_URL}/feedback/stats`, {
+    headers: { ...authHeaders() },
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) throw new Error('Erro ao buscar estatísticas.');
+  return res.json();
+}
