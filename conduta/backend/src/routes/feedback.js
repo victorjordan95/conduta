@@ -2,6 +2,7 @@ const express = require('express');
 const pool = require('../db/pg');
 const driver = require('../db/neo4j');
 const authMiddleware = require('../middleware/auth');
+const adminMiddleware = require('../middleware/admin');
 
 const router = express.Router();
 
@@ -101,5 +102,48 @@ function extractKeywords(text) {
       .slice(0, 20)
   )];
 }
+
+// GET /feedback/stats — resumo e breakdown diário (admin only)
+router.get('/stats', adminMiddleware, async (req, res) => {
+  try {
+    const [summary, daily] = await Promise.all([
+      pool.query(
+        `SELECT
+           COUNT(*) FILTER (WHERE feedback = 'positive') AS positive,
+           COUNT(*) FILTER (WHERE feedback = 'negative') AS negative,
+           COUNT(*) FILTER (WHERE feedback = 'negative' AND feedback_note IS NOT NULL AND feedback_note != '') AS negative_with_note
+         FROM messages
+         WHERE feedback IS NOT NULL`
+      ),
+      pool.query(
+        `SELECT
+           DATE_TRUNC('day', created_at)::date AS day,
+           COUNT(*) FILTER (WHERE feedback = 'positive') AS positive,
+           COUNT(*) FILTER (WHERE feedback = 'negative') AS negative
+         FROM messages
+         WHERE feedback IS NOT NULL
+           AND created_at >= NOW() - INTERVAL '30 days'
+         GROUP BY DATE_TRUNC('day', created_at)
+         ORDER BY day DESC`
+      ),
+    ]);
+
+    res.json({
+      summary: {
+        positive:           Number(summary.rows[0].positive),
+        negative:           Number(summary.rows[0].negative),
+        negativeWithNote:   Number(summary.rows[0].negative_with_note),
+      },
+      daily: daily.rows.map((r) => ({
+        day:      r.day,
+        positive: Number(r.positive),
+        negative: Number(r.negative),
+      })),
+    });
+  } catch (err) {
+    console.error('[feedback] stats error:', err.message);
+    res.status(500).json({ error: 'Erro interno.' });
+  }
+});
 
 module.exports = router;
