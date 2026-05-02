@@ -23,7 +23,7 @@ router.post('/', authMiddleware, async (req, res) => {
       `UPDATE messages SET feedback = $1, feedback_note = $2
        WHERE id = $3
          AND session_id IN (SELECT id FROM sessions WHERE user_id = $4)
-       RETURNING session_id`,
+       RETURNING session_id, content`,
       [feedback, note || null, message_id, req.userId]
     );
 
@@ -32,8 +32,9 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 
     const sessionId = result.rows[0].session_id;
+    const messageContent = result.rows[0].content;
 
-    applyKnowledgeFeedback(sessionId, feedback, note).catch((err) =>
+    applyKnowledgeFeedback(sessionId, feedback, note, messageContent).catch((err) =>
       console.error('[feedback] erro ao aplicar no grafo:', err.message)
     );
 
@@ -48,7 +49,7 @@ router.post('/', authMiddleware, async (req, res) => {
  * Positivo → aprova nós/relações pendentes da sessão no Neo4j.
  * Negativo → remove nós pendentes + cria Correcao node com keywords da nota.
  */
-async function applyKnowledgeFeedback(sessionId, feedback, note) {
+async function applyKnowledgeFeedback(sessionId, feedback, note, messageContent) {
   if (!driver) return;
   const session = driver.session();
   try {
@@ -64,15 +65,19 @@ async function applyKnowledgeFeedback(sessionId, feedback, note) {
         { sessionId, now: new Date().toISOString() }
       );
     } else {
-      // Remove nós pendentes da sessão
       await session.run(
         `MATCH (n {status: 'pending', sourceSessionId: $sessionId}) DETACH DELETE n`,
         { sessionId }
       );
 
-      // Cria Correcao node para alimentar contexto futuro
-      if (note && note.trim().length > 0) {
-        const keywords = extractKeywords(note);
+      const notaFinal = (note && note.trim().length > 0)
+        ? note.trim()
+        : messageContent
+          ? `Resposta marcada como incorreta pelo médico: ${messageContent.trim().slice(0, 300)}`
+          : null;
+
+      if (notaFinal) {
+        const keywords = extractKeywords(notaFinal);
         await session.run(
           `CREATE (c:Correcao {
              sessionId: $sessionId,
@@ -81,9 +86,9 @@ async function applyKnowledgeFeedback(sessionId, feedback, note) {
              status: 'active',
              createdAt: $now
            })`,
-          { sessionId, nota: note.trim(), keywords, now: new Date().toISOString() }
+          { sessionId, nota: notaFinal, keywords, now: new Date().toISOString() }
         );
-        console.log(`[feedback] Correcao criada para session ${sessionId}: "${note.trim().slice(0, 60)}..."`);
+        console.log(`[feedback] Correcao criada para session ${sessionId}: "${notaFinal.slice(0, 60)}..."`);
       }
     }
   } finally {
