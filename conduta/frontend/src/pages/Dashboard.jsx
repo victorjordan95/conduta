@@ -86,8 +86,8 @@ export default function Dashboard() {
               messages={messages}
               streaming={streaming}
               loading={loadingHistory}
-              onFeedback={async (messageId, feedback) => {
-                await submitFeedback(messageId, feedback);
+              onFeedback={async (messageId, feedback, note) => {
+                await submitFeedback(messageId, feedback, note);
                 setMessages((prev) =>
                   prev.map((m) => (m.id === messageId ? { ...m, feedback } : m))
                 );
