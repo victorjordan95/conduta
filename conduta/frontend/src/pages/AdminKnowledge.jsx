@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getPendingKnowledge, approveKnowledge, rejectKnowledge, listDocuments, uploadDocument } from '../services/api';
+import { getPendingKnowledge, approveKnowledge, rejectKnowledge, listDocuments, uploadDocument, getFeedbackStats, getAdminFeedbacks, deactivateAdminFeedback } from '../services/api';
 import styles from './AdminKnowledge.module.scss';
 
 function DocumentsPanel() {
@@ -106,8 +106,24 @@ export default function AdminKnowledge() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(new Set());
+  const [stats, setStats] = useState(null);
+  const [corrections, setCorrections] = useState([]);
+  const [loadingStats, setLoadingStats] = useState(true);
+  const [loadingCorrections, setLoadingCorrections] = useState(true);
 
   useEffect(() => { load(); }, []);
+
+  useEffect(() => {
+    getFeedbackStats()
+      .then(setStats)
+      .catch(() => {})
+      .finally(() => setLoadingStats(false));
+
+    getAdminFeedbacks()
+      .then((data) => setCorrections(data.corrections))
+      .catch(() => {})
+      .finally(() => setLoadingCorrections(false));
+  }, []);
 
   async function load() {
     setLoading(true);
@@ -131,6 +147,17 @@ export default function AdminKnowledge() {
       alert('Erro ao aprovar: ' + err.message);
     } finally {
       setProcessing((prev) => { const s = new Set(prev); s.delete(elementId); return s; });
+    }
+  }
+
+  async function handleDeactivate(nodeId) {
+    try {
+      await deactivateAdminFeedback(nodeId);
+      setCorrections((prev) =>
+        prev.map((c) => (c.nodeId === nodeId ? { ...c, status: 'inactive' } : c))
+      );
+    } catch (err) {
+      alert(err.message);
     }
   }
 
@@ -211,6 +238,74 @@ export default function AdminKnowledge() {
           </tbody>
         </table>
       )}
+
+      {/* ── ESTATÍSTICAS DE FEEDBACK ── */}
+      <section className={styles.feedbackSection}>
+        <h2 className={styles.sectionTitle}>Estatísticas de Feedback</h2>
+        {loadingStats ? (
+          <p className={styles.info}>Carregando...</p>
+        ) : stats ? (
+          <div className={styles.statsGrid}>
+            <div className={styles.statCard}>
+              <span className={styles.statValue}>{stats.summary.positive}</span>
+              <span className={styles.statLabel}>👍 Positivos</span>
+            </div>
+            <div className={styles.statCard}>
+              <span className={styles.statValue}>{stats.summary.negative}</span>
+              <span className={styles.statLabel}>👎 Negativos</span>
+            </div>
+            <div className={styles.statCard}>
+              <span className={styles.statValue}>{stats.summary.negativeWithNote}</span>
+              <span className={styles.statLabel}>📝 Com nota</span>
+            </div>
+          </div>
+        ) : (
+          <p className={styles.info}>Sem dados.</p>
+        )}
+      </section>
+
+      {/* ── CORREÇÕES REGISTRADAS ── */}
+      <section className={styles.feedbackSection}>
+        <h2 className={styles.sectionTitle}>Correções Registradas ({corrections.length})</h2>
+        {loadingCorrections ? (
+          <p className={styles.info}>Carregando...</p>
+        ) : corrections.length === 0 ? (
+          <p className={styles.info}>Nenhuma correção registrada.</p>
+        ) : (
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Nota</th>
+                <th>Keywords</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody>
+              {corrections.map((c) => (
+                <tr key={c.nodeId} className={c.status === 'inactive' ? styles.rowInactive : ''}>
+                  <td className={styles.correctionNota}>{c.nota?.slice(0, 120)}{c.nota?.length > 120 ? '…' : ''}</td>
+                  <td className={styles.correctionKeywords}>{(c.keywords || []).slice(0, 5).join(', ')}</td>
+                  <td>
+                    <span className={c.status === 'active' ? styles.badgeActive : styles.badgeInactive}>
+                      {c.status}
+                    </span>
+                  </td>
+                  <td className={styles.date}>{c.createdAt ? new Date(c.createdAt).toLocaleDateString('pt-BR') : '—'}</td>
+                  <td>
+                    {c.status === 'active' && (
+                      <button className={styles.rejectBtn} onClick={() => handleDeactivate(c.nodeId)}>
+                        Desativar
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
 
       <DocumentsPanel />
     </div>

@@ -230,3 +230,73 @@
   font-size: 0.875rem;
   margin-bottom: 1rem;
 }
+
+.feedbackSection {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e5e7eb;
+}
+
+.statsGrid {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.statCard {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 130px;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a6b73;
+}
+
+.statLabel {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.correctionNota {
+  max-width: 380px;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.correctionKeywords {
+  font-size: 0.8rem;
+  color: #888;
+  font-style: italic;
+}
+
+.badgeActive {
+  background: #d4edda;
+  color: #155724;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badgeInactive {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.rowInactive td {
+  opacity: 0.5;
+}
