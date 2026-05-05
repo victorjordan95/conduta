@@ -5,6 +5,30 @@ const adminMiddleware = require('../middleware/admin');
 
 const router = express.Router();
 
+router.get('/users', adminMiddleware, async (req, res) => {
+  const { search } = req.query;
+  try {
+    let query, params;
+    if (search && search.trim()) {
+      query = `SELECT id, email, nome, role, plan, active, created_at
+               FROM users
+               WHERE nome ILIKE $1 OR email ILIKE $1
+               ORDER BY created_at DESC`;
+      params = [`%${search.trim()}%`];
+    } else {
+      query = `SELECT id, email, nome, role, plan, active, created_at
+               FROM users
+               ORDER BY created_at DESC`;
+      params = [];
+    }
+    const result = await pool.query(query, params);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('[admin] listar usuários:', err.message);
+    res.status(500).json({ error: 'Erro interno.' });
+  }
+});
+
 router.post('/users', adminMiddleware, async (req, res) => {
   const { email, nome, senha } = req.body;
 

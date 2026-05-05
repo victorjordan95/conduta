@@ -37,6 +37,53 @@ beforeAll(async () => {
   userToken = userLogin.body.token;
 });
 
+describe('GET /admin/users', () => {
+  it('retorna 401 sem token', async () => {
+    const res = await request(app).get('/admin/users');
+    expect(res.status).toBe(401);
+  });
+
+  it('retorna 403 para usuário comum', async () => {
+    const res = await request(app)
+      .get('/admin/users')
+      .set('Authorization', `Bearer ${userToken}`);
+    expect(res.status).toBe(403);
+  });
+
+  it('retorna lista de usuários para admin', async () => {
+    const res = await request(app)
+      .get('/admin/users')
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.some((u) => u.email === USER_EMAIL)).toBe(true);
+    expect(res.body[0]).toMatchObject({
+      id: expect.any(String),
+      email: expect.any(String),
+      nome: expect.any(String),
+      role: expect.any(String),
+      plan: expect.any(String),
+      active: expect.any(Boolean),
+    });
+  });
+
+  it('filtra usuários por search', async () => {
+    const res = await request(app)
+      .get('/admin/users?search=Usuário Teste')
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.status).toBe(200);
+    expect(res.body.every((u) => u.nome.includes('Usuário') || u.email.includes('Usuário'))).toBe(true);
+  });
+
+  it('retorna array vazio para search sem correspondência', async () => {
+    const res = await request(app)
+      .get('/admin/users?search=xyzabc_inexistente')
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual([]);
+  });
+});
+
 afterAll(async () => {
   await pool.query('DELETE FROM users WHERE email = ANY($1)', [[ADMIN_EMAIL, USER_EMAIL]]);
   await pool.end();
