@@ -237,3 +237,42 @@ export async function getFeedbackStats() {
   if (!res.ok) throw new Error('Erro ao buscar estatísticas.');
   return res.json();
 }
+
+// ─────── ADMIN USERS ──────────────
+export async function getAdminUsers(search) {
+  const params = search ? `?search=${encodeURIComponent(search)}` : '';
+  const res = await fetch(`${BASE_URL}/admin/users${params}`, {
+    headers: authHeaders(),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) throw new Error('Erro ao listar usuários.');
+  return res.json();
+}
+
+export async function updateUserPlan(id, plan) {
+  const res = await fetch(`${BASE_URL}/admin/users/${id}/plan`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ plan }),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao alterar plano.');
+  }
+  return res.json();
+}
+
+export async function updateUserStatus(id, active) {
+  const res = await fetch(`${BASE_URL}/admin/users/${id}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ active }),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao alterar status.');
+  }
+  return res.json();
+}
