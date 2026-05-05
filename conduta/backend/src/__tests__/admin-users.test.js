@@ -37,6 +37,22 @@ beforeAll(async () => {
   userToken = userLogin.body.token;
 });
 
+describe('authMiddleware — active check', () => {
+  it('retorna 401 com "Conta desativada." quando active=false', async () => {
+    await pool.query('UPDATE users SET active = false WHERE id = $1', [userId]);
+
+    const res = await request(app)
+      .get('/usage')
+      .set('Authorization', `Bearer ${userToken}`);
+
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe('Conta desativada.');
+
+    // Restaurar para não quebrar outros testes
+    await pool.query('UPDATE users SET active = true WHERE id = $1', [userId]);
+  });
+});
+
 describe('GET /admin/users', () => {
   it('retorna 401 sem token', async () => {
     const res = await request(app).get('/admin/users');
@@ -87,20 +103,4 @@ describe('GET /admin/users', () => {
 afterAll(async () => {
   await pool.query('DELETE FROM users WHERE email = ANY($1)', [[ADMIN_EMAIL, USER_EMAIL]]);
   await pool.end();
-});
-
-describe('authMiddleware — active check', () => {
-  it('retorna 401 com "Conta desativada." quando active=false', async () => {
-    await pool.query('UPDATE users SET active = false WHERE id = $1', [userId]);
-
-    const res = await request(app)
-      .get('/usage')
-      .set('Authorization', `Bearer ${userToken}`);
-
-    expect(res.status).toBe(401);
-    expect(res.body.error).toBe('Conta desativada.');
-
-    // Restaurar para não quebrar outros testes
-    await pool.query('UPDATE users SET active = true WHERE id = $1', [userId]);
-  });
 });
