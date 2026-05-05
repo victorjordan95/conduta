@@ -29,6 +29,37 @@ router.get('/users', adminMiddleware, async (req, res) => {
   }
 });
 
+router.patch('/users/:id/status', adminMiddleware, async (req, res) => {
+  const { active } = req.body;
+
+  if (typeof active !== 'boolean') {
+    return res.status(400).json({ error: 'active deve ser boolean.' });
+  }
+
+  try {
+    const targetResult = await pool.query(
+      'SELECT role FROM users WHERE id = $1',
+      [req.params.id]
+    );
+    if (targetResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+    if (targetResult.rows[0].role === 'admin') {
+      return res.status(403).json({ error: 'Não é possível alterar o status de um admin.' });
+    }
+
+    const query = active
+      ? `UPDATE users SET active = $1 WHERE id = $2 RETURNING id, email, nome, role, plan, active`
+      : `UPDATE users SET active = $1, session_version = session_version + 1 WHERE id = $2 RETURNING id, email, nome, role, plan, active`;
+
+    const result = await pool.query(query, [active, req.params.id]);
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('[admin] alterar status:', err.message);
+    res.status(500).json({ error: 'Erro interno.' });
+  }
+});
+
 router.post('/users', adminMiddleware, async (req, res) => {
   const { email, nome, senha } = req.body;
 

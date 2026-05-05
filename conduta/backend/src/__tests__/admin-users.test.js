@@ -100,6 +100,84 @@ describe('GET /admin/users', () => {
   });
 });
 
+describe('PATCH /admin/users/:id/status', () => {
+  it('retorna 401 sem token', async () => {
+    const res = await request(app)
+      .patch(`/admin/users/${userId}/status`)
+      .send({ active: false });
+    expect(res.status).toBe(401);
+  });
+
+  it('retorna 403 para usuário comum', async () => {
+    const res = await request(app)
+      .patch(`/admin/users/${userId}/status`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .send({ active: false });
+    expect(res.status).toBe(403);
+  });
+
+  it('retorna 400 quando active não é boolean', async () => {
+    const res = await request(app)
+      .patch(`/admin/users/${userId}/status`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ active: 'nope' });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBeDefined();
+  });
+
+  it('desativa usuário e incrementa session_version', async () => {
+    const svBefore = await pool.query('SELECT session_version FROM users WHERE id = $1', [userId]);
+    const svAntes = svBefore.rows[0].session_version;
+
+    const res = await request(app)
+      .patch(`/admin/users/${userId}/status`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ active: false });
+
+    expect(res.status).toBe(200);
+    expect(res.body.active).toBe(false);
+
+    const svAfter = await pool.query('SELECT session_version FROM users WHERE id = $1', [userId]);
+    expect(svAfter.rows[0].session_version).toBe(svAntes + 1);
+
+    // Restaurar
+    await pool.query('UPDATE users SET active = true WHERE id = $1', [userId]);
+  });
+
+  it('retorna 403 ao tentar desativar outro admin', async () => {
+    const res = await request(app)
+      .patch(`/admin/users/${adminId}/status`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ active: false });
+    expect(res.status).toBe(403);
+  });
+
+  it('reativa usuário sem incrementar session_version', async () => {
+    await pool.query('UPDATE users SET active = false WHERE id = $1', [userId]);
+    const svBefore = await pool.query('SELECT session_version FROM users WHERE id = $1', [userId]);
+    const svAntes = svBefore.rows[0].session_version;
+
+    const res = await request(app)
+      .patch(`/admin/users/${userId}/status`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ active: true });
+
+    expect(res.status).toBe(200);
+    expect(res.body.active).toBe(true);
+
+    const svAfter = await pool.query('SELECT session_version FROM users WHERE id = $1', [userId]);
+    expect(svAfter.rows[0].session_version).toBe(svAntes);
+  });
+
+  it('retorna 404 para userId inexistente', async () => {
+    const res = await request(app)
+      .patch('/admin/users/00000000-0000-0000-0000-000000000000/status')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ active: false });
+    expect(res.status).toBe(404);
+  });
+});
+
 afterAll(async () => {
   await pool.query('DELETE FROM users WHERE email = ANY($1)', [[ADMIN_EMAIL, USER_EMAIL]]);
   await pool.end();
