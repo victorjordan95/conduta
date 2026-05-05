@@ -9,17 +9,21 @@ function UsersPanel({ currentUserId }) {
   const [search, setSearch] = useState('');
   const [actionLoading, setActionLoading] = useState({});
   const [rowMessages, setRowMessages] = useState({});
+  const [fetchError, setFetchError] = useState('');
   const debounceRef = useRef(null);
+  const messageTimersRef = useRef({});
 
   useEffect(() => {
     fetchUsers('');
+    return () => clearTimeout(debounceRef.current);
   }, []);
 
   function fetchUsers(q) {
     setLoading(true);
+    setFetchError('');
     getAdminUsers(q)
       .then(setUsers)
-      .catch(() => {})
+      .catch(() => setFetchError('Erro ao carregar usuários.'))
       .finally(() => setLoading(false));
   }
 
@@ -31,8 +35,9 @@ function UsersPanel({ currentUserId }) {
   }
 
   function setRowMessage(userId, type, text) {
+    clearTimeout(messageTimersRef.current[userId]);
     setRowMessages((prev) => ({ ...prev, [userId]: { type, text } }));
-    setTimeout(() => {
+    messageTimersRef.current[userId] = setTimeout(() => {
       setRowMessages((prev) => {
         const next = { ...prev };
         delete next[userId];
@@ -94,6 +99,8 @@ function UsersPanel({ currentUserId }) {
         value={search}
         onChange={handleSearchChange}
       />
+
+      {fetchError && <p className={styles.error}>{fetchError}</p>}
 
       {loading ? (
         <p className={styles.info}>Carregando usuários...</p>
@@ -341,7 +348,6 @@ export default function AdminKnowledge() {
 
   return (
     <div className={styles.page}>
-      <UsersPanel currentUserId={user?.id} />
       <header className={styles.header}>
         <h1>Base de Conhecimento</h1>
         <span className={styles.badge}>{items.length} pendentes</span>
@@ -349,6 +355,8 @@ export default function AdminKnowledge() {
           Atualizar
         </button>
       </header>
+
+      <UsersPanel currentUserId={user?.id} />
 
       {loading && <p className={styles.info}>Carregando...</p>}
       {error && <p className={styles.error}>{error}</p>}
