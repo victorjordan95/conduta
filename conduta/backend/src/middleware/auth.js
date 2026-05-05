@@ -17,12 +17,16 @@ async function authMiddleware(req, res, next) {
       return res.status(401).json({ error: 'Token inválido ou expirado.' });
     }
 
-    const result = await pool.query('SELECT session_version, plan FROM users WHERE id = $1', [payload.sub]);
+    const result = await pool.query('SELECT session_version, plan, active FROM users WHERE id = $1', [payload.sub]);
     if (!result.rows.length || result.rows[0].session_version !== payload.sv) {
       return res.status(401).json({
         error: 'Sua sessão foi encerrada pois outro acesso foi iniciado.',
         code: 'SESSION_KICKED',
       });
+    }
+
+    if (!result.rows[0].active) {
+      return res.status(401).json({ error: 'Conta desativada.' });
     }
 
     req.userId = payload.sub;
