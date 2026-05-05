@@ -300,3 +300,64 @@
 .rowInactive td {
   opacity: 0.5;
 }
+
+// ── Users Panel ────────────────────────────────────────────────
+.usersPanel {
+  margin-bottom: 2.5rem;
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 380px;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  outline: none;
+
+  &:focus {
+    border-color: #1a56db;
+    box-shadow: 0 0 0 2px #e8f0fe;
+  }
+}
+
+.planBtn {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: white;
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin-right: 0.4rem;
+
+  &:hover:not(:disabled) {
+    background: #f3f4f6;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.badgePlan {
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+.rowSuccess {
+  font-size: 0.75rem;
+  color: #166534;
+  margin-right: 0.5rem;
+}
+
+.rowError {
+  font-size: 0.75rem;
+  color: #991b1b;
+  margin-right: 0.5rem;
+}

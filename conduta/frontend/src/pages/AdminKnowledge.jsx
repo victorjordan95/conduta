@@ -1,6 +1,170 @@
-import { useEffect, useState } from 'react';
-import { getPendingKnowledge, approveKnowledge, rejectKnowledge, listDocuments, uploadDocument, getFeedbackStats, getAdminFeedbacks, deactivateAdminFeedback } from '../services/api';
+import { useEffect, useRef, useState } from 'react';
+import { getPendingKnowledge, approveKnowledge, rejectKnowledge, listDocuments, uploadDocument, getFeedbackStats, getAdminFeedbacks, deactivateAdminFeedback, getAdminUsers, updateUserPlan, updateUserStatus } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import styles from './AdminKnowledge.module.scss';
+
+function UsersPanel({ currentUserId }) {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [actionLoading, setActionLoading] = useState({});
+  const [rowMessages, setRowMessages] = useState({});
+  const debounceRef = useRef(null);
+
+  useEffect(() => {
+    fetchUsers('');
+  }, []);
+
+  function fetchUsers(q) {
+    setLoading(true);
+    getAdminUsers(q)
+      .then(setUsers)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }
+
+  function handleSearchChange(e) {
+    const q = e.target.value;
+    setSearch(q);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => fetchUsers(q), 300);
+  }
+
+  function setRowMessage(userId, type, text) {
+    setRowMessages((prev) => ({ ...prev, [userId]: { type, text } }));
+    setTimeout(() => {
+      setRowMessages((prev) => {
+        const next = { ...prev };
+        delete next[userId];
+        return next;
+      });
+    }, 3000);
+  }
+
+  async function handleTogglePlan(u) {
+    const novoPlan = u.plan === 'free' ? 'pro' : 'free';
+    setActionLoading((prev) => ({ ...prev, [u.id]: 'plan' }));
+    try {
+      const updated = await updateUserPlan(u.id, novoPlan);
+      setUsers((prev) => prev.map((x) => (x.id === u.id ? { ...x, plan: updated.plan } : x)));
+      setRowMessage(u.id, 'success', `Plano alterado para ${updated.plan}.`);
+    } catch (err) {
+      setRowMessage(u.id, 'error', err.message);
+    } finally {
+      setActionLoading((prev) => ({ ...prev, [u.id]: null }));
+    }
+  }
+
+  async function handleToggleStatus(u) {
+    if (!u.active) {
+      setActionLoading((prev) => ({ ...prev, [u.id]: 'status' }));
+      try {
+        const updated = await updateUserStatus(u.id, true);
+        setUsers((prev) => prev.map((x) => (x.id === u.id ? { ...x, active: updated.active } : x)));
+        setRowMessage(u.id, 'success', 'Usuário reativado.');
+      } catch (err) {
+        setRowMessage(u.id, 'error', err.message);
+      } finally {
+        setActionLoading((prev) => ({ ...prev, [u.id]: null }));
+      }
+      return;
+    }
+
+    if (!confirm(`Desativar ${u.nome}? O acesso será bloqueado imediatamente.`)) return;
+    setActionLoading((prev) => ({ ...prev, [u.id]: 'status' }));
+    try {
+      const updated = await updateUserStatus(u.id, false);
+      setUsers((prev) => prev.map((x) => (x.id === u.id ? { ...x, active: updated.active } : x)));
+      setRowMessage(u.id, 'success', 'Usuário desativado.');
+    } catch (err) {
+      setRowMessage(u.id, 'error', err.message);
+    } finally {
+      setActionLoading((prev) => ({ ...prev, [u.id]: null }));
+    }
+  }
+
+  return (
+    <section className={styles.usersPanel}>
+      <h2 className={styles.sectionTitle}>Usuários ({users.length})</h2>
+
+      <input
+        className={styles.searchInput}
+        type="text"
+        placeholder="Buscar por nome ou email"
+        value={search}
+        onChange={handleSearchChange}
+      />
+
+      {loading ? (
+        <p className={styles.info}>Carregando usuários...</p>
+      ) : users.length === 0 ? (
+        <p className={styles.info}>Nenhum usuário encontrado.</p>
+      ) : (
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Plano</th>
+              <th>Status</th>
+              <th>Cadastro</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((u) => {
+              const isSelf = u.id === currentUserId;
+              const busy = actionLoading[u.id];
+              const msg = rowMessages[u.id];
+              return (
+                <tr key={u.id} className={!u.active ? styles.rowInactive : ''}>
+                  <td className={styles.nome}>{u.nome}</td>
+                  <td>{u.email}</td>
+                  <td>
+                    <span className={u.plan === 'pro' ? styles.badgeActive : styles.badgePlan}>
+                      {u.plan}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={u.active ? styles.badgeActive : styles.badgeInactive}>
+                      {u.active ? 'ativo' : 'inativo'}
+                    </span>
+                  </td>
+                  <td className={styles.date}>
+                    {u.created_at ? new Date(u.created_at).toLocaleDateString('pt-BR') : '—'}
+                  </td>
+                  <td className={styles.actions}>
+                    {msg && (
+                      <span className={msg.type === 'error' ? styles.rowError : styles.rowSuccess}>
+                        {msg.text}
+                      </span>
+                    )}
+                    <button
+                      className={styles.planBtn}
+                      onClick={() => handleTogglePlan(u)}
+                      disabled={isSelf || !!busy}
+                      title={isSelf ? 'Não é possível alterar o próprio plano' : ''}
+                    >
+                      {busy === 'plan' ? '...' : u.plan === 'free' ? '→ pro' : '→ free'}
+                    </button>
+                    <button
+                      className={u.active ? styles.rejectBtn : styles.approveBtn}
+                      onClick={() => handleToggleStatus(u)}
+                      disabled={isSelf || !!busy}
+                      title={isSelf ? 'Não é possível alterar o próprio status' : ''}
+                    >
+                      {busy === 'status' ? '...' : u.active ? 'Desativar' : 'Reativar'}
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
+    </section>
+  );
+}
 
 function DocumentsPanel() {
   const [docs, setDocs] = useState([]);
@@ -102,6 +266,7 @@ function DocumentsPanel() {
 }
 
 export default function AdminKnowledge() {
+  const { user } = useAuth();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -176,6 +341,7 @@ export default function AdminKnowledge() {
 
   return (
     <div className={styles.page}>
+      <UsersPanel currentUserId={user?.id} />
       <header className={styles.header}>
         <h1>Base de Conhecimento</h1>
         <span className={styles.badge}>{items.length} pendentes</span>
