@@ -64,7 +64,7 @@ router.get('/:id', async (req, res) => {
           [req.params.id]
         )
       : await pool.query(
-          'SELECT id, titulo, created_at FROM sessions WHERE id = $1 AND user_id = $2',
+          'SELECT id, titulo, created_at, summary FROM sessions WHERE id = $1 AND user_id = $2',
           [req.params.id, req.userId]
         );
 
@@ -95,6 +95,43 @@ router.get('/:id', async (req, res) => {
     });
   } catch (err) {
     console.error(err.message);
+    res.status(500).json({ error: 'Erro interno.' });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  const { titulo } = req.body;
+  if (!titulo || typeof titulo !== 'string' || !titulo.trim()) {
+    return res.status(400).json({ error: 'Título é obrigatório.' });
+  }
+  if (titulo.trim().length > 100) {
+    return res.status(400).json({ error: 'Título deve ter no máximo 100 caracteres.' });
+  }
+  try {
+    const result = await pool.query(
+      `UPDATE sessions SET titulo = $1 WHERE id = $2 AND user_id = $3 RETURNING id, titulo, created_at`,
+      [titulo.trim(), req.params.id, req.userId]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Sessão não encontrada.' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('[sessions] renomear:', err.message);
+    res.status(500).json({ error: 'Erro interno.' });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const check = await pool.query(
+      'SELECT id FROM sessions WHERE id = $1 AND user_id = $2',
+      [req.params.id, req.userId]
+    );
+    if (check.rows.length === 0) return res.status(404).json({ error: 'Sessão não encontrada.' });
+    await pool.query('DELETE FROM messages WHERE session_id = $1', [req.params.id]);
+    await pool.query('DELETE FROM sessions WHERE id = $1', [req.params.id]);
+    res.status(204).send();
+  } catch (err) {
+    console.error('[sessions] excluir:', err.message);
     res.status(500).json({ error: 'Erro interno.' });
   }
 });
