@@ -108,3 +108,115 @@
     backdrop-filter: blur(1px);
   }
 }
+
+// ── Session Header ──────────────────────────────────────────────
+.sessionHeader {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid $color-border;
+  gap: 1rem;
+  flex-shrink: 0;
+  background: $color-surface;
+}
+
+.sessionTitle {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $color-text-primary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pdfBtn {
+  flex-shrink: 0;
+  padding: 0.3rem 0.85rem;
+  border: 1px solid $color-border;
+  border-radius: 4px;
+  background: white;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: $color-text-secondary;
+  white-space: nowrap;
+
+  &:hover {
+    background: #f3f4f6;
+    color: $color-text-primary;
+  }
+}
+
+// ── Entities Panel ──────────────────────────────────────────────
+.entitiesPanel {
+  flex-shrink: 0;
+  border-top: 1px solid $color-border;
+  background: #fafafa;
+}
+
+.entitiesToggle {
+  width: 100%;
+  text-align: left;
+  padding: 0.45rem 1.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: $color-text-secondary;
+
+  &:hover {
+    color: $color-text-primary;
+  }
+}
+
+.entitiesBody {
+  padding: 0 1.25rem 0.75rem;
+}
+
+.entitiesGroup {
+  margin-bottom: 0.5rem;
+}
+
+.entitiesLabel {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9ca3af;
+  margin-bottom: 0.3rem;
+}
+
+.entitiesTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.tagDiag {
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  cursor: default;
+}
+
+.tagMed {
+  background: #d1fae5;
+  color: #065f46;
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  cursor: default;
+}
+
+.entitiesInfo {
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.entitiesError {
+  font-size: 0.78rem;
+  color: #991b1b;
+}
