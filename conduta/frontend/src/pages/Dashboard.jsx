@@ -16,6 +16,7 @@ function EntitiesPanel({ sessionId }) {
   useEffect(() => {
     setOpen(false);
     setEntities(null);
+    setLoading(false);
     setError(null);
   }, [sessionId]);
 
