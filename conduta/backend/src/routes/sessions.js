@@ -218,7 +218,8 @@ router.get('/:id/pdf', async (req, res) => {
     );
 
     const primeiraMensagem = msgResult.rows[0]?.content || '';
-    const { hipotese, conduta, alertas = [] } = sessao.summary;
+    const { hipotese, conduta } = sessao.summary;
+    const alertas = Array.isArray(sessao.summary.alertas) ? sessao.summary.alertas : [];
     const safeTitulo = sessao.titulo.replace(/[^\w\sÀ-ɏ-]/g, '').trim() || 'caso';
     const filename = `caso-${safeTitulo}.pdf`;
 
@@ -226,6 +227,10 @@ router.get('/:id/pdf', async (req, res) => {
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
 
     const doc = new PDFDocument({ margin: 50 });
+    doc.on('error', (err) => {
+      console.error('[sessions] pdf stream error:', err.message);
+      res.destroy();
+    });
     doc.pipe(res);
 
     doc.fontSize(18).font('Helvetica-Bold').text(sessao.titulo, { align: 'center' });
