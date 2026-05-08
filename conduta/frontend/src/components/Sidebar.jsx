@@ -13,10 +13,6 @@ export default function Sidebar({ activeSessionId, onSelectSession, onSessionDel
 
   useEffect(() => {
     getSessions().then(setSessions).catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    getSessions().then(setSessions).catch(console.error);
   }, [activeSessionId]);
 
   useEffect(() => {
@@ -36,14 +32,15 @@ export default function Sidebar({ activeSessionId, onSelectSession, onSessionDel
     }
   }
 
-  async function handleRename(id) {
-    const titulo = editingTitulo.trim();
+  async function handleRename(id, titulo) {
+    const t = titulo !== undefined ? titulo : editingTitulo.trim();
     setEditingId(null);
-    if (!titulo) return;
+    if (!t) return;
     try {
-      const updated = await renameSession(id, titulo);
+      const updated = await renameSession(id, t);
       setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, titulo: updated.titulo } : s)));
     } catch (err) {
+      window.alert('Erro ao renomear sessão. Tente novamente.');
       console.error(err);
     }
   }
@@ -55,6 +52,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onSessionDel
       setSessions((prev) => prev.filter((s) => s.id !== id));
       onSessionDeleted?.(id);
     } catch (err) {
+      window.alert('Erro ao excluir sessão. Tente novamente.');
       console.error(err);
     }
   }
@@ -106,7 +104,11 @@ export default function Sidebar({ activeSessionId, onSelectSession, onSessionDel
                   autoFocus
                   onChange={(e) => setEditingTitulo(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleRename(s.id);
+                    if (e.key === 'Enter') {
+                      const titulo = editingTitulo.trim();
+                      setEditingTitulo('');
+                      handleRename(s.id, titulo);
+                    }
                     if (e.key === 'Escape') setEditingId(null);
                   }}
                   onBlur={() => handleRename(s.id)}
@@ -115,18 +117,16 @@ export default function Sidebar({ activeSessionId, onSelectSession, onSessionDel
               ) : (
                 <>
                   <span className={styles.itemTitle} title={s.titulo}>{s.titulo}</span>
-                  {(s.id === activeSessionId || s.id === menuOpenId) && (
-                    <button
-                      className={styles.menuBtn}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setMenuOpenId(menuOpenId === s.id ? null : s.id);
-                      }}
-                      title="Opções"
-                    >
-                      ⋯
-                    </button>
-                  )}
+                  <button
+                    className={`${styles.menuBtn} ${(s.id === activeSessionId || s.id === menuOpenId) ? styles.menuBtnVisible : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMenuOpenId(menuOpenId === s.id ? null : s.id);
+                    }}
+                    title="Opções"
+                  >
+                    ⋯
+                  </button>
                   {menuOpenId === s.id && (
                     <div className={styles.dropdown} onClick={(e) => e.stopPropagation()}>
                       <button
