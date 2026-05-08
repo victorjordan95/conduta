@@ -49,6 +49,19 @@ beforeAll(async () => {
   );
 });
 
+// ── GET /sessions/:id — inclui summary ────────────────────────
+
+describe('GET /sessions/:id', () => {
+  it('inclui summary na resposta quando disponível', async () => {
+    const res = await request(app)
+      .get(`/sessions/${sessionWithSummaryId}`)
+      .set('Authorization', `Bearer ${userToken}`);
+    expect(res.status).toBe(200);
+    expect(res.body.session.summary).toBeDefined();
+    expect(res.body.session.summary.hipotese).toBe('IAM');
+  });
+});
+
 afterAll(async () => {
   await pool.query('DELETE FROM sessions WHERE user_id = ANY($1)', [[userId, otherId]]);
   await pool.query('DELETE FROM users WHERE email = ANY($1)', [[USER_EMAIL, OTHER_EMAIL]]);

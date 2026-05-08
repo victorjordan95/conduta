@@ -57,7 +57,7 @@ router.get('/:id', async (req, res) => {
     const isAdmin = req.userRole === 'admin';
     const sessionResult = isAdmin
       ? await pool.query(
-          `SELECT s.id, s.titulo, s.created_at, u.email AS user_email, u.nome AS user_nome
+          `SELECT s.id, s.titulo, s.created_at, s.summary, u.email AS user_email, u.nome AS user_nome
            FROM sessions s
            JOIN users u ON u.id = s.user_id
            WHERE s.id = $1`,
@@ -127,8 +127,15 @@ router.delete('/:id', async (req, res) => {
       [req.params.id, req.userId]
     );
     if (check.rows.length === 0) return res.status(404).json({ error: 'Sessão não encontrada.' });
-    await pool.query('DELETE FROM messages WHERE session_id = $1', [req.params.id]);
-    await pool.query('DELETE FROM sessions WHERE id = $1', [req.params.id]);
+    await pool.query('BEGIN');
+    try {
+      await pool.query('DELETE FROM messages WHERE session_id = $1', [req.params.id]);
+      await pool.query('DELETE FROM sessions WHERE id = $1', [req.params.id]);
+      await pool.query('COMMIT');
+    } catch (txErr) {
+      await pool.query('ROLLBACK');
+      throw txErr;
+    }
     res.status(204).send();
   } catch (err) {
     console.error('[sessions] excluir:', err.message);
