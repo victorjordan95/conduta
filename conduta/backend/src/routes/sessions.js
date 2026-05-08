@@ -2,6 +2,7 @@ const express = require('express');
 const pool = require('../db/pg');
 const authMiddleware = require('../middleware/auth');
 const driver = require('../db/neo4j');
+const PDFDocument = require('pdfkit');
 
 const router = express.Router();
 
@@ -193,6 +194,75 @@ router.get('/:id/entities', async (req, res) => {
     res.json({ diagnosticos: [], medicamentos: [] });
   } finally {
     if (neo4jSession) await neo4jSession.close();
+  }
+});
+
+router.get('/:id/pdf', async (req, res) => {
+  try {
+    const sessionResult = await pool.query(
+      'SELECT id, titulo, summary FROM sessions WHERE id = $1 AND user_id = $2',
+      [req.params.id, req.userId]
+    );
+    if (sessionResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Sessão não encontrada.' });
+    }
+
+    const sessao = sessionResult.rows[0];
+    if (!sessao.summary) {
+      return res.status(400).json({ error: 'Resumo ainda não gerado para esta sessão.' });
+    }
+
+    const msgResult = await pool.query(
+      `SELECT content FROM messages WHERE session_id = $1 AND role = 'user' ORDER BY created_at ASC LIMIT 1`,
+      [req.params.id]
+    );
+
+    const primeiraMensagem = msgResult.rows[0]?.content || '';
+    const { hipotese, conduta, alertas = [] } = sessao.summary;
+    const safeTitulo = sessao.titulo.replace(/[^\w\sÀ-ɏ-]/g, '').trim() || 'caso';
+    const filename = `caso-${safeTitulo}.pdf`;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    const doc = new PDFDocument({ margin: 50 });
+    doc.pipe(res);
+
+    doc.fontSize(18).font('Helvetica-Bold').text(sessao.titulo, { align: 'center' });
+    doc.moveDown(0.5);
+    doc.fontSize(10).font('Helvetica').fillColor('#666666')
+       .text(`Gerado em ${new Date().toLocaleDateString('pt-BR')}`, { align: 'center' });
+    doc.fillColor('#000000').moveDown(1.5);
+
+    doc.fontSize(13).font('Helvetica-Bold').text('Caso Clínico');
+    doc.moveDown(0.3);
+    doc.fontSize(11).font('Helvetica').text(primeiraMensagem || 'Não registrado.', { lineGap: 4 });
+    doc.moveDown(1.5);
+
+    doc.fontSize(13).font('Helvetica-Bold').text('Hipótese Diagnóstica');
+    doc.moveDown(0.3);
+    doc.fontSize(11).font('Helvetica').text(hipotese || 'Não disponível.', { lineGap: 4 });
+    doc.moveDown(1.5);
+
+    doc.fontSize(13).font('Helvetica-Bold').text('Conduta Proposta');
+    doc.moveDown(0.3);
+    doc.fontSize(11).font('Helvetica').text(conduta || 'Não disponível.', { lineGap: 4 });
+
+    if (alertas.length > 0) {
+      doc.moveDown(1.5);
+      doc.fontSize(13).font('Helvetica-Bold').text('Alertas');
+      doc.moveDown(0.3);
+      for (const alerta of alertas) {
+        doc.fontSize(11).font('Helvetica').text(`• ${alerta}`, { lineGap: 4 });
+      }
+    }
+
+    doc.end();
+  } catch (err) {
+    console.error('[sessions] pdf:', err.message);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Erro interno.' });
+    }
   }
 });
 

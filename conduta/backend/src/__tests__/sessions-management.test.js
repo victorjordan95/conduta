@@ -170,6 +170,45 @@ describe('GET /sessions/:id/entities', () => {
   });
 });
 
+// ── GET /sessions/:id/pdf ─────────────────────────────────────
+
+describe('GET /sessions/:id/pdf', () => {
+  it('retorna 401 sem token', async () => {
+    const res = await request(app).get(`/sessions/${sessionWithSummaryId}/pdf`);
+    expect(res.status).toBe(401);
+  });
+
+  it('retorna 404 para sessão de outro usuário', async () => {
+    const res = await request(app)
+      .get(`/sessions/${sessionWithSummaryId}/pdf`)
+      .set('Authorization', `Bearer ${otherToken}`);
+    expect(res.status).toBe(404);
+  });
+
+  it('retorna 400 quando sessão não tem summary', async () => {
+    const res = await request(app)
+      .get(`/sessions/${sessionId}/pdf`)
+      .set('Authorization', `Bearer ${userToken}`);
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBeDefined();
+  });
+
+  it('retorna PDF com Content-Type correto quando summary existe', async () => {
+    const res = await request(app)
+      .get(`/sessions/${sessionWithSummaryId}/pdf`)
+      .set('Authorization', `Bearer ${userToken}`)
+      .buffer(true)
+      .parse((res, callback) => {
+        const chunks = [];
+        res.on('data', (chunk) => chunks.push(chunk));
+        res.on('end', () => callback(null, Buffer.concat(chunks)));
+      });
+    expect(res.status).toBe(200);
+    expect(res.headers['content-type']).toMatch(/application\/pdf/);
+    expect(res.body.length).toBeGreaterThan(0);
+  });
+});
+
 afterAll(async () => {
   await pool.query('DELETE FROM sessions WHERE user_id = ANY($1)', [[userId, otherId]]);
   await pool.query('DELETE FROM users WHERE email = ANY($1)', [[USER_EMAIL, OTHER_EMAIL]]);
