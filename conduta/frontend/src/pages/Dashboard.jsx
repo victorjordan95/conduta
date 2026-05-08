@@ -21,6 +21,7 @@ function EntitiesPanel({ sessionId }) {
   }, [sessionId]);
 
   async function handleToggle() {
+    if (!sessionId) return;
     if (!open && entities === null) {
       setLoading(true);
       try {
@@ -231,20 +232,25 @@ export default function Dashboard() {
                 });
               }}
               onAnalysisDone={() => {
+                const capturedId = activeSessionId;
                 setStreaming(false);
                 refreshUsage();
-                getSession(activeSessionId)
+                getSession(capturedId)
                   .then((data) => {
-                    setActiveSession(data.session);
-                    const msgs = data.messages;
-                    if (msgs.length > 0) {
-                      const last = msgs[msgs.length - 1];
-                      setMessages((prev) => {
-                        const updated = [...prev];
-                        updated[updated.length - 1] = { ...updated[updated.length - 1], id: last.id };
-                        return updated;
-                      });
-                    }
+                    setActiveSessionId((current) => {
+                      if (current !== capturedId) return current;
+                      setActiveSession(data.session);
+                      const msgs = data.messages;
+                      if (msgs.length > 0) {
+                        const last = msgs[msgs.length - 1];
+                        setMessages((prev) => {
+                          const updated = [...prev];
+                          updated[updated.length - 1] = { ...updated[updated.length - 1], id: last.id };
+                          return updated;
+                        });
+                      }
+                      return current;
+                    });
                   })
                   .catch(console.error);
               }}
