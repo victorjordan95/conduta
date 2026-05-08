@@ -165,12 +165,12 @@ router.get('/:id/entities', async (req, res) => {
   const neo4jSession = driver.session();
   try {
     const diagResult = await neo4jSession.run(
-      `MATCH (d:Diagnostico) WHERE d.sourceSessionId = $sessionId AND d.status IN ['pending', 'verified']
+      `MATCH (d:Diagnostico) WHERE d.sourceSessionId = $sessionId AND d.status IN ["pending", "verified"]
        RETURN d.nome AS nome, d.cid AS cid, d.status AS status`,
       { sessionId: req.params.id }
     );
     const medResult = await neo4jSession.run(
-      `MATCH (m:Medicamento) WHERE m.sourceSessionId = $sessionId AND m.status IN ['pending', 'verified']
+      `MATCH (m:Medicamento) WHERE m.sourceSessionId = $sessionId AND m.status IN ["pending", "verified"]
        RETURN m.nome AS nome, m.classe AS classe, m.viaAdmin AS viaAdmin, m.status AS status`,
       { sessionId: req.params.id }
     );
@@ -192,7 +192,7 @@ router.get('/:id/entities', async (req, res) => {
     console.error('[sessions] entities — neo4j:', err.message);
     res.json({ diagnosticos: [], medicamentos: [] });
   } finally {
-    await neo4jSession.close();
+    if (neo4jSession) await neo4jSession.close();
   }
 });
 
