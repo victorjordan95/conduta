@@ -83,7 +83,7 @@ export async function deleteSession(id) {
   });
   await checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao deletar sessão.');
-  return res.json();
+  // 204 No Content — sem corpo para parsear
 }
 
 export async function submitFeedback(messageId, feedback, note) {
@@ -275,4 +275,40 @@ export async function updateUserStatus(id, active) {
     throw new Error(data.error || 'Erro ao alterar status.');
   }
   return res.json();
+}
+
+// ─────── SESSIONS ──────────────
+export async function renameSession(id, titulo) {
+  const res = await fetch(`${BASE_URL}/sessions/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ titulo }),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao renomear sessão.');
+  }
+  return res.json();
+}
+
+export async function getSessionEntities(id) {
+  const res = await fetch(`${BASE_URL}/sessions/${id}/entities`, {
+    headers: authHeaders(),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) throw new Error('Erro ao buscar entidades.');
+  return res.json();
+}
+
+export async function downloadSessionPdf(id) {
+  const res = await fetch(`${BASE_URL}/sessions/${id}/pdf`, {
+    headers: authHeaders(),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao gerar PDF.');
+  }
+  return res.blob();
 }
