@@ -62,12 +62,6 @@ describe('GET /sessions/:id', () => {
   });
 });
 
-afterAll(async () => {
-  await pool.query('DELETE FROM sessions WHERE user_id = ANY($1)', [[userId, otherId]]);
-  await pool.query('DELETE FROM users WHERE email = ANY($1)', [[USER_EMAIL, OTHER_EMAIL]]);
-  await pool.end();
-});
-
 // ── PUT /sessions/:id ──────────────────────────────────────────
 
 describe('PUT /sessions/:id', () => {
@@ -149,4 +143,35 @@ describe('DELETE /sessions/:id', () => {
     const checkMessages = await pool.query('SELECT id FROM messages WHERE session_id = $1', [sessionToDeleteId]);
     expect(checkMessages.rows.length).toBe(0);
   });
+});
+
+// ── GET /sessions/:id/entities ────────────────────────────────
+
+describe('GET /sessions/:id/entities', () => {
+  it('retorna 401 sem token', async () => {
+    const res = await request(app).get(`/sessions/${sessionId}/entities`);
+    expect(res.status).toBe(401);
+  });
+
+  it('retorna 404 para sessão de outro usuário', async () => {
+    const res = await request(app)
+      .get(`/sessions/${sessionId}/entities`)
+      .set('Authorization', `Bearer ${otherToken}`);
+    expect(res.status).toBe(404);
+  });
+
+  it('retorna estrutura { diagnosticos, medicamentos } (Neo4j indisponível → arrays vazios)', async () => {
+    const res = await request(app)
+      .get(`/sessions/${sessionId}/entities`)
+      .set('Authorization', `Bearer ${userToken}`);
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body.diagnosticos)).toBe(true);
+    expect(Array.isArray(res.body.medicamentos)).toBe(true);
+  });
+});
+
+afterAll(async () => {
+  await pool.query('DELETE FROM sessions WHERE user_id = ANY($1)', [[userId, otherId]]);
+  await pool.query('DELETE FROM users WHERE email = ANY($1)', [[USER_EMAIL, OTHER_EMAIL]]);
+  await pool.end();
 });

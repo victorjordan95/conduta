@@ -1,6 +1,7 @@
 const express = require('express');
 const pool = require('../db/pg');
 const authMiddleware = require('../middleware/auth');
+const driver = require('../db/neo4j');
 
 const router = express.Router();
 
@@ -140,6 +141,58 @@ router.delete('/:id', async (req, res) => {
   } catch (err) {
     console.error('[sessions] excluir:', err.message);
     res.status(500).json({ error: 'Erro interno.' });
+  }
+});
+
+router.get('/:id/entities', async (req, res) => {
+  try {
+    const sessionCheck = await pool.query(
+      'SELECT id FROM sessions WHERE id = $1 AND user_id = $2',
+      [req.params.id, req.userId]
+    );
+    if (sessionCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Sessão não encontrada.' });
+    }
+  } catch (err) {
+    console.error('[sessions] entities — pg:', err.message);
+    return res.status(500).json({ error: 'Erro interno.' });
+  }
+
+  if (!driver) {
+    return res.json({ diagnosticos: [], medicamentos: [] });
+  }
+
+  const neo4jSession = driver.session();
+  try {
+    const diagResult = await neo4jSession.run(
+      `MATCH (d:Diagnostico) WHERE d.sourceSessionId = $sessionId AND d.status IN ['pending', 'verified']
+       RETURN d.nome AS nome, d.cid AS cid, d.status AS status`,
+      { sessionId: req.params.id }
+    );
+    const medResult = await neo4jSession.run(
+      `MATCH (m:Medicamento) WHERE m.sourceSessionId = $sessionId AND m.status IN ['pending', 'verified']
+       RETURN m.nome AS nome, m.classe AS classe, m.viaAdmin AS viaAdmin, m.status AS status`,
+      { sessionId: req.params.id }
+    );
+
+    const diagnosticos = diagResult.records.map(r => ({
+      nome: r.get('nome'),
+      cid: r.get('cid'),
+      status: r.get('status'),
+    }));
+    const medicamentos = medResult.records.map(r => ({
+      nome: r.get('nome'),
+      classe: r.get('classe'),
+      viaAdmin: r.get('viaAdmin'),
+      status: r.get('status'),
+    }));
+
+    res.json({ diagnosticos, medicamentos });
+  } catch (err) {
+    console.error('[sessions] entities — neo4j:', err.message);
+    res.json({ diagnosticos: [], medicamentos: [] });
+  } finally {
+    await neo4jSession.close();
   }
 });
 
