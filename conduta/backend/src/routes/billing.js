@@ -16,11 +16,16 @@ router.post('/checkout', async (req, res) => {
     let customerId = stripe_customer_id;
 
     if (!customerId) {
-      const customer = await stripe.customers.create({
-        email,
-        metadata: { userId: req.userId },
-      });
-      customerId = customer.id;
+      const existing = await stripe.customers.list({ email, limit: 1 });
+      if (existing.data.length > 0) {
+        customerId = existing.data[0].id;
+      } else {
+        const customer = await stripe.customers.create({
+          email,
+          metadata: { userId: req.userId },
+        });
+        customerId = customer.id;
+      }
       await pool.query('UPDATE users SET stripe_customer_id = $1 WHERE id = $2', [
         customerId,
         req.userId,
@@ -90,11 +95,7 @@ async function webhookHandler(req, res) {
       }
     }
 
-    if (
-      event.type === 'customer.subscription.deleted' ||
-      (event.type === 'customer.subscription.updated' &&
-        event.data.object.status === 'canceled')
-    ) {
+    if (event.type === 'customer.subscription.deleted') {
       const sub = event.data.object;
       await pool.query(
         'UPDATE users SET plan = $1 WHERE stripe_customer_id = $2',

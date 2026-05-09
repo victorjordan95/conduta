@@ -71,6 +71,7 @@ describe('POST /billing/checkout', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('url', 'https://checkout.stripe.com/test');
+    expect(stripe.customers.list).toHaveBeenCalledWith({ email: 'billing@conduta.dev', limit: 1 });
     expect(stripe.customers.create).toHaveBeenCalledWith({
       email: 'billing@conduta.dev',
       metadata: { userId },
@@ -92,6 +93,7 @@ describe('POST /billing/checkout', () => {
 
     expect(res.status).toBe(200);
     expect(stripe.customers.create).not.toHaveBeenCalled();
+    expect(stripe.customers.list).not.toHaveBeenCalled();
     expect(stripe.checkout.sessions.create).toHaveBeenCalledWith(
       expect.objectContaining({ customer: 'cus_existing' })
     );
