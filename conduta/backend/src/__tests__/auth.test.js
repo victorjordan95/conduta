@@ -120,3 +120,30 @@ describe('PATCH /auth/me/coachmarks', () => {
     expect(res.status).toBe(401);
   });
 });
+
+describe('GET /auth/me', () => {
+  let token;
+
+  beforeAll(async () => {
+    const res = await request(app)
+      .post('/auth/login')
+      .send({ email: 'test@conduta.dev', senha: 'senha123' });
+    token = res.body.token;
+  });
+
+  it('retorna dados do usuário autenticado', async () => {
+    const res = await request(app)
+      .get('/auth/me')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('email', 'test@conduta.dev');
+    expect(res.body).toHaveProperty('plan');
+    expect(res.body).not.toHaveProperty('senha_hash');
+  });
+
+  it('retorna 401 sem token', async () => {
+    const res = await request(app).get('/auth/me');
+    expect(res.status).toBe(401);
+  });
+});
