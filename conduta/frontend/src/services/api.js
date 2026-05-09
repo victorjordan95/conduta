@@ -150,6 +150,17 @@ export async function getUsage() {
   return res.json();
 }
 
+export async function markCoachmarks(type) {
+  const res = await fetch(`${BASE_URL}/auth/me/coachmarks`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ type }),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) throw new Error('Erro ao marcar coachmark.');
+  return res.json();
+}
+
 // ── Admin Knowledge ────────────────────────────────────────────
 // Rotas admin exigem JWT com role = 'admin' (Bearer token normal).
 
@@ -229,6 +240,26 @@ export async function deactivateAdminFeedback(nodeId) {
   return res.json();
 }
 
+export async function validateAdminFeedback(nodeId) {
+  const res = await fetch(`${BASE_URL}/admin/feedbacks/${encodeURIComponent(nodeId)}/validate`, {
+    method: 'PUT',
+    headers: { ...authHeaders() },
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) throw new Error('Erro ao validar correção.');
+  return res.json();
+}
+
+export async function rejectAdminFeedback(nodeId) {
+  const res = await fetch(`${BASE_URL}/admin/feedbacks/${encodeURIComponent(nodeId)}/reject`, {
+    method: 'PUT',
+    headers: { ...authHeaders() },
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) throw new Error('Erro ao rejeitar correção.');
+  return res.json();
+}
+
 export async function getFeedbackStats() {
   const res = await fetch(`${BASE_URL}/feedback/stats`, {
     headers: { ...authHeaders() },
@@ -273,6 +304,20 @@ export async function updateUserStatus(id, active) {
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     throw new Error(data.error || 'Erro ao alterar status.');
+  }
+  return res.json();
+}
+
+export async function grantUserCredits(id, amount) {
+  const res = await fetch(`${BASE_URL}/admin/users/${id}/grant-credits`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ amount }),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao conceder créditos.');
   }
   return res.json();
 }
