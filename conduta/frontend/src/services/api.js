@@ -323,6 +323,38 @@ export async function grantUserCredits(id, amount) {
 }
 
 // ─────── SESSIONS ──────────────
+export async function getMe() {
+  const res = await fetch(`${BASE_URL}/auth/me`, {
+    headers: authHeaders(),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) throw new Error('Erro ao buscar usuário.');
+  return res.json();
+}
+
+export async function createCheckoutSession() {
+  const res = await fetch(`${BASE_URL}/billing/checkout`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) throw new Error('Erro ao criar sessão de pagamento.');
+  return res.json();
+}
+
+export async function getBillingPortalUrl() {
+  const res = await fetch(`${BASE_URL}/billing/portal`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao abrir portal.');
+  }
+  return res.json();
+}
+
 export async function renameSession(id, titulo) {
   const res = await fetch(`${BASE_URL}/sessions/${id}`, {
     method: 'PUT',
