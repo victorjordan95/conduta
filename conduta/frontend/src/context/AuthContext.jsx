@@ -33,7 +33,9 @@ export function AuthProvider({ children }) {
       const updatedUser = { ...user, ...data };
       localStorage.setItem('conduta_user', JSON.stringify(updatedUser));
       setUser(updatedUser);
-    } catch {}
+    } catch (err) {
+      console.warn('[AuthContext] refreshUser falhou:', err.message);
+    }
   }
 
   useEffect(() => {
