@@ -24,7 +24,8 @@
     "openai": "^4.47.1",
     "pdf-parse": "^2.4.5",
     "pdfkit": "^0.18.0",
-    "pg": "^8.11.5"
+    "pg": "^8.11.5",
+    "stripe": "^22.1.1"
   },
   "devDependencies": {
     "jest": "^29.7.0",
