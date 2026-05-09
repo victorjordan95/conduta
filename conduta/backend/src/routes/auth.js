@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('../db/pg');
 const adminMiddleware = require('../middleware/admin');
+const authMiddleware = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -20,7 +21,7 @@ router.post('/login', async (req, res) => {
   try {
     console.log(`[AUTH] DB query for email=${email}`);
     const result = await pool.query(
-      'SELECT id, email, nome, senha_hash, role, plan FROM users WHERE email = $1',
+      'SELECT id, email, nome, senha_hash, role, plan, coachmarks_welcome_seen, coachmarks_session_seen FROM users WHERE email = $1',
       [email]
     );
 
@@ -59,7 +60,15 @@ router.post('/login', async (req, res) => {
     console.log(`[AUTH] LOGIN success | userId=${user.id} email=${email} role=${user.role} sv=${sv} ip=${ip}`);
     res.json({
       token,
-      user: { id: user.id, email: user.email, nome: user.nome, role: user.role, plan: user.plan },
+      user: {
+        id: user.id,
+        email: user.email,
+        nome: user.nome,
+        role: user.role,
+        plan: user.plan,
+        coachmarks_welcome_seen: user.coachmarks_welcome_seen,
+        coachmarks_session_seen: user.coachmarks_session_seen,
+      },
     });
   } catch (err) {
     const detail = process.env.NODE_ENV === 'production' ? err.message : err.stack;
@@ -116,7 +125,7 @@ router.post('/signup', async (req, res) => {
     const result = await pool.query(
       `INSERT INTO users (email, nome, senha_hash, role)
        VALUES ($1, $2, $3, 'user')
-       RETURNING id, email, nome, role, plan`,
+       RETURNING id, email, nome, role, plan, coachmarks_welcome_seen, coachmarks_session_seen`,
       [email, nome, senhaHash]
     );
     const user = result.rows[0];
@@ -146,6 +155,27 @@ router.post('/signup', async (req, res) => {
 
 router.post('/logout', (req, res) => {
   res.json({ message: 'Logout realizado.' });
+});
+
+router.patch('/me/coachmarks', authMiddleware, async (req, res) => {
+  const { type } = req.body;
+
+  if (!['welcome', 'session'].includes(type)) {
+    return res.status(400).json({ error: 'type deve ser "welcome" ou "session".' });
+  }
+
+  const column = type === 'welcome' ? 'coachmarks_welcome_seen' : 'coachmarks_session_seen';
+
+  try {
+    await pool.query(
+      `UPDATE users SET ${column} = TRUE WHERE id = $1`,
+      [req.userId]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[AUTH] coachmarks update error:', err.message);
+    res.status(500).json({ error: 'Erro interno.' });
+  }
 });
 
 module.exports = router;
