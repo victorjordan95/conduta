@@ -14,6 +14,8 @@ const analyzeRoutes = require('./routes/analyze');
 const feedbackRoutes = require('./routes/feedback');
 const { usageCheck } = require('./middleware/usageCheck');
 const usageRoutes = require('./routes/usage');
+const billingRoutes = require('./routes/billing');
+const { webhookHandler } = require('./routes/billing');
 
 const app = express();
 
@@ -43,6 +45,10 @@ const corsOptions = {
 app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 app.use(helmet());
+
+// Webhook Stripe — raw body obrigatório para verificar assinatura (antes do express.json global)
+app.post('/billing/webhook', express.raw({ type: 'application/json' }), webhookHandler);
+
 app.use(express.json());
 
 // Rate limiting: login — 10 tentativas / 15 min por IP
@@ -77,5 +83,6 @@ app.use('/sessions', sessionsRoutes);
 app.use('/analyze', authMiddleware, usageCheck, analyzeLimiter, analyzeRoutes);
 app.use('/usage', authMiddleware, usageRoutes);
 app.use('/feedback', feedbackRoutes);
+app.use('/billing', authMiddleware, billingRoutes);
 
 module.exports = app;
