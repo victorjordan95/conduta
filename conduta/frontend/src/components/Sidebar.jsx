@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { getSessions, createSession, renameSession, deleteSession } from '../services/api';
 import styles from './Sidebar.module.scss';
 
-export default function Sidebar({ activeSessionId, onSelectSession, onSessionDeleted, isOpen, onClose }) {
+export default function Sidebar({ activeSessionId, onSelectSession, onNewSession, onSessionDeleted, isOpen, onClose }) {
   const { user, clearAuth } = useAuth();
   const [sessions, setSessions] = useState([]);
   const [search, setSearch] = useState('');
@@ -26,7 +26,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onSessionDel
     try {
       const session = await createSession('Novo caso');
       setSessions((prev) => [session, ...prev]);
-      onSelectSession(session.id);
+      onNewSession(session.id);
     } catch (err) {
       console.error(err);
     }
