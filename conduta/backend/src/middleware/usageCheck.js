@@ -14,18 +14,27 @@ async function getMonthlyUsed(userId) {
   return parseInt(result.rows[0].count, 10);
 }
 
+async function getBonusCredits(userId) {
+  const result = await pool.query('SELECT bonus_credits FROM users WHERE id = $1', [userId]);
+  return result.rows[0]?.bonus_credits ?? 0;
+}
+
 async function usageCheck(req, res, next) {
   if (req.userRole === 'admin' || req.userPlan === 'pro') return next();
 
   try {
     const limit = plans.free.analysesPerMonth;
-    const used = await getMonthlyUsed(req.userId);
+    const [used, bonusCredits] = await Promise.all([
+      getMonthlyUsed(req.userId),
+      getBonusCredits(req.userId),
+    ]);
 
-    if (used >= limit) {
+    if (used >= limit + bonusCredits) {
       return res.status(429).json({
-        error: 'Você atingiu seu limite de 15 análises este mês.',
+        error: 'Você atingiu seu limite de análises este mês.',
         used,
         limit,
+        bonus_credits: bonusCredits,
         plan: req.userPlan,
       });
     }
@@ -37,4 +46,4 @@ async function usageCheck(req, res, next) {
   }
 }
 
-module.exports = { usageCheck, getMonthlyUsed };
+module.exports = { usageCheck, getMonthlyUsed, getBonusCredits };

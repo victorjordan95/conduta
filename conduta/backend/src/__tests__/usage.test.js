@@ -80,3 +80,33 @@ describe('POST /analyze — limite mensal', () => {
     expect(res.body).toMatchObject({ used: 15, limit: 15, plan: 'free' });
   });
 });
+
+describe('bonus_credits', () => {
+  it('GET /usage retorna bonus_credits do usuário', async () => {
+    await pool.query('UPDATE users SET bonus_credits = 3 WHERE email = $1', [TEST_EMAIL]);
+    const res = await request(app)
+      .get('/usage')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.status).toBe(200);
+    expect(res.body.bonus_credits).toBe(3);
+    await pool.query('UPDATE users SET bonus_credits = 0 WHERE email = $1', [TEST_EMAIL]);
+  });
+
+  it('POST /analyze não bloqueia quando used < limit + bonus_credits', async () => {
+    // Preenche exatamente 15 mensagens (atingiria o limite normal)
+    const values = Array.from({ length: 15 }, (_, i) => `($1, 'user', 'Caso ${i + 1}')`).join(', ');
+    await pool.query(`INSERT INTO messages (session_id, role, content) VALUES ${values}`, [sessionId]);
+    // Concede 2 créditos extras
+    await pool.query('UPDATE users SET bonus_credits = 2 WHERE email = $1', [TEST_EMAIL]);
+
+    // Sem chamar LLM real, apenas verifica que usageCheck passa (a rota /analyze pode falhar por outros motivos,
+    // mas não deve retornar 429)
+    const res = await request(app)
+      .post('/analyze')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ session_id: sessionId, content: 'Caso extra com crédito' });
+
+    expect(res.status).not.toBe(429);
+    await pool.query('UPDATE users SET bonus_credits = 0 WHERE email = $1', [TEST_EMAIL]);
+  });
+});
