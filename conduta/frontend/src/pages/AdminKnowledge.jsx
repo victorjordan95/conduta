@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { getPendingKnowledge, approveKnowledge, rejectKnowledge, listDocuments, uploadDocument, getFeedbackStats, getAdminFeedbacks, deactivateAdminFeedback, getAdminUsers, updateUserPlan, updateUserStatus } from '../services/api';
+import { getPendingKnowledge, approveKnowledge, rejectKnowledge, listDocuments, uploadDocument, getFeedbackStats, getAdminFeedbacks, deactivateAdminFeedback, validateAdminFeedback, rejectAdminFeedback, getAdminUsers, updateUserPlan, updateUserStatus, grantUserCredits } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import styles from './AdminKnowledge.module.scss';
 
@@ -9,6 +9,8 @@ function UsersPanel({ currentUserId }) {
   const [search, setSearch] = useState('');
   const [actionLoading, setActionLoading] = useState({});
   const [rowMessages, setRowMessages] = useState({});
+  const [creditInputId, setCreditInputId] = useState(null);
+  const [creditAmount, setCreditAmount] = useState('');
   const [fetchError, setFetchError] = useState('');
   const debounceRef = useRef(null);
   const messageTimersRef = useRef({});
@@ -53,6 +55,25 @@ function UsersPanel({ currentUserId }) {
       const updated = await updateUserPlan(u.id, novoPlan);
       setUsers((prev) => prev.map((x) => (x.id === u.id ? { ...x, plan: updated.plan } : x)));
       setRowMessage(u.id, 'success', `Plano alterado para ${updated.plan}.`);
+    } catch (err) {
+      setRowMessage(u.id, 'error', err.message);
+    } finally {
+      setActionLoading((prev) => ({ ...prev, [u.id]: null }));
+    }
+  }
+
+  async function handleGrantCredits(u) {
+    const amount = parseInt(creditAmount, 10);
+    if (!amount || amount < 1 || amount > 100) {
+      setRowMessage(u.id, 'error', 'Valor inválido (1–100).');
+      return;
+    }
+    setActionLoading((prev) => ({ ...prev, [u.id]: 'credits' }));
+    try {
+      const result = await grantUserCredits(u.id, amount);
+      setRowMessage(u.id, 'success', `+${amount} créditos. Total: ${result.bonusCredits}.`);
+      setCreditInputId(null);
+      setCreditAmount('');
     } catch (err) {
       setRowMessage(u.id, 'error', err.message);
     } finally {
@@ -162,6 +183,42 @@ function UsersPanel({ currentUserId }) {
                     >
                       {busy === 'status' ? '...' : u.active ? 'Desativar' : 'Reativar'}
                     </button>
+                    {!isSelf && (
+                      creditInputId === u.id ? (
+                        <>
+                          <input
+                            type="number"
+                            min="1"
+                            max="100"
+                            value={creditAmount}
+                            onChange={(e) => setCreditAmount(e.target.value)}
+                            style={{ width: 50, marginRight: 4, padding: '2px 4px', fontSize: '0.78rem' }}
+                            autoFocus
+                          />
+                          <button
+                            className={styles.approveBtn}
+                            onClick={() => handleGrantCredits(u)}
+                            disabled={!!busy}
+                          >
+                            {busy === 'credits' ? '...' : 'OK'}
+                          </button>
+                          <button
+                            className={styles.rejectBtn}
+                            onClick={() => { setCreditInputId(null); setCreditAmount(''); }}
+                          >
+                            ✕
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          className={styles.planBtn}
+                          onClick={() => { setCreditInputId(u.id); setCreditAmount(''); }}
+                          disabled={!!busy}
+                        >
+                          + Créditos
+                        </button>
+                      )
+                    )}
                   </td>
                 </tr>
               );
@@ -333,6 +390,32 @@ export default function AdminKnowledge() {
     }
   }
 
+  async function handleValidate(nodeId) {
+    try {
+      const result = await validateAdminFeedback(nodeId);
+      setCorrections((prev) =>
+        prev.map((c) => (c.nodeId === nodeId ? { ...c, status: 'active' } : c))
+      );
+      if (result.creditsGranted > 0) {
+        alert(`Correção validada. +${result.creditsGranted} análises creditadas ao usuário.`);
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+  async function handleRejectCorrection(nodeId) {
+    if (!confirm('Rejeitar esta correção?')) return;
+    try {
+      await rejectAdminFeedback(nodeId);
+      setCorrections((prev) =>
+        prev.map((c) => (c.nodeId === nodeId ? { ...c, status: 'inactive' } : c))
+      );
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
   async function handleReject(elementId) {
     if (!confirm('Rejeitar e remover este item?')) return;
     setProcessing((prev) => new Set(prev).add(elementId));
@@ -462,12 +545,26 @@ export default function AdminKnowledge() {
                   <td className={styles.correctionNota}>{c.nota?.slice(0, 120)}{c.nota?.length > 120 ? '…' : ''}</td>
                   <td className={styles.correctionKeywords}>{(c.keywords || []).slice(0, 5).join(', ')}</td>
                   <td>
-                    <span className={c.status === 'active' ? styles.badgeActive : styles.badgeInactive}>
-                      {c.status}
+                    <span className={
+                      c.status === 'active' ? styles.badgeActive :
+                      c.status === 'pending_validation' ? styles.badgePending :
+                      styles.badgeInactive
+                    }>
+                      {c.status === 'pending_validation' ? 'pendente' : c.status}
                     </span>
                   </td>
                   <td className={styles.date}>{c.createdAt ? new Date(c.createdAt).toLocaleDateString('pt-BR') : '—'}</td>
                   <td>
+                    {c.status === 'pending_validation' && (
+                      <>
+                        <button className={styles.approveBtn} onClick={() => handleValidate(c.nodeId)}>
+                          Validar ✓
+                        </button>
+                        <button className={styles.rejectBtn} onClick={() => handleRejectCorrection(c.nodeId)}>
+                          Rejeitar ✗
+                        </button>
+                      </>
+                    )}
                     {c.status === 'active' && (
                       <button className={styles.rejectBtn} onClick={() => handleDeactivate(c.nodeId)}>
                         Desativar
