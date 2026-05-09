@@ -107,4 +107,30 @@ router.put('/users/:id/plan', adminMiddleware, async (req, res) => {
   }
 });
 
+router.post('/users/:id/grant-credits', adminMiddleware, async (req, res) => {
+  const { amount } = req.body;
+
+  if (!Number.isInteger(amount) || amount < 1 || amount > 100) {
+    return res.status(400).json({ error: 'amount deve ser um inteiro entre 1 e 100.' });
+  }
+
+  try {
+    const result = await pool.query(
+      `UPDATE users SET bonus_credits = bonus_credits + $1
+       WHERE id = $2 AND role != 'admin'
+       RETURNING id, bonus_credits`,
+      [amount, req.params.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    res.json({ ok: true, bonusCredits: result.rows[0].bonus_credits });
+  } catch (err) {
+    console.error('[admin] grant-credits:', err.message);
+    res.status(500).json({ error: 'Erro interno.' });
+  }
+});
+
 module.exports = router;
