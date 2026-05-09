@@ -83,12 +83,12 @@ async function applyKnowledgeFeedback(sessionId, feedback, note, messageContent)
              sessionId: $sessionId,
              nota: $nota,
              keywords: $keywords,
-             status: 'active',
+             status: 'pending_validation',
              createdAt: $now
            })`,
           { sessionId, nota: notaFinal, keywords, now: new Date().toISOString() }
         );
-        console.log(`[feedback] Correcao criada para session ${sessionId}: "${notaFinal.slice(0, 60)}..."`);
+        console.log(`[feedback] Correcao pendente criada para session ${sessionId}: "${notaFinal.slice(0, 60)}..."`);
       }
     }
   } finally {
