@@ -75,7 +75,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
         </div>
       </div>
 
-      <button className={styles.newCase} onClick={handleNewCase}>
+      <button className={styles.newCase} onClick={handleNewCase} data-coachmark="new-case">
         + Novo caso
       </button>
 

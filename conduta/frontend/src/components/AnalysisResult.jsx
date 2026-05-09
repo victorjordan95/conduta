@@ -111,7 +111,7 @@ export default function AnalysisResult({ messages, streaming, loading, onFeedbac
 
   if (!messages || messages.length === 0) {
     return (
-      <div className={styles.container}>
+      <div className={styles.container} data-coachmark="results">
         <p className={styles.empty}>Descreva o caso abaixo para iniciar a análise</p>
       </div>
     );

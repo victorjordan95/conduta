@@ -191,7 +191,7 @@ export default function Dashboard() {
           type="welcome"
           steps={[
             {
-              target: 'sidebar',
+              target: 'new-case',
               title: 'Painel lateral',
               text: 'Crie um novo caso clínico pelo botão "+ Novo caso" ou retome um anterior.',
             },

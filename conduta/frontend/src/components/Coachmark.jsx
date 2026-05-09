@@ -12,7 +12,7 @@ export default function Coachmark({ type, steps, onDone }) {
 
   const updateRect = useCallback(() => {
     const el = document.querySelector(`[data-coachmark="${currentStep.target}"]`);
-    if (el) setRect(el.getBoundingClientRect());
+    setRect(el ? el.getBoundingClientRect() : null);
   }, [currentStep.target]);
 
   useEffect(() => {
