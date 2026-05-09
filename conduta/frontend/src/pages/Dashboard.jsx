@@ -90,7 +90,7 @@ function EntitiesPanel({ sessionId }) {
 }
 
 export default function Dashboard() {
-  const { user, token, saveAuth } = useAuth();
+  const { user, token, saveAuth, refreshUser } = useAuth();
   const [activeSessionId, setActiveSessionId] = useState(null);
   const [activeSession, setActiveSession] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -112,6 +112,14 @@ export default function Dashboard() {
       setShowWelcomeTour(true);
     }
   }, [user]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+      refreshUser();
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   async function refreshUsage() {
     if (user?.plan === 'free') {
