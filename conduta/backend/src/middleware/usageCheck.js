@@ -33,7 +33,7 @@ async function usageCheck(req, res, next) {
       return res.status(429).json({
         error: 'Você atingiu seu limite de análises este mês.',
         used,
-        limit,
+        limit: limit + bonusCredits,
         bonus_credits: bonusCredits,
         plan: req.userPlan,
       });

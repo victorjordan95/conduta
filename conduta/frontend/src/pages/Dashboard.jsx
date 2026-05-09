@@ -90,7 +90,7 @@ function EntitiesPanel({ sessionId }) {
 }
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, token, saveAuth } = useAuth();
   const [activeSessionId, setActiveSessionId] = useState(null);
   const [activeSession, setActiveSession] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -108,7 +108,7 @@ export default function Dashboard() {
   }, [user]);
 
   useEffect(() => {
-    if (user && user.coachmarks_welcome_seen === false) {
+    if (user && !user.coachmarks_welcome_seen) {
       setShowWelcomeTour(true);
     }
   }, [user]);
@@ -138,10 +138,10 @@ export default function Dashboard() {
 
   async function handleNewSession(id) {
     await handleSelectSession(id);
-    if (user && user.coachmarks_session_seen === false) {
+    setSidebarOpen(false);
+    if (user && !user.coachmarks_session_seen) {
       setShowSessionTour(true);
     }
-    setSidebarOpen(false);
   }
 
   function handleSessionDeleted(deletedId) {
@@ -196,7 +196,10 @@ export default function Dashboard() {
               text: 'Crie um novo caso clínico pelo botão "+ Novo caso" ou retome um anterior.',
             },
           ]}
-          onDone={() => setShowWelcomeTour(false)}
+          onDone={() => {
+            setShowWelcomeTour(false);
+            if (user && token) saveAuth(token, { ...user, coachmarks_welcome_seen: true });
+          }}
         />
       )}
 
@@ -220,7 +223,10 @@ export default function Dashboard() {
               text: 'Clique para ver diagnósticos e medicamentos detectados automaticamente no caso.',
             },
           ]}
-          onDone={() => setShowSessionTour(false)}
+          onDone={() => {
+            setShowSessionTour(false);
+            if (user && token) saveAuth(token, { ...user, coachmarks_session_seen: true });
+          }}
         />
       )}
 

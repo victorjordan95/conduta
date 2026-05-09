@@ -94,6 +94,9 @@ router.put('/:nodeId/validate', adminMiddleware, async (req, res) => {
       [sessionId]
     );
 
+    if (pgResult.rows.length === 0) {
+      console.warn(`[admin-feedback] validate: sessionId ${sessionId} não encontrado no PG — Correcao ativada mas crédito não concedido`);
+    }
     const creditsGranted = pgResult.rows.length > 0 ? 2 : 0;
     res.json({ ok: true, creditsGranted });
   } catch (err) {
