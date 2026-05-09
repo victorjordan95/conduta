@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getSessions, createSession, renameSession, deleteSession } from '../services/api';
+import { createCheckoutSession, getBillingPortalUrl } from '../services/api';
 import styles from './Sidebar.module.scss';
 
 export default function Sidebar({ activeSessionId, onSelectSession, onNewSession, onSessionDeleted, isOpen, onClose }) {
@@ -10,6 +11,31 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
   const [menuOpenId, setMenuOpenId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [editingTitulo, setEditingTitulo] = useState('');
+  const [billingLoading, setBillingLoading] = useState(false);
+
+  async function handleUpgrade() {
+    setBillingLoading(true);
+    try {
+      const { url } = await createCheckoutSession();
+      window.location.href = url;
+    } catch (err) {
+      window.alert('Erro ao abrir pagamento. Tente novamente.');
+    } finally {
+      setBillingLoading(false);
+    }
+  }
+
+  async function handleManageSubscription() {
+    setBillingLoading(true);
+    try {
+      const { url } = await getBillingPortalUrl();
+      window.location.href = url;
+    } catch (err) {
+      window.alert('Erro ao abrir portal. Tente novamente.');
+    } finally {
+      setBillingLoading(false);
+    }
+  }
 
   useEffect(() => {
     getSessions().then(setSessions).catch(console.error);
@@ -161,10 +187,30 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
       </div>
 
       <div className={styles.footer}>
-        <span className={styles.userName}>{user?.nome}</span>
-        <button className={styles.logoutBtn} onClick={clearAuth}>
-          Sair
-        </button>
+        {user?.plan === 'free' && (
+          <button
+            className={styles.upgradeBtn}
+            onClick={handleUpgrade}
+            disabled={billingLoading}
+          >
+            {billingLoading ? '...' : '⭐ Assinar Pro'}
+          </button>
+        )}
+        {user?.plan === 'pro' && (
+          <button
+            className={styles.manageBtn}
+            onClick={handleManageSubscription}
+            disabled={billingLoading}
+          >
+            {billingLoading ? '...' : 'Gerenciar assinatura'}
+          </button>
+        )}
+        <div className={styles.footerUser}>
+          <span className={styles.userName}>{user?.nome}</span>
+          <button className={styles.logoutBtn} onClick={clearAuth}>
+            Sair
+          </button>
+        </div>
       </div>
     </aside>
   );
