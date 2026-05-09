@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { getMe } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -25,6 +26,16 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
+  async function refreshUser() {
+    if (!token) return;
+    try {
+      const data = await getMe();
+      const updatedUser = { ...user, ...data };
+      localStorage.setItem('conduta_user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+    } catch {}
+  }
+
   useEffect(() => {
     const handler = (e) => {
       setKickMessage(e.detail?.message || null);
@@ -35,7 +46,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token, user, kickMessage, saveAuth, clearAuth }}>
+    <AuthContext.Provider value={{ token, user, kickMessage, saveAuth, clearAuth, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
