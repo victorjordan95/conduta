@@ -178,4 +178,19 @@ router.patch('/me/coachmarks', authMiddleware, async (req, res) => {
   }
 });
 
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, email, nome, role, plan, coachmarks_welcome_seen, coachmarks_session_seen
+       FROM users WHERE id = $1`,
+      [req.userId]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'Usuário não encontrado.' });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('[AUTH] GET /me error:', err.message);
+    res.status(500).json({ error: 'Erro interno.' });
+  }
+});
+
 module.exports = router;
