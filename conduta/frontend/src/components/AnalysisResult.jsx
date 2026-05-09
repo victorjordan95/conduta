@@ -118,7 +118,7 @@ export default function AnalysisResult({ messages, streaming, loading, onFeedbac
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-coachmark="results">
       {messages.map((msg, i) =>
         msg.role === 'user' ? (
           <div key={i} className={styles.userMessage}>

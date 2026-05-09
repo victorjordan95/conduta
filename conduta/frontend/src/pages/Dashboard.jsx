@@ -3,6 +3,7 @@ import Sidebar from '../components/Sidebar';
 import CaseInput from '../components/CaseInput';
 import AnalysisResult from '../components/AnalysisResult';
 import UsageCounter from '../components/UsageCounter';
+import Coachmark from '../components/Coachmark';
 import { getSession, submitFeedback, getUsage, downloadSessionPdf, getSessionEntities } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import styles from './Dashboard.module.scss';
@@ -39,7 +40,7 @@ function EntitiesPanel({ sessionId }) {
   const total = entities ? entities.diagnosticos.length + entities.medicamentos.length : 0;
 
   return (
-    <div className={styles.entitiesPanel}>
+    <div className={styles.entitiesPanel} data-coachmark="entities">
       <button className={styles.entitiesToggle} onClick={handleToggle}>
         {open ? '▴' : '▾'} Entidades extraídas{entities !== null ? ` (${total})` : ''}
       </button>
@@ -97,10 +98,18 @@ export default function Dashboard() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [usage, setUsage] = useState(null);
+  const [showWelcomeTour, setShowWelcomeTour] = useState(false);
+  const [showSessionTour, setShowSessionTour] = useState(false);
 
   useEffect(() => {
     if (user?.plan === 'free') {
       getUsage().then(setUsage).catch(() => {});
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user && user.coachmarks_welcome_seen === false) {
+      setShowWelcomeTour(true);
     }
   }, [user]);
 
@@ -125,6 +134,14 @@ export default function Dashboard() {
     } finally {
       setLoadingHistory(false);
     }
+  }
+
+  async function handleNewSession(id) {
+    await handleSelectSession(id);
+    if (user && user.coachmarks_session_seen === false) {
+      setShowSessionTour(true);
+    }
+    setSidebarOpen(false);
   }
 
   function handleSessionDeleted(deletedId) {
@@ -159,6 +176,7 @@ export default function Dashboard() {
           handleSelectSession(id);
           setSidebarOpen(false);
         }}
+        onNewSession={handleNewSession}
         onSessionDeleted={handleSessionDeleted}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -166,6 +184,44 @@ export default function Dashboard() {
 
       {sidebarOpen && (
         <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
+      )}
+
+      {showWelcomeTour && (
+        <Coachmark
+          type="welcome"
+          steps={[
+            {
+              target: 'sidebar',
+              title: 'Painel lateral',
+              text: 'Crie um novo caso clínico pelo botão "+ Novo caso" ou retome um anterior.',
+            },
+          ]}
+          onDone={() => setShowWelcomeTour(false)}
+        />
+      )}
+
+      {showSessionTour && (
+        <Coachmark
+          type="session"
+          steps={[
+            {
+              target: 'case-input',
+              title: 'Campo do caso clínico',
+              text: 'Descreva o caso como em um prontuário — idade, queixa, sinais vitais, evolução.',
+            },
+            {
+              target: 'results',
+              title: 'Resultado da análise',
+              text: 'Após cada resposta, avalie com 👍 ou 👎. Feedbacks negativos corretos e validados pelo time rendem +2 análises extras.',
+            },
+            {
+              target: 'entities',
+              title: 'Entidades extraídas',
+              text: 'Clique para ver diagnósticos e medicamentos detectados automaticamente no caso.',
+            },
+          ]}
+          onDone={() => setShowSessionTour(false)}
+        />
       )}
 
       <main className={styles.main}>

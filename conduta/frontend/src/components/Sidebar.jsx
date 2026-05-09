@@ -62,7 +62,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
     : sessions;
 
   return (
-    <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
+    <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`} data-coachmark="sidebar">
       <div className={styles.header}>
         <div className={styles.headerTop}>
           <div>

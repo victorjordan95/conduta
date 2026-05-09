@@ -33,7 +33,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-coachmark="case-input">
       {limitReached && (
         <div className={styles.limitBanner}>
           <span>Você atingiu seu limite de {usage.limit} análises este mês.</span>
