@@ -147,3 +147,48 @@ describe('GET /auth/me', () => {
     expect(res.status).toBe(401);
   });
 });
+
+describe('POST /auth/signup', () => {
+  const email = 'signup-test@conduta.dev';
+
+  afterAll(async () => {
+    await pool.query('DELETE FROM users WHERE email = $1', [email]);
+  });
+
+  it('cria usuário e salva terms_accepted_at quando enviado', async () => {
+    const termsTs = new Date().toISOString();
+
+    const res = await request(app)
+      .post('/auth/signup')
+      .send({ nome: 'Dr. Signup', email, senha: 'Senha123', terms_accepted_at: termsTs });
+
+    expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty('token');
+    expect(res.body.user).toHaveProperty('email', email);
+
+    const db = await pool.query(
+      'SELECT terms_accepted_at FROM users WHERE email = $1',
+      [email]
+    );
+    expect(db.rows[0].terms_accepted_at).not.toBeNull();
+  });
+
+  it('cria usuário com terms_accepted_at null quando não enviado', async () => {
+    const email2 = 'signup-noterms@conduta.dev';
+    try {
+      const res = await request(app)
+        .post('/auth/signup')
+        .send({ nome: 'Dr. NoTerms', email: email2, senha: 'Senha123' });
+
+      expect(res.status).toBe(201);
+
+      const db = await pool.query(
+        'SELECT terms_accepted_at FROM users WHERE email = $1',
+        [email2]
+      );
+      expect(db.rows[0].terms_accepted_at).toBeNull();
+    } finally {
+      await pool.query('DELETE FROM users WHERE email = $1', [email2]);
+    }
+  });
+});

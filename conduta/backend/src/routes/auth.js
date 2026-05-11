@@ -109,7 +109,7 @@ router.post('/register', adminMiddleware, async (req, res) => {
 });
 
 router.post('/signup', async (req, res) => {
-  const { email, nome, senha } = req.body;
+  const { email, nome, senha, terms_accepted_at } = req.body;
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
   if (!email || !nome || !senha) {
@@ -123,10 +123,10 @@ router.post('/signup', async (req, res) => {
   try {
     const senhaHash = await bcrypt.hash(senha, 10);
     const result = await pool.query(
-      `INSERT INTO users (email, nome, senha_hash, role)
-       VALUES ($1, $2, $3, 'user')
+      `INSERT INTO users (email, nome, senha_hash, role, terms_accepted_at)
+       VALUES ($1, $2, $3, 'user', $4)
        RETURNING id, email, nome, role, plan, coachmarks_welcome_seen, coachmarks_session_seen`,
-      [email, nome, senhaHash]
+      [email, nome, senhaHash, terms_accepted_at || null]
     );
     const user = result.rows[0];
 
