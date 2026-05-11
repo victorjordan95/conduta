@@ -72,7 +72,7 @@ describe('Dashboard — banners de sessão longa', () => {
 
     fireEvent.click(screen.getByText('simular 16 msg'));
 
-    expect(screen.getByText(/Nova sessão/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Nova sessão/i })).toBeInTheDocument();
     expect(screen.queryByText(/Contexto longo/i)).not.toBeInTheDocument();
   });
 
@@ -82,7 +82,7 @@ describe('Dashboard — banners de sessão longa', () => {
     await waitFor(() => screen.getByTestId('case-input'));
     fireEvent.click(screen.getByText('simular 16 msg'));
 
-    fireEvent.click(screen.getByText('Nova sessão'));
+    fireEvent.click(screen.getByRole('button', { name: /Nova sessão/i }));
 
     expect(screen.queryByTestId('case-input')).not.toBeInTheDocument();
   });

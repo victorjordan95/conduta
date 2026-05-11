@@ -284,14 +284,15 @@ export default function Dashboard() {
             />
             <EntitiesPanel sessionId={activeSessionId} />
             {userMsgCount >= 16 && (
-              <div className={styles.bannerCritico}>
-                <span>Sessão muito longa — considere reiniciar o caso para manter a precisão das respostas.</span>
+              <div className={styles.bannerCritico} role="alert">
+                <span>Sessão longa — considere iniciar uma nova sessão para manter a precisão das respostas.</span>
                 <button
                   className={styles.bannerBtn}
                   onClick={() => {
                     setActiveSessionId(null);
                     setActiveSession(null);
                     setMessages([]);
+                    setStreaming(false);
                     setUserMsgCount(0);
                   }}
                 >
@@ -300,7 +301,7 @@ export default function Dashboard() {
               </div>
             )}
             {userMsgCount >= 8 && userMsgCount < 16 && (
-              <div className={styles.bannerAviso}>
+              <div className={styles.bannerAviso} role="status">
                 Contexto longo — mensagens antigas foram resumidas para reduzir custo.
               </div>
             )}
