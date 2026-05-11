@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { analyzeCase } from '../services/api';
 import styles from './CaseInput.module.scss';
 
-export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, onAnalysisDone, onUsageUpdate }) {
+export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, onAnalysisDone, onUsageUpdate, onSessionMsgCount }) {
   const [content, setContent] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState('');
@@ -18,7 +18,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
 
     try {
       onAnalysisStart(content.trim());
-      await analyzeCase(sessionId, content.trim(), onChunk);
+      await analyzeCase(sessionId, content.trim(), onChunk, onSessionMsgCount);
       setContent('');
     } catch (err) {
       if (err.code === 'USAGE_LIMIT' && err.usage) {

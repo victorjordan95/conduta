@@ -100,8 +100,9 @@ export async function submitFeedback(messageId, feedback, note) {
 /**
  * Envia caso para análise com streaming SSE.
  * Chama onChunk(string) a cada fragmento recebido.
+ * Chama onSessionMsgCount(number) quando recebe session_msg_count.
  */
-export async function analyzeCase(sessionId, content, onChunk) {
+export async function analyzeCase(sessionId, content, onChunk, onSessionMsgCount) {
   const res = await fetch(`${BASE_URL}/analyze`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
@@ -132,8 +133,12 @@ export async function analyzeCase(sessionId, content, onChunk) {
       const data = line.slice(6);
       if (data === '[DONE]') return;
       try {
-        const { content: chunk } = JSON.parse(data);
-        if (chunk) onChunk(chunk);
+        const parsed = JSON.parse(data);
+        if (parsed.session_msg_count !== undefined) {
+          onSessionMsgCount?.(parsed.session_msg_count);
+        } else if (parsed.content) {
+          onChunk(parsed.content);
+        }
       } catch {
         // ignora linha malformada
       }
