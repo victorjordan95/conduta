@@ -75,7 +75,6 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await pool.query(`DELETE FROM users WHERE email = 'analyze_sse_test@conduta.dev'`);
-  await pool.end();
 });
 
 describe('POST /analyze — evento SSE session_msg_count', () => {
