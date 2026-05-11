@@ -94,7 +94,7 @@ export default function PrecosSection() {
 
         <p className={styles.estudante}>
           Estudante de medicina?{' '}
-          <a href="mailto:contato@useconduta.com.br" className={styles.estudanteLink}>
+          <a href="mailto:app.conduta@gmail.com" className={styles.estudanteLink}>
             Fale com a gente — temos condições especiais.
           </a>
         </p>

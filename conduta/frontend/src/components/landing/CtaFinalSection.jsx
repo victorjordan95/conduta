@@ -34,8 +34,8 @@ export default function CtaFinalSection() {
 
       <footer className={styles.footer}>
         <span>Conduta · Feito para médicos brasileiros</span>
-        <a href="mailto:contato@useconduta.com.br" className={styles.footerLink}>
-          contato@useconduta.com.br
+        <a href="mailto:app.conduta@gmail.com" className={styles.footerLink}>
+          app.conduta@gmail.com
         </a>
       </footer>
     </section>
