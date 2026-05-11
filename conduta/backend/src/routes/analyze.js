@@ -67,6 +67,13 @@ router.post('/', async (req, res) => {
 
     const summaryForStream = !isFirstMessage ? sessionSummary : null;
 
+    const sessionMsgCount = history.filter((m) => m.role === 'user').length;
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+    res.write(`data: ${JSON.stringify({ session_msg_count: sessionMsgCount })}\n\n`);
+
     const fullResponse = await streamAnalysis(history, content, context, summaryForStream, res);
 
     if (fullResponse) {
