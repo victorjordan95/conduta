@@ -361,6 +361,12 @@ export default function Dashboard() {
             />
           </>
         )}
+
+        <footer className={styles.footer}>
+          <a href="/termos" target="_blank" rel="noreferrer">Termos de Uso</a>
+          {' · '}
+          <a href="/privacidade" target="_blank" rel="noreferrer">Política de Privacidade</a>
+        </footer>
       </main>
     </div>
   );
