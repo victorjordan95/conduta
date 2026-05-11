@@ -166,3 +166,37 @@
     }
   }
 }
+
+.termosField {
+  margin-bottom: 16px;
+}
+
+.termosLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.5;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+
+  input[type='checkbox'] {
+    width: auto;
+    margin-top: 2px;
+    flex-shrink: 0;
+    accent-color: $color-accent;
+    cursor: pointer;
+  }
+
+  a {
+    color: $color-accent;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

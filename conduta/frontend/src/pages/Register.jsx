@@ -38,6 +38,7 @@ export default function Register() {
   const [senhaFocada, setSenhaFocada] = useState(false);
   const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
+  const [termosAceitos, setTermosAceitos] = useState(false);
   const { saveAuth } = useAuth();
   const navigate = useNavigate();
 
@@ -60,7 +61,7 @@ export default function Register() {
 
     setLoading(true);
     try {
-      const data = await register(nome, email, senha);
+      const data = await register(nome, email, senha, new Date().toISOString());
       saveAuth(data.token, data.user);
       navigate('/');
     } catch (err) {
@@ -168,10 +169,26 @@ export default function Register() {
             )}
           </div>
 
+          <div className={styles.termosField}>
+            <label className={styles.termosLabel}>
+              <input
+                type="checkbox"
+                checked={termosAceitos}
+                onChange={(e) => setTermosAceitos(e.target.checked)}
+              />
+              <span>
+                Li e concordo com os{' '}
+                <a href="/termos" target="_blank" rel="noreferrer">Termos de Uso</a>
+                {' '}e a{' '}
+                <a href="/privacidade" target="_blank" rel="noreferrer">Política de Privacidade</a>
+              </span>
+            </label>
+          </div>
+
           <button
             type="submit"
             className={styles.button}
-            disabled={loading}
+            disabled={loading || !termosAceitos || !senhaValida || !coincidem}
           >
             {loading ? 'Criando conta...' : 'Criar conta grátis'}
           </button>

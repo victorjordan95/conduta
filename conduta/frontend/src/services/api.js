@@ -22,11 +22,11 @@ async function checkUnauthorized(res) {
   return res;
 }
 
-export async function register(nome, email, senha) {
+export async function register(nome, email, senha, termsAcceptedAt) {
   const res = await fetch(`${BASE_URL}/auth/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome, email, senha }),
+    body: JSON.stringify({ nome, email, senha, terms_accepted_at: termsAcceptedAt }),
   });
 
   if (!res.ok) {
