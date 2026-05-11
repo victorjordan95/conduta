@@ -138,6 +138,7 @@ export default function Dashboard() {
     try {
       const data = await getSession(id);
       setMessages(data.messages.map((m) => ({ id: m.id, role: m.role, content: m.content, feedback: m.feedback })));
+      setUserMsgCount(data.messages.filter((m) => m.role === 'user').length);
       setActiveSession(data.session);
     } catch (err) {
       console.error('Erro ao carregar histórico:', err.message);
@@ -302,7 +303,7 @@ export default function Dashboard() {
             )}
             {userMsgCount >= 8 && userMsgCount < 16 && (
               <div className={styles.bannerAviso} role="status">
-                Contexto longo — mensagens antigas foram resumidas para reduzir custo.
+                Contexto truncado — apenas as últimas mensagens são enviadas ao modelo.
               </div>
             )}
             <CaseInput

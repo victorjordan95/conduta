@@ -50,7 +50,7 @@ describe('Dashboard — banners de sessão longa', () => {
     fireEvent.click(screen.getByText('Sessão Teste'));
     await waitFor(() => screen.getByTestId('case-input'));
 
-    expect(screen.queryByText(/Contexto longo/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Contexto truncado/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Nova sessão/i)).not.toBeInTheDocument();
   });
 
@@ -61,7 +61,7 @@ describe('Dashboard — banners de sessão longa', () => {
 
     fireEvent.click(screen.getByText('simular 8 msg'));
 
-    expect(screen.getByText(/Contexto longo/i)).toBeInTheDocument();
+    expect(screen.getByText(/Contexto truncado/i)).toBeInTheDocument();
     expect(screen.queryByText(/Nova sessão/i)).not.toBeInTheDocument();
   });
 
@@ -73,7 +73,7 @@ describe('Dashboard — banners de sessão longa', () => {
     fireEvent.click(screen.getByText('simular 16 msg'));
 
     expect(screen.getByRole('button', { name: /Nova sessão/i })).toBeInTheDocument();
-    expect(screen.queryByText(/Contexto longo/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Contexto truncado/i)).not.toBeInTheDocument();
   });
 
   it('botão Nova sessão limpa a sessão ativa', async () => {
