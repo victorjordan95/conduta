@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom';
 import styles from './CtaFinalSection.module.scss';
 
+
 export default function CtaFinalSection() {
   return (
     <section className={styles.section}>
@@ -21,7 +22,7 @@ export default function CtaFinalSection() {
         <div className={styles.ctaGroup}>
           <Link to="/login" className={styles.ctaBtn}>Criar conta grátis</Link>
           <span className={styles.ou}>
-            ou <Link to="/login" className={styles.verPlanos}>ver planos</Link>
+            ou <a href="#precos" className={styles.verPlanos}>ver planos</a>
           </span>
         </div>
 
@@ -37,6 +38,8 @@ export default function CtaFinalSection() {
         <a href="mailto:app.conduta@gmail.com" className={styles.footerLink}>
           app.conduta@gmail.com
         </a>
+        <Link to="/termos" className={styles.footerLink}>Termos de Uso</Link>
+        <Link to="/privacidade" className={styles.footerLink}>Política de Privacidade</Link>
       </footer>
     </section>
   );

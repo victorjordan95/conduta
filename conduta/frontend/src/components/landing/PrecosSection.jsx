@@ -54,7 +54,7 @@ function ItemPlano({ item, pro = false }) {
 
 export default function PrecosSection() {
   return (
-    <section className={styles.section}>
+    <section id="precos" className={styles.section}>
       <div className={shared.section}>
         <p className={shared.sectionLabel}>Planos</p>
         <h2 className={shared.sectionTitle}>
@@ -92,12 +92,7 @@ export default function PrecosSection() {
           </div>
         </div>
 
-        <p className={styles.estudante}>
-          Estudante de medicina?{' '}
-          <a href="mailto:app.conduta@gmail.com" className={styles.estudanteLink}>
-            Fale com a gente — temos condições especiais.
-          </a>
-        </p>
+
       </div>
     </section>
   );
