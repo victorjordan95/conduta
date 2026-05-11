@@ -255,6 +255,14 @@ export default function Dashboard() {
           <span className={styles.mobileBrand}>Conduta</span>
         </header>
 
+        <div className={styles.clinicalBanner} role="status" aria-label="Aviso clínico">
+          <span className={styles.clinicalBannerIcon}>⚕</span>
+          <span>
+            As análises do Conduta são sugestões de apoio clínico.
+            A decisão final é sempre responsabilidade do profissional.
+          </span>
+        </div>
+
         {usage && <UsageCounter used={usage.used} limit={usage.limit} />}
 
         {!activeSessionId ? (
