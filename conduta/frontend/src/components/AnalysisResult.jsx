@@ -140,6 +140,11 @@ export default function AnalysisResult({ messages, streaming, loading, onFeedbac
                 onFeedback={onFeedback}
               />
             )}
+            {(!streaming || i < messages.length - 1) && (
+              <p className={styles.aiDisclaimer}>
+                Esta análise é gerada por inteligência artificial e não substitui o julgamento clínico do profissional.
+              </p>
+            )}
           </div>
         )
       )}
