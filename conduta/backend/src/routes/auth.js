@@ -126,7 +126,7 @@ router.post('/signup', async (req, res) => {
       `INSERT INTO users (email, nome, senha_hash, role, terms_accepted_at)
        VALUES ($1, $2, $3, 'user', $4)
        RETURNING id, email, nome, role, plan, coachmarks_welcome_seen, coachmarks_session_seen`,
-      [email, nome, senhaHash, terms_accepted_at || null]
+      [email, nome, senhaHash, terms_accepted_at ? new Date() : null]
     );
     const user = result.rows[0];
 
@@ -135,6 +135,11 @@ router.post('/signup', async (req, res) => {
       [user.id]
     );
     const sv = svResult.rows[0].session_version;
+
+    if (!process.env.JWT_SECRET) {
+      console.error('[AUTH] JWT_SECRET not set — cannot sign token');
+      return res.status(500).json({ error: 'Erro interno.' });
+    }
 
     const token = jwt.sign(
       { sub: user.id, role: user.role, sv },

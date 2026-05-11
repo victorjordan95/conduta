@@ -157,10 +157,13 @@ describe('POST /auth/signup', () => {
 
   it('cria usuário e salva terms_accepted_at quando enviado', async () => {
     const termsTs = new Date().toISOString();
+    const beforeSignup = Date.now();
 
     const res = await request(app)
       .post('/auth/signup')
       .send({ nome: 'Dr. Signup', email, senha: 'Senha123', terms_accepted_at: termsTs });
+
+    const afterSignup = Date.now();
 
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('token');
@@ -170,7 +173,9 @@ describe('POST /auth/signup', () => {
       'SELECT terms_accepted_at FROM users WHERE email = $1',
       [email]
     );
-    expect(db.rows[0].terms_accepted_at).not.toBeNull();
+    const storedTs = new Date(db.rows[0].terms_accepted_at);
+    expect(storedTs.getTime()).toBeGreaterThanOrEqual(beforeSignup - 100);
+    expect(storedTs.getTime()).toBeLessThanOrEqual(afterSignup + 100);
   });
 
   it('cria usuário com terms_accepted_at null quando não enviado', async () => {
