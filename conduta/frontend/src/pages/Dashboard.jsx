@@ -100,6 +100,7 @@ export default function Dashboard() {
   const [usage, setUsage] = useState(null);
   const [showWelcomeTour, setShowWelcomeTour] = useState(false);
   const [showSessionTour, setShowSessionTour] = useState(false);
+  const [userMsgCount, setUserMsgCount] = useState(0);
 
   useEffect(() => {
     if (user?.plan === 'free') {
@@ -133,6 +134,7 @@ export default function Dashboard() {
     setMessages([]);
     setStreaming(false);
     setLoadingHistory(true);
+    setUserMsgCount(0);
     try {
       const data = await getSession(id);
       setMessages(data.messages.map((m) => ({ id: m.id, role: m.role, content: m.content, feedback: m.feedback })));
@@ -281,10 +283,32 @@ export default function Dashboard() {
               }}
             />
             <EntitiesPanel sessionId={activeSessionId} />
+            {userMsgCount >= 16 && (
+              <div className={styles.bannerCritico}>
+                <span>Sessão muito longa — considere reiniciar o caso para manter a precisão das respostas.</span>
+                <button
+                  className={styles.bannerBtn}
+                  onClick={() => {
+                    setActiveSessionId(null);
+                    setActiveSession(null);
+                    setMessages([]);
+                    setUserMsgCount(0);
+                  }}
+                >
+                  Nova sessão
+                </button>
+              </div>
+            )}
+            {userMsgCount >= 8 && userMsgCount < 16 && (
+              <div className={styles.bannerAviso}>
+                Contexto longo — mensagens antigas foram resumidas para reduzir custo.
+              </div>
+            )}
             <CaseInput
               sessionId={activeSessionId}
               usage={usage}
               onUsageUpdate={(updatedUsage) => setUsage(updatedUsage)}
+              onSessionMsgCount={(count) => setUserMsgCount(count)}
               onAnalysisStart={(userContent) => {
                 setMessages((prev) => [
                   ...prev,

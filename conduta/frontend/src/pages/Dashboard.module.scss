@@ -220,3 +220,44 @@
   font-size: 0.78rem;
   color: #991b1b;
 }
+
+// ── Banners de sessão longa ─────────────────────────────────────
+.bannerAviso {
+  flex-shrink: 0;
+  padding: 8px 20px;
+  background: #fffbeb;
+  border-top: 1px solid #f59e0b;
+  border-bottom: 1px solid #f59e0b;
+  color: #92400e;
+  font-size: 0.8rem;
+}
+
+.bannerCritico {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 20px;
+  background: #fff7ed;
+  border-top: 1px solid #ea580c;
+  border-bottom: 1px solid #ea580c;
+  color: #7c2d12;
+  font-size: 0.8rem;
+}
+
+.bannerBtn {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border: 1px solid #ea580c;
+  border-radius: 4px;
+  background: white;
+  color: #ea580c;
+  font-size: 0.78rem;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background: #fff1ec;
+  }
+}
