@@ -29,7 +29,7 @@ Página estática React com as seguintes seções:
 | 5. Indenização | O usuário concorda em defender, indenizar e isentar o prestador de quaisquer reclamações, ações ou despesas (incluindo honorários advocatícios) movidas por terceiros em razão de atos ou omissões do próprio usuário. |
 | 6. Vedações | Proibido: uso para laudo pericial ou documento oficial; automação de decisões clínicas sem supervisão humana; compartilhamento de credenciais; uso para fins fora do suporte clínico educacional. |
 | 7. Alterações e rescisão | O prestador pode alterar os Termos com aviso de 15 dias por e-mail. O uso continuado após a vigência implica aceite. Contas que violem os Termos podem ser suspensas ou encerradas sem aviso prévio. |
-| 8. Lei aplicável e foro | Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da comarca de domicílio do prestador para dirimir controvérsias. |
+| 8. Lei aplicável e foro | Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da comarca de **Mogi das Cruzes/SP** para dirimir controvérsias. |
 
 ---
 
@@ -46,7 +46,7 @@ Página estática React com as seguintes seções:
 | 5. Compartilhamento | Os textos dos casos são processados pela API do **OpenRouter** (serviço de terceiro responsável pelo roteamento de modelos de linguagem). Não há venda ou compartilhamento de dados para fins comerciais. |
 | 6. Retenção | Dados mantidos enquanto a conta estiver ativa e por 12 meses após o encerramento, salvo obrigação legal de prazo maior. |
 | 7. Direitos do titular | Acesso, correção, exclusão, portabilidade e revogação do consentimento mediante solicitação por e-mail ao controlador. Resposta em até 15 dias úteis. |
-| 8. Controlador | Nome do prestador, CPF parcialmente mascarado (ex: `***.456.789-**`), e-mail de contato. |
+| 8. Controlador | Victor Jordan, CPF `***.278.258-**`, e-mail: app.conduta@gmail.com |
 
 ---
 
