@@ -5,6 +5,8 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import AdminKnowledge from './pages/AdminKnowledge';
 import LandingPage from './pages/LandingPage';
+import TermosUso from './pages/TermosUso';
+import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
 
 function PrivateRoute({ children }) {
   const { token } = useAuth();
@@ -31,6 +33,8 @@ export default function App() {
           <Route path="/" element={<RootRoute />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Register />} />
+          <Route path="/termos" element={<TermosUso />} />
+          <Route path="/privacidade" element={<PoliticaPrivacidade />} />
           <Route
             path="/admin/knowledge"
             element={
