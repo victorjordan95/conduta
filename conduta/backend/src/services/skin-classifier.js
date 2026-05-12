@@ -9,8 +9,13 @@ const MAPA_LABELS = {
 };
 
 async function classificar(buffer, mimetype) {
-  const modelo = process.env.HF_SKIN_MODEL || 'bsenst/skin-cancer-HAM10k';
   const token = process.env.HF_API_TOKEN;
+  if (!token) {
+    const err = new Error('[skin-classifier] HF_API_TOKEN não definido');
+    err.status = 502;
+    throw err;
+  }
+  const modelo = process.env.HF_SKIN_MODEL || 'bsenst/skin-cancer-HAM10k';
 
   const response = await fetch(
     `https://api-inference.huggingface.co/models/${modelo}`,

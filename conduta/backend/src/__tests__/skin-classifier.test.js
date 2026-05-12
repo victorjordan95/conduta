@@ -8,6 +8,8 @@ beforeEach(() => {
 afterEach(() => {
   jest.restoreAllMocks();
   delete global.fetch;
+  delete process.env.HF_API_TOKEN;
+  delete process.env.HF_SKIN_MODEL;
 });
 
 describe('classificar', () => {
@@ -39,6 +41,11 @@ describe('classificar', () => {
   it('lança erro com status 502 para outros erros do HF', async () => {
     global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500 });
 
+    await expect(classificar(Buffer.from('fake'), 'image/jpeg')).rejects.toMatchObject({ status: 502 });
+  });
+
+  it('lança erro 502 quando HF_API_TOKEN não está definido', async () => {
+    delete process.env.HF_API_TOKEN;
     await expect(classificar(Buffer.from('fake'), 'image/jpeg')).rejects.toMatchObject({ status: 502 });
   });
 });
