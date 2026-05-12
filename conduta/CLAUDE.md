@@ -141,4 +141,6 @@ Conduta is a clinical decision support system for general practitioners. Doctors
 | `JWT_EXPIRES_IN` | — | Token TTL, default `8h` |
 | `OPENROUTER_MODEL` | — | Model ID, default `anthropic/claude-sonnet-4-5` |
 | `PORT` | — | Backend port, default `3000` |
+| `HF_API_TOKEN` | — | Token Hugging Face Inference API (obrigatório para classificação de lesões) |
+| `HF_SKIN_MODEL` | — | Modelo HF, default `bsenst/skin-cancer-HAM10k` |
 | `VITE_API_URL` | — | Frontend target URL, default `/api` |

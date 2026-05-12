@@ -85,7 +85,7 @@ app.use('/analyze', authMiddleware, usageCheck, analyzeLimiter, analyzeRoutes);
 app.use('/usage', authMiddleware, usageRoutes);
 app.use('/feedback', feedbackRoutes);
 app.use('/billing', authMiddleware, billingRoutes);
-app.use('/skin', authMiddleware, skinRoutes);
+app.use('/skin', authMiddleware, analyzeLimiter, skinRoutes);
 
 app.use((err, req, res, next) => {
   if (err.code === 'LIMIT_FILE_SIZE') {
