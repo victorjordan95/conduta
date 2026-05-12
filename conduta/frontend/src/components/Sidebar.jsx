@@ -102,11 +102,9 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
         </div>
       </div>
 
-      {user?.role !== 'admin' && (
-        <button className={styles.newCase} onClick={handleNewCase} data-coachmark="new-case">
-          + Novo caso
-        </button>
-      )}
+      <button className={styles.newCase} onClick={handleNewCase} data-coachmark="new-case">
+        + Novo caso
+      </button>
 
       <input
         className={styles.searchInput}

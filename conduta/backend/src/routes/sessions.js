@@ -33,10 +33,6 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  if (req.userRole === 'admin') {
-    return res.status(403).json({ error: 'Admin não pode criar sessões.' });
-  }
-
   const { titulo } = req.body;
   const tituloFinal = titulo || 'Novo caso';
 
