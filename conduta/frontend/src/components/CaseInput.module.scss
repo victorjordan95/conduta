@@ -100,3 +100,82 @@
     text-decoration: underline;
   }
 }
+
+.fotoArea {
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+
+.fotoInput {
+  display: none;
+}
+
+.fotoBtn {
+  font-size: $font-size-sm;
+  color: $color-accent;
+  background: none;
+  border: 1px dashed $color-accent;
+  border-radius: $border-radius;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover:not(:disabled) {
+    background: rgba(26, 107, 115, 0.06);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.fotoAviso {
+  margin-top: 4px;
+  font-size: 11px;
+  color: $color-text-secondary;
+  font-style: italic;
+}
+
+.fotoPreview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #f0f7f8;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+}
+
+.fotoThumb {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.fotoNome {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fotoRemover {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: $color-text-secondary;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+
+  &:hover {
+    background: #e0e0e0;
+    color: $color-danger;
+  }
+}
