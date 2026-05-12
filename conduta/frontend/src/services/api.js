@@ -394,3 +394,19 @@ export async function downloadSessionPdf(id) {
   }
   return res.blob();
 }
+
+export async function classificarLesao(arquivo) {
+  const formData = new FormData();
+  formData.append('imagem', arquivo);
+  const res = await fetch(`${BASE_URL}/skin/classificar`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: formData,
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao classificar imagem.');
+  }
+  return res.json();
+}
