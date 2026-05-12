@@ -55,10 +55,10 @@ describe('CaseInput', () => {
     expect(screen.queryByText(/anexar foto/i)).not.toBeInTheDocument();
   });
 
-  it('exibe botão de foto para usuário pro', () => {
+  it('não exibe botão de foto para usuário pro (feature oculta)', () => {
     useAuth.mockReturnValue({ user: { plan: 'pro', role: 'user' } });
     render(<CaseInput {...defaultProps} />);
-    expect(screen.getByText(/anexar foto de lesão de pele/i)).toBeInTheDocument();
+    expect(screen.queryByText(/anexar foto/i)).not.toBeInTheDocument();
   });
 
   it('exibe botão de foto para admin', () => {
@@ -68,7 +68,7 @@ describe('CaseInput', () => {
   });
 
   it('sem foto: chama apenas analyzeCase', async () => {
-    useAuth.mockReturnValue({ user: { plan: 'pro', role: 'user' } });
+    useAuth.mockReturnValue({ user: { plan: 'free', role: 'user' } });
     render(<CaseInput {...defaultProps} />);
 
     fireEvent.change(screen.getByPlaceholderText(/descreva o caso/i), {
@@ -88,7 +88,7 @@ describe('CaseInput', () => {
   });
 
   it('com foto: chama classificarLesao antes de analyzeCase', async () => {
-    useAuth.mockReturnValue({ user: { plan: 'pro', role: 'user' } });
+    useAuth.mockReturnValue({ user: { plan: 'free', role: 'admin' } });
     classificarLesao.mockResolvedValue({
       classificacao: 'Classificação de lesão cutânea (IA): Melanoma (87%)\n⚠️ Suporte clínico.',
     });

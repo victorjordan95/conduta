@@ -10,8 +10,8 @@ const upload = multer({
 });
 
 router.post('/classificar', upload.single('imagem'), async (req, res) => {
-  if (req.userPlan !== 'pro' && req.userRole !== 'admin') {
-    return res.status(403).json({ error: 'Disponível apenas no plano Pro.' });
+  if (req.userRole !== 'admin') {
+    return res.status(403).json({ error: 'Funcionalidade em fase de testes.' });
   }
 
   if (!req.file) {

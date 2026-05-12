@@ -20,7 +20,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
     };
   }, [fotoUrl]);
 
-  const isPro = user?.plan === 'pro' || user?.role === 'admin';
+  const isPro = user?.role === 'admin';
   const limitReached = usage && usage.limit !== null && usage.used >= usage.limit;
 
   function handleFotoChange(e) {
