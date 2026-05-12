@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getSessions, createSession, renameSession, deleteSession } from '../services/api';
 import { createCheckoutSession, getBillingPortalUrl } from '../services/api';
@@ -101,9 +102,11 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
         </div>
       </div>
 
-      <button className={styles.newCase} onClick={handleNewCase} data-coachmark="new-case">
-        + Novo caso
-      </button>
+      {user?.role !== 'admin' && (
+        <button className={styles.newCase} onClick={handleNewCase} data-coachmark="new-case">
+          + Novo caso
+        </button>
+      )}
 
       <input
         className={styles.searchInput}
@@ -187,7 +190,12 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
       </div>
 
       <div className={styles.footer}>
-        {user?.plan === 'free' && (
+        {user?.role === 'admin' && (
+          <Link to="/admin/knowledge" className={styles.adminLink}>
+            Painel de administração
+          </Link>
+        )}
+        {user?.role !== 'admin' && user?.plan === 'free' && (
           <button
             className={styles.upgradeBtn}
             onClick={handleUpgrade}
@@ -196,7 +204,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
             {billingLoading ? '...' : '⭐ Assinar Pro'}
           </button>
         )}
-        {user?.plan === 'pro' && (
+        {user?.role !== 'admin' && user?.plan === 'pro' && (
           <button
             className={styles.manageBtn}
             onClick={handleManageSubscription}
