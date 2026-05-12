@@ -15,6 +15,7 @@ const feedbackRoutes = require('./routes/feedback');
 const { usageCheck } = require('./middleware/usageCheck');
 const usageRoutes = require('./routes/usage');
 const billingRoutes = require('./routes/billing');
+const skinRoutes = require('./routes/skin');
 const { webhookHandler } = require('./routes/billing');
 
 const app = express();
@@ -84,5 +85,6 @@ app.use('/analyze', authMiddleware, usageCheck, analyzeLimiter, analyzeRoutes);
 app.use('/usage', authMiddleware, usageRoutes);
 app.use('/feedback', feedbackRoutes);
 app.use('/billing', authMiddleware, billingRoutes);
+app.use('/skin', authMiddleware, skinRoutes);
 
 module.exports = app;
