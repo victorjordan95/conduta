@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import { analyzeCase, classificarLesao } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import styles from './CaseInput.module.scss';
@@ -11,6 +11,14 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
   const [foto, setFoto] = useState(null);
   const [classificando, setClassificando] = useState(false);
   const fileInputRef = useRef(null);
+
+  const fotoUrl = useMemo(() => (foto ? URL.createObjectURL(foto) : null), [foto]);
+
+  useEffect(() => {
+    return () => {
+      if (fotoUrl) URL.revokeObjectURL(fotoUrl);
+    };
+  }, [fotoUrl]);
 
   const isPro = user?.plan === 'pro' || user?.role === 'admin';
   const limitReached = usage && usage.limit !== null && usage.used >= usage.limit;
@@ -27,6 +35,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
 
     setError('');
     setAnalyzing(true);
+    let analiseIniciada = false;
 
     try {
       let textoFinal = content.trim();
@@ -39,6 +48,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
       }
 
       onAnalysisStart(textoFinal);
+      analiseIniciada = true;
       await analyzeCase(sessionId, textoFinal, onChunk, onSessionMsgCount);
       setContent('');
       setFoto(null);
@@ -51,7 +61,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
       }
     } finally {
       setAnalyzing(false);
-      onAnalysisDone();
+      if (analiseIniciada) onAnalysisDone();
     }
   }
 
@@ -92,7 +102,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
             {foto ? (
               <div className={styles.fotoPreview}>
                 <img
-                  src={URL.createObjectURL(foto)}
+                  src={fotoUrl}
                   alt="Preview da lesão"
                   className={styles.fotoThumb}
                 />
