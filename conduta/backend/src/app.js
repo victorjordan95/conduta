@@ -87,4 +87,12 @@ app.use('/feedback', feedbackRoutes);
 app.use('/billing', authMiddleware, billingRoutes);
 app.use('/skin', authMiddleware, skinRoutes);
 
+app.use((err, req, res, next) => {
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(400).json({ error: 'A imagem deve ter no máximo 5MB.' });
+  }
+  console.error('[app] Erro não tratado:', err.message);
+  res.status(500).json({ error: 'Erro interno do servidor.' });
+});
+
 module.exports = app;

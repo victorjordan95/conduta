@@ -101,6 +101,18 @@ describe('POST /skin/classificar', () => {
     expect(res.body.classificacao).toContain('Melanoma');
   });
 
+  it('retorna 400 para imagem maior que 5MB', async () => {
+    const res = await request(app)
+      .post('/skin/classificar')
+      .set('Authorization', `Bearer ${tokenPro}`)
+      .attach('imagem', Buffer.alloc(6 * 1024 * 1024), {
+        filename: 'grande.jpg',
+        contentType: 'image/jpeg',
+      });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/5MB/i);
+  });
+
   it('retorna 503 quando HF está indisponível', async () => {
     classificar.mockRejectedValue(
       Object.assign(new Error('HF down'), { status: 503 })
