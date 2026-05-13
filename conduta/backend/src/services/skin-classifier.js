@@ -1,4 +1,6 @@
+// Labels do modelo bsenst (siglas) e do modelo gianlab (nomes completos)
 const MAPA_LABELS = {
+  // bsenst/skin-cancer-HAM10k
   MEL: 'Melanoma',
   NV: 'Nevo melanocítico',
   BCC: 'Carcinoma basocelular',
@@ -6,6 +8,14 @@ const MAPA_LABELS = {
   BKL: 'Queratose benigna',
   DF: 'Dermatofibroma',
   VASC: 'Lesão vascular',
+  // gianlab/swin-tiny-patch4-window7-224-finetuned-skin-cancer
+  Melanoma: 'Melanoma',
+  'Melanocytic nevi': 'Nevo melanocítico',
+  'Basal cell carcinoma': 'Carcinoma basocelular',
+  'Actinic keratoses': 'Queratose actínica',
+  'Benign keratosis-like lesions': 'Queratose benigna',
+  Dermatofibroma: 'Dermatofibroma',
+  'Vascular lesions': 'Lesão vascular',
 };
 
 async function classificar(buffer, mimetype) {
@@ -16,7 +26,7 @@ async function classificar(buffer, mimetype) {
     err.status = 502;
     throw err;
   }
-  const modelo = process.env.HF_SKIN_MODEL || 'bsenst/skin-cancer-HAM10k';
+  const modelo = process.env.HF_SKIN_MODEL || 'gianlab/swin-tiny-patch4-window7-224-finetuned-skin-cancer';
 
   console.log(`[skin-classifier] chamando HF API modelo=${modelo} bufferSize=${buffer.length}B`);
 
