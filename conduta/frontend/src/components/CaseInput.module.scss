@@ -6,17 +6,35 @@
   padding: 16px 24px 20px;
 }
 
+.labelRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
 .label {
   font-size: $font-size-sm;
   font-weight: 600;
   color: $color-text-secondary;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.hint {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.inputRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
 }
 
 .textarea {
-  width: 100%;
+  flex: 1;
   min-height: 100px;
   max-height: 220px;
   padding: 12px 14px;
@@ -38,16 +56,9 @@
   }
 }
 
-.footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.hint {
+.statusLine {
+  margin-top: 6px;
   font-size: $font-size-sm;
-  color: $color-text-secondary;
 }
 
 .button {

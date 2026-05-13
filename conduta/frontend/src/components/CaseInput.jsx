@@ -81,15 +81,27 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
           </a>
         </div>
       )}
-      <div className={styles.label}>Caso clínico</div>
+      <div className={styles.labelRow}>
+        <span className={styles.label}>Caso clínico</span>
+        <span className={styles.hint}>Texto livre — descreva com os dados que você tem</span>
+      </div>
       <form onSubmit={handleSubmit}>
-        <textarea
-          className={styles.textarea}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Descreva o caso como escreveria num prontuário — idade, queixa principal, sinais vitais, tempo de evolução, comorbidades..."
-          disabled={analyzing || limitReached}
-        />
+        <div className={styles.inputRow}>
+          <textarea
+            className={styles.textarea}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Descreva o caso como escreveria num prontuário — idade, queixa principal, sinais vitais, tempo de evolução, comorbidades..."
+            disabled={analyzing || limitReached}
+          />
+          <button
+            type="submit"
+            className={styles.button}
+            disabled={!content.trim() || analyzing || limitReached}
+          >
+            {classificando ? 'Classificando...' : analyzing ? 'Analisando...' : 'Analisar'}
+          </button>
+        </div>
         {isPro && (
           <div className={styles.fotoArea}>
             <input
@@ -132,24 +144,14 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
             )}
           </div>
         )}
-        <div className={styles.footer}>
-          <span className={styles.hint}>
-            {error ? (
-              <span style={{ color: '#c0392b' }}>{error}</span>
-            ) : statusText ? (
-              <span className={styles.progress}>{statusText}</span>
-            ) : (
-              'Texto livre — descreva com os dados que você tem'
-            )}
-          </span>
-          <button
-            type="submit"
-            className={styles.button}
-            disabled={!content.trim() || analyzing || limitReached}
-          >
-            {classificando ? 'Classificando...' : analyzing ? 'Analisando...' : 'Analisar'}
-          </button>
-        </div>
+        {(error || statusText) && (
+          <div className={styles.statusLine}>
+            {error
+              ? <span style={{ color: '#c0392b' }}>{error}</span>
+              : <span className={styles.progress}>{statusText}</span>
+            }
+          </div>
+        )}
       </form>
     </div>
   );

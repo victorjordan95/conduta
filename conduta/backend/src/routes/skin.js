@@ -22,12 +22,20 @@ router.post('/classificar', upload.single('imagem'), async (req, res) => {
     return res.status(400).json({ error: 'Formato não suportado. Use JPEG ou PNG.' });
   }
 
+  console.log(`[skin] classificar — mimetype=${req.file.mimetype} size=${req.file.size}B user=${req.userId}`);
+
   try {
     const classificacao = await classificar(req.file.buffer, req.file.mimetype);
+    console.log(`[skin] classificação concluída user=${req.userId}`);
     return res.json({ classificacao });
   } catch (err) {
     const status = err.status || 502;
-    return res.status(status).json({ error: 'Erro ao processar imagem. Tente novamente.' });
+    console.error(`[skin] erro na classificação status=${status} user=${req.userId} msg="${err.message}"`);
+    const msg =
+      status === 504
+        ? 'O modelo de IA demorou para responder. Tente novamente em alguns instantes.'
+        : 'Erro ao processar imagem. Tente novamente.';
+    return res.status(status).json({ error: msg });
   }
 });
 
