@@ -3,11 +3,10 @@ import { analyzeCase, classificarLesao } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import styles from './CaseInput.module.scss';
 
-export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, onAnalysisDone, onUsageUpdate, onSessionMsgCount, onReviewStart }) {
+export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, onAnalysisDone, onUsageUpdate, onSessionMsgCount }) {
   const { user } = useAuth();
   const [content, setContent] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
-  const [reviewing, setReviewing] = useState(false);
   const [error, setError] = useState('');
   const [foto, setFoto] = useState(null);
   const [classificando, setClassificando] = useState(false);
@@ -50,12 +49,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
 
       onAnalysisStart(textoFinal);
       analiseIniciada = true;
-      await analyzeCase(sessionId, textoFinal, onChunk, onSessionMsgCount, (phase) => {
-        if (phase === 'review') {
-          setReviewing(true);
-          onReviewStart?.();
-        }
-      });
+      await analyzeCase(sessionId, textoFinal, onChunk, onSessionMsgCount);
       setContent('');
       setFoto(null);
     } catch (err) {
@@ -67,15 +61,12 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
       }
     } finally {
       setAnalyzing(false);
-      setReviewing(false);
       if (analiseIniciada) onAnalysisDone();
     }
   }
 
   const statusText = classificando
     ? 'Classificando imagem...'
-    : reviewing
-    ? 'Revisando com GPT...'
     : analyzing
     ? 'Analisando...'
     : null;
@@ -108,7 +99,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
             className={styles.button}
             disabled={!content.trim() || analyzing || limitReached}
           >
-            {classificando ? 'Classificando...' : reviewing ? 'Revisando...' : analyzing ? 'Analisando...' : 'Analisar'}
+            {classificando ? 'Classificando...' : analyzing ? 'Analisando...' : 'Analisar'}
           </button>
         </div>
         {isPro && (

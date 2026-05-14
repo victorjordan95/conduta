@@ -1,6 +1,6 @@
 const express = require('express');
 const pool = require('../db/pg');
-const { streamAnalysis, streamReview } = require('../services/openrouter');
+const { collectAnalysis, streamReview } = require('../services/openrouter');
 const { searchClinicalContext } = require('../services/neo4j-search');
 const { searchSimilarCases } = require('../services/case-search');
 const { extractAndPersist } = require('../services/knowledge-extractor');
@@ -74,30 +74,11 @@ router.post('/', async (req, res) => {
     res.flushHeaders();
     res.write(`data: ${JSON.stringify({ session_msg_count: sessionMsgCount })}\n\n`);
 
-    // ── Fase 1: análise primária ──────────────────────────────
-    const fullResponse = await streamAnalysis(history, content, context, summaryForStream, res);
+    // ── Fase 1: análise primária silenciosa (contexto interno) ──
+    const firstAnalysis = await collectAnalysis(history, content, context, summaryForStream);
 
-    if (fullResponse) {
-      await pool.query(
-        'INSERT INTO messages (session_id, role, content) VALUES ($1, $2, $3)',
-        [session_id, 'assistant', fullResponse]
-      );
-
-      extractAndPersist(fullResponse, session_id).catch((err) =>
-        console.error('[analyze] extractor fire-and-forget error:', err.message)
-      );
-
-      if (isFirstMessage) {
-        generateAndSave(session_id, fullResponse).catch((err) =>
-          console.error('[analyze] summarizer fire-and-forget error:', err.message)
-        );
-      }
-    }
-
-    // ── Fase 2: revisão pelo segundo modelo ───────────────────
-    res.write(`data: ${JSON.stringify({ phase: 'review' })}\n\n`);
-
-    const fullReview = await streamReview(content, fullResponse || '', res).catch((err) => {
+    // ── Fase 2: revisão final — única resposta visível ao usuário ──
+    const fullReview = await streamReview(content, firstAnalysis || '', res).catch((err) => {
       console.error('[analyze] review error:', err.message);
       return null;
     });
@@ -107,6 +88,16 @@ router.post('/', async (req, res) => {
         'INSERT INTO messages (session_id, role, content) VALUES ($1, $2, $3)',
         [session_id, 'assistant', fullReview]
       );
+
+      extractAndPersist(fullReview, session_id).catch((err) =>
+        console.error('[analyze] extractor fire-and-forget error:', err.message)
+      );
+
+      if (isFirstMessage) {
+        generateAndSave(session_id, fullReview).catch((err) =>
+          console.error('[analyze] summarizer fire-and-forget error:', err.message)
+        );
+      }
     }
 
     res.write('data: [DONE]\n\n');

@@ -147,32 +147,6 @@
   }
 }
 
-.reviewMessage {
-  border-left: 3px solid #2563eb;
-  padding-left: 16px;
-  margin-left: -19px;
-}
-
-.reviewBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  color: #2563eb;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-
-  span {
-    background: #2563eb;
-    color: #fff;
-    border-radius: 3px;
-    padding: 1px 5px;
-    font-size: 10px;
-  }
-}
-
 .feedback {
   display: flex;
   align-items: center;

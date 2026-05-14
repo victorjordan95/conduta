@@ -64,20 +64,24 @@ function buildMessages(history, newMessage, neo4jContext, sessionSummary) {
   return messages;
 }
 
-async function streamAnalysis(history, newMessage, neo4jContext, sessionSummary, res) {
-  const messages = buildMessages(history, newMessage, neo4jContext, sessionSummary);
+const COLLECT_SUFFIX = '\n\nResponda de forma direta e sem formatação — apenas o raciocínio clínico bruto. Será usado como contexto interno para uma segunda análise.';
 
+async function collectAnalysis(history, newMessage, neo4jContext, sessionSummary) {
+  const messages = buildMessages(history, newMessage, neo4jContext, sessionSummary);
+  // Instrui o modelo a não formatar — a resposta é contexto interno, não visível ao usuário
+  const last = messages[messages.length - 1];
+  messages[messages.length - 1] = { ...last, content: last.content + COLLECT_SUFFIX };
   const client = getClient();
+
   const MAX_RETRIES = 3;
-  let stream;
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      stream = await client.chat.completions.create({
-        model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct:free',
+      const completion = await client.chat.completions.create({
+        model: process.env.OPENROUTER_MODEL || 'openai/gpt-4o',
         messages,
-        stream: true,
+        stream: false,
       });
-      break;
+      return completion.choices[0]?.message?.content || '';
     } catch (err) {
       const status = err?.status ?? err?.response?.status;
       if (status === 429 && attempt < MAX_RETRIES) {
@@ -89,25 +93,6 @@ async function streamAnalysis(history, newMessage, neo4jContext, sessionSummary,
       throw err;
     }
   }
-
-  if (!res.headersSent) {
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.flushHeaders();
-  }
-
-  let fullContent = '';
-
-  for await (const chunk of stream) {
-    const content = chunk.choices[0]?.delta?.content || '';
-    if (content) {
-      fullContent += content;
-      res.write(`data: ${JSON.stringify({ content })}\n\n`);
-    }
-  }
-
-  return fullContent;
 }
 
 async function streamReview(userCase, firstAnalysis, res) {
@@ -138,4 +123,4 @@ async function streamReview(userCase, firstAnalysis, res) {
   return fullReview;
 }
 
-module.exports = { streamAnalysis, streamReview, buildMessages };
+module.exports = { collectAnalysis, streamReview, buildMessages };
