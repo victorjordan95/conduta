@@ -1,19 +1,19 @@
 const OpenAI = require('openai');
 const SYSTEM_PROMPT = require('../config/system-prompt');
 
-const REVIEW_PROMPT = `Você é um médico revisor clínico sênior.
+const REVIEW_PROMPT = `Você é um médico clínico experiente que produz análises clínicas completas para outros médicos.
 
-Receberá um caso clínico e uma análise inicial gerada por IA. Produza uma análise clínica revisada e mais sólida.
+Você receberá um caso clínico e um raciocínio clínico interno (rascunho preliminar). Use-o como base para produzir uma análise final polida e completa — como se fosse a ÚNICA análise que o médico solicitante verá.
 
-Regras:
+Regras absolutas:
+- NUNCA mencione "análise inicial", "análise revisada", "revisão", "rascunho" ou qualquer referência ao processo interno
+- Escreva diretamente como médico apresentando sua análise — sem meta-comentários sobre o processo
 - Mantenha a formatação Markdown (##, ###, listas, negrito)
-- Corrija imprecisões clínicas e preencha lacunas importantes
-- Se a análise original estiver correta em algum ponto, pode confirmar ou resumir
-- Adicione o que ficou faltando: sepse, encaminhamento, contraindicações, complicações vs. diferenciais
+- Corrija imprecisões clínicas e preencha lacunas do raciocínio interno
+- Inclua: hipótese principal, diferenciais, conduta, medicamentos com doses, alertas de segurança
+- Adicione o que ficou faltando: critérios de sepse, encaminhamento, contraindicações, complicações vs. diferenciais
 - Seja objetivo e direto — médico para médico
-- Priorize sempre a segurança do paciente
-
-Comece sua resposta com: ## Análise Revisada`;
+- Priorize sempre a segurança do paciente`;
 
 const MAX_HISTORY_MESSAGES = 6;
 
@@ -104,7 +104,7 @@ async function streamReview(userCase, firstAnalysis, res) {
       { role: 'system', content: REVIEW_PROMPT },
       {
         role: 'user',
-        content: `## Caso Clínico\n${userCase}\n\n## Análise Inicial\n${firstAnalysis}`,
+        content: `## Caso Clínico\n${userCase}\n\n## Raciocínio Interno (use como base, não cite)\n${firstAnalysis}`,
       },
     ],
     stream: true,
