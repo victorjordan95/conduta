@@ -7,6 +7,8 @@ function FeedbackButtons({ messageId, current, onFeedback }) {
   const [askingNote, setAskingNote] = useState(false);
   const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [erroEnvio, setErroEnvio] = useState(null);
+  const MAX_NOTA = 1000;
 
   if (!messageId) return null;
 
@@ -28,14 +30,17 @@ function FeedbackButtons({ messageId, current, onFeedback }) {
   }
 
   async function submitNegative() {
+    if (note.length > MAX_NOTA) return;
     setSubmitting(true);
+    setErroEnvio(null);
     setSentValue('negative');
     setAskingNote(false);
     try {
       await onFeedback(messageId, 'negative', note.trim());
-    } catch {
+    } catch (err) {
       setSentValue(null);
       setAskingNote(true);
+      setErroEnvio(err.message || 'Erro ao enviar. Tente novamente.');
     } finally {
       setSubmitting(false);
     }
@@ -58,16 +63,23 @@ function FeedbackButtons({ messageId, current, onFeedback }) {
         <textarea
           className={styles.feedbackNoteInput}
           value={note}
-          onChange={(e) => setNote(e.target.value)}
+          onChange={(e) => { setNote(e.target.value); setErroEnvio(null); }}
           placeholder="Ex: dose de amoxicilina errada para o peso informado, diagnóstico diferencial importante omitido..."
           rows={3}
           autoFocus
+          maxLength={MAX_NOTA}
         />
+        <div className={styles.feedbackNoteMeta}>
+          {erroEnvio && <span className={styles.feedbackErro}>{erroEnvio}</span>}
+          <span className={note.length > MAX_NOTA * 0.9 ? styles.feedbackContadorAlerta : styles.feedbackContador}>
+            {note.length}/{MAX_NOTA}
+          </span>
+        </div>
         <div className={styles.feedbackNoteActions}>
           <button
             className={styles.feedbackNoteSubmit}
             onClick={submitNegative}
-            disabled={submitting}
+            disabled={submitting || note.length > MAX_NOTA}
           >
             {submitting ? 'Enviando...' : 'Enviar correção'}
           </button>

@@ -108,7 +108,10 @@ export async function submitFeedback(messageId, feedback, note) {
     body: JSON.stringify({ message_id: messageId, feedback, note: note || undefined }),
   });
   await checkUnauthorized(res);
-  if (!res.ok) throw new Error('Erro ao enviar feedback.');
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || 'Erro ao enviar feedback.');
+  }
   return res.json();
 }
 

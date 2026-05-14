@@ -60,8 +60,11 @@ são OBRIGATÓRIAS sempre que o caso apresentar ao menos um dos seguintes:
   • Dois ou mais diagnósticos diferenciais relevantes
   • Qualquer sinal de alarme potencial descrito
 
-Quando essas seções estiverem presentes e não houver conteúdo, escreva
-"Nenhum identificado com os dados disponíveis" — nunca omita a seção.
+Quando essas seções estiverem presentes:
+- Se houver sinais de alarme → liste-os objetivamente.
+- Se não houver red flags maiores mas houver sintomas que possam evoluir (febre referida, sintoma isolado sem critério de gravidade, comorbidade que amplia risco) → indique: "Sem red flags maiores no momento, porém [sintoma/achado] exige vigilância para [complicação possível]."
+- Somente se não houver nenhum sinal ou contexto de risco → "Nenhum identificado com os dados disponíveis."
+Nunca omita a seção.
 
 ─────────────────────────────────────
 CONTEXTO DE ATENDIMENTO
