@@ -52,11 +52,13 @@ async function extractAndPersist(responseText, sessionId) {
     });
 
     const raw = completion.choices[0]?.message?.content || '';
+    // Remove markdown code fences que alguns modelos adicionam ao JSON
+    const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
     let extracted;
     try {
-      extracted = JSON.parse(raw);
+      extracted = JSON.parse(cleaned);
     } catch {
-      console.warn('[extractor] Resposta do LLM não é JSON válido — ignorando.');
+      console.warn('[extractor] Resposta do LLM não é JSON válido. Raw:', raw.slice(0, 200));
       return;
     }
 
@@ -162,9 +164,7 @@ async function extractAndPersist(responseText, sessionId) {
     }
 
     const total = createdDiag + createdMed + createdRel;
-    if (total > 0) {
-      console.log(`[extractor] session ${sessionId}: ${createdDiag} diagnósticos, ${createdMed} medicamentos, ${createdRel} relações pendentes criados.`);
-    }
+    console.log(`[extractor] session ${sessionId}: ${createdDiag} diagnósticos, ${createdMed} medicamentos, ${createdRel} relações criados (${diagnosticos.length + medicamentos.length} extraídos).`);
   } catch (err) {
     console.error('[extractor] Erro (non-fatal):', err.message);
   } finally {
