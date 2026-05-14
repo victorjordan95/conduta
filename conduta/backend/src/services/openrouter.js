@@ -1,6 +1,20 @@
 const OpenAI = require('openai');
 const SYSTEM_PROMPT = require('../config/system-prompt');
 
+const REVIEW_PROMPT = `Você é um médico revisor clínico sênior.
+
+Receberá um caso clínico e uma análise inicial gerada por IA. Produza uma análise clínica revisada e mais sólida.
+
+Regras:
+- Mantenha a formatação Markdown (##, ###, listas, negrito)
+- Corrija imprecisões clínicas e preencha lacunas importantes
+- Se a análise original estiver correta em algum ponto, pode confirmar ou resumir
+- Adicione o que ficou faltando: sepse, encaminhamento, contraindicações, complicações vs. diferenciais
+- Seja objetivo e direto — médico para médico
+- Priorize sempre a segurança do paciente
+
+Comece sua resposta com: ## Análise Revisada`;
+
 const MAX_HISTORY_MESSAGES = 6;
 
 function getClient() {
@@ -93,10 +107,35 @@ async function streamAnalysis(history, newMessage, neo4jContext, sessionSummary,
     }
   }
 
-  res.write('data: [DONE]\n\n');
-  res.end();
-
   return fullContent;
 }
 
-module.exports = { streamAnalysis, buildMessages };
+async function streamReview(userCase, firstAnalysis, res) {
+  const client = getClient();
+
+  const stream = await client.chat.completions.create({
+    model: process.env.OPENROUTER_REVIEW_MODEL || 'openai/gpt-4o',
+    messages: [
+      { role: 'system', content: REVIEW_PROMPT },
+      {
+        role: 'user',
+        content: `## Caso Clínico\n${userCase}\n\n## Análise Inicial\n${firstAnalysis}`,
+      },
+    ],
+    stream: true,
+  });
+
+  let fullReview = '';
+
+  for await (const chunk of stream) {
+    const content = chunk.choices[0]?.delta?.content || '';
+    if (content) {
+      fullReview += content;
+      res.write(`data: ${JSON.stringify({ content })}\n\n`);
+    }
+  }
+
+  return fullReview;
+}
+
+module.exports = { streamAnalysis, streamReview, buildMessages };

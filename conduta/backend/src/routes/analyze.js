@@ -1,6 +1,6 @@
 const express = require('express');
 const pool = require('../db/pg');
-const { streamAnalysis } = require('../services/openrouter');
+const { streamAnalysis, streamReview } = require('../services/openrouter');
 const { searchClinicalContext } = require('../services/neo4j-search');
 const { searchSimilarCases } = require('../services/case-search');
 const { extractAndPersist } = require('../services/knowledge-extractor');
@@ -74,6 +74,7 @@ router.post('/', async (req, res) => {
     res.flushHeaders();
     res.write(`data: ${JSON.stringify({ session_msg_count: sessionMsgCount })}\n\n`);
 
+    // ── Fase 1: análise primária ──────────────────────────────
     const fullResponse = await streamAnalysis(history, content, context, summaryForStream, res);
 
     if (fullResponse) {
@@ -92,6 +93,24 @@ router.post('/', async (req, res) => {
         );
       }
     }
+
+    // ── Fase 2: revisão pelo segundo modelo ───────────────────
+    res.write(`data: ${JSON.stringify({ phase: 'review' })}\n\n`);
+
+    const fullReview = await streamReview(content, fullResponse || '', res).catch((err) => {
+      console.error('[analyze] review error:', err.message);
+      return null;
+    });
+
+    if (fullReview) {
+      await pool.query(
+        'INSERT INTO messages (session_id, role, content) VALUES ($1, $2, $3)',
+        [session_id, 'assistant', fullReview]
+      );
+    }
+
+    res.write('data: [DONE]\n\n');
+    res.end();
 
     embed(content)
       .then((embedding) =>

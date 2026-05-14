@@ -138,7 +138,12 @@ export default function AnalysisResult({ messages, streaming, loading, onFeedbac
             <p className={styles.userContent}>{msg.content}</p>
           </div>
         ) : (
-          <div key={i} className={styles.assistantMessage}>
+          <div key={i} className={`${styles.assistantMessage}${msg.isReview ? ` ${styles.reviewMessage}` : ''}`}>
+            {msg.isReview && (
+              <div className={styles.reviewBadge}>
+                <span>GPT</span> Análise Revisada
+              </div>
+            )}
             <div className={styles.content}>
               <ReactMarkdown>{msg.content}</ReactMarkdown>
               {streaming && i === messages.length - 1 && (

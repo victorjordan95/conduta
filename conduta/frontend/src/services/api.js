@@ -120,7 +120,7 @@ export async function submitFeedback(messageId, feedback, note) {
  * Chama onChunk(string) a cada fragmento recebido.
  * Chama onSessionMsgCount(number) quando recebe session_msg_count.
  */
-export async function analyzeCase(sessionId, content, onChunk, onSessionMsgCount) {
+export async function analyzeCase(sessionId, content, onChunk, onSessionMsgCount, onPhaseChange) {
   const res = await fetch(`${BASE_URL}/analyze`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
@@ -154,6 +154,8 @@ export async function analyzeCase(sessionId, content, onChunk, onSessionMsgCount
         const parsed = JSON.parse(data);
         if (parsed.session_msg_count !== undefined) {
           onSessionMsgCount?.(parsed.session_msg_count);
+        } else if (parsed.phase) {
+          onPhaseChange?.(parsed.phase);
         } else if (parsed.content) {
           onChunk(parsed.content);
         }

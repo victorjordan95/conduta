@@ -317,6 +317,12 @@ export default function Dashboard() {
                 ]);
                 setStreaming(true);
               }}
+              onReviewStart={() => {
+                setMessages((prev) => [
+                  ...prev,
+                  { role: 'assistant', content: '', id: null, isReview: true },
+                ]);
+              }}
               onChunk={(chunk) => {
                 setMessages((prev) => {
                   const updated = [...prev];
