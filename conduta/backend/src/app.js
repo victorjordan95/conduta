@@ -1,4 +1,5 @@
 require('dotenv').config();
+const Sentry = require('@sentry/node');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -86,6 +87,8 @@ app.use('/usage', authMiddleware, usageRoutes);
 app.use('/feedback', feedbackRoutes);
 app.use('/billing', authMiddleware, billingRoutes);
 app.use('/skin', authMiddleware, analyzeLimiter, skinRoutes);
+
+Sentry.setupExpressErrorHandler(app);
 
 app.use((err, req, res, next) => {
   if (err.code === 'LIMIT_FILE_SIZE') {

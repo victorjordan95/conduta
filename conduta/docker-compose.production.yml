@@ -55,6 +55,7 @@ services:
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
       OPENROUTER_MODEL: ${OPENROUTER_MODEL:-anthropic/claude-sonnet-4-5}
       ADMIN_SECRET: ${ADMIN_SECRET}
+      SENTRY_DSN: ${SENTRY_DSN:-}
     depends_on:
       postgres:
         condition: service_healthy
