@@ -31,8 +31,8 @@ let userId;
 beforeAll(async () => {
   const hash = await bcrypt.hash('senha123', 10);
   const res = await pool.query(
-    `INSERT INTO users (email, nome, senha_hash)
-     VALUES ($1, $2, $3) RETURNING id`,
+    `INSERT INTO users (email, nome, senha_hash, email_verified)
+     VALUES ($1, $2, $3, TRUE) RETURNING id`,
     ['billing@conduta.dev', 'Dr. Billing', hash]
   );
   userId = res.rows[0].id;

@@ -95,7 +95,11 @@ async function webhookHandler(req, res) {
       }
     }
 
-    if (event.type === 'customer.subscription.deleted') {
+    if (
+      event.type === 'customer.subscription.deleted' ||
+      (event.type === 'customer.subscription.updated' &&
+        event.data.object.status === 'canceled')
+    ) {
       const sub = event.data.object;
       await pool.query(
         'UPDATE users SET plan = $1 WHERE stripe_customer_id = $2',
