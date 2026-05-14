@@ -9,8 +9,8 @@ const router = express.Router();
 router.post('/', authMiddleware, async (req, res) => {
   const { message_id, feedback, note } = req.body;
 
-  if (!message_id || !['positive', 'negative'].includes(feedback)) {
-    return res.status(400).json({ error: 'message_id e feedback (positive|negative) são obrigatórios.' });
+  if (!message_id || !['positive', 'negative', 'partial'].includes(feedback)) {
+    return res.status(400).json({ error: 'message_id e feedback (positive|negative|partial) são obrigatórios.' });
   }
 
   if (note && note.length > 1000) {
@@ -64,6 +64,24 @@ async function applyKnowledgeFeedback(sessionId, feedback, note, messageContent)
          SET r.status = 'verified', r.approvedBy = 'feedback:positive', r.approvedAt = $now`,
         { sessionId, now: new Date().toISOString() }
       );
+    } else if (feedback === 'partial') {
+      // Mantém nós pendentes para revisão admin — resposta foi boa, só precisa de ajuste pontual
+      const notaFinal = note && note.trim().length > 0 ? note.trim() : null;
+      if (notaFinal) {
+        const keywords = extractKeywords(notaFinal);
+        await session.run(
+          `CREATE (c:Correcao {
+             sessionId: $sessionId,
+             nota: $nota,
+             keywords: $keywords,
+             tipo: 'partial',
+             status: 'pending_validation',
+             createdAt: $now
+           })`,
+          { sessionId, nota: notaFinal, keywords, now: new Date().toISOString() }
+        );
+        console.log(`[feedback] Ajuste parcial registrado para session ${sessionId}: "${notaFinal.slice(0, 60)}..."`);
+      }
     } else {
       await session.run(
         `MATCH (n {status: 'pending', sourceSessionId: $sessionId}) DETACH DELETE n`,
@@ -83,6 +101,7 @@ async function applyKnowledgeFeedback(sessionId, feedback, note, messageContent)
              sessionId: $sessionId,
              nota: $nota,
              keywords: $keywords,
+             tipo: 'negative',
              status: 'pending_validation',
              createdAt: $now
            })`,
@@ -116,6 +135,7 @@ router.get('/stats', adminMiddleware, async (req, res) => {
         `SELECT
            COUNT(*) FILTER (WHERE feedback = 'positive') AS positive,
            COUNT(*) FILTER (WHERE feedback = 'negative') AS negative,
+           COUNT(*) FILTER (WHERE feedback = 'partial')  AS partial,
            COUNT(*) FILTER (WHERE feedback = 'negative' AND feedback_note IS NOT NULL AND feedback_note != '') AS negative_with_note
          FROM messages
          WHERE feedback IS NOT NULL`
@@ -124,7 +144,8 @@ router.get('/stats', adminMiddleware, async (req, res) => {
         `SELECT
            DATE_TRUNC('day', created_at)::date AS day,
            COUNT(*) FILTER (WHERE feedback = 'positive') AS positive,
-           COUNT(*) FILTER (WHERE feedback = 'negative') AS negative
+           COUNT(*) FILTER (WHERE feedback = 'negative') AS negative,
+           COUNT(*) FILTER (WHERE feedback = 'partial')  AS partial
          FROM messages
          WHERE feedback IS NOT NULL
            AND created_at >= NOW() - INTERVAL '30 days'
@@ -137,12 +158,14 @@ router.get('/stats', adminMiddleware, async (req, res) => {
       summary: {
         positive:           Number(summary.rows[0].positive),
         negative:           Number(summary.rows[0].negative),
+        partial:            Number(summary.rows[0].partial),
         negativeWithNote:   Number(summary.rows[0].negative_with_note),
       },
       daily: daily.rows.map((r) => ({
         day:      r.day,
         positive: Number(r.positive),
         negative: Number(r.negative),
+        partial:  Number(r.partial),
       })),
     });
   } catch (err) {

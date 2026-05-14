@@ -175,6 +175,24 @@
   }
 }
 
+.feedbackBtnPartial {
+  background: none;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: #fdf6ec;
+    border-color: #e67e22;
+    color: #e67e22;
+  }
+}
+
 .feedbackDone {
   margin-top: 12px;
   font-size: $font-size-sm;

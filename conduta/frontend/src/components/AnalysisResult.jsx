@@ -4,7 +4,7 @@ import styles from './AnalysisResult.module.scss';
 
 function FeedbackButtons({ messageId, current, onFeedback }) {
   const [sentValue, setSentValue] = useState(null);
-  const [askingNote, setAskingNote] = useState(false);
+  const [askingNote, setAskingNote] = useState(null); // null | 'negative' | 'partial'
   const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [erroEnvio, setErroEnvio] = useState(null);
@@ -26,20 +26,26 @@ function FeedbackButtons({ messageId, current, onFeedback }) {
 
   function handleNegativeClick() {
     if (displayValue) return;
-    setAskingNote(true);
+    setAskingNote('negative');
   }
 
-  async function submitNegative() {
+  function handlePartialClick() {
+    if (displayValue) return;
+    setAskingNote('partial');
+  }
+
+  async function submitNote() {
     if (note.length > MAX_NOTA) return;
+    const tipo = askingNote;
     setSubmitting(true);
     setErroEnvio(null);
-    setSentValue('negative');
-    setAskingNote(false);
+    setSentValue(tipo);
+    setAskingNote(null);
     try {
-      await onFeedback(messageId, 'negative', note.trim());
+      await onFeedback(messageId, tipo, note.trim());
     } catch (err) {
       setSentValue(null);
-      setAskingNote(true);
+      setAskingNote(tipo);
       setErroEnvio(err.message || 'Erro ao enviar. Tente novamente.');
     } finally {
       setSubmitting(false);
@@ -51,15 +57,20 @@ function FeedbackButtons({ messageId, current, onFeedback }) {
       <div className={styles.feedbackDone}>
         {displayValue === 'positive'
           ? '👍 Obrigado — o conhecimento desta resposta foi reforçado.'
+          : displayValue === 'partial'
+          ? '✏️ Ajuste registrado — obrigado pelo retorno.'
           : '👎 Correção registrada — casos similares serão alertados.'}
       </div>
     );
   }
 
   if (askingNote) {
+    const isPartial = askingNote === 'partial';
     return (
       <div className={styles.feedbackNote}>
-        <p className={styles.feedbackNoteLabel}>O que estava incorreto nesta resposta?</p>
+        <p className={styles.feedbackNoteLabel}>
+          {isPartial ? 'O que precisa de ajuste nesta resposta?' : 'O que estava incorreto nesta resposta?'}
+        </p>
         <textarea
           className={styles.feedbackNoteInput}
           value={note}
@@ -78,14 +89,14 @@ function FeedbackButtons({ messageId, current, onFeedback }) {
         <div className={styles.feedbackNoteActions}>
           <button
             className={styles.feedbackNoteSubmit}
-            onClick={submitNegative}
+            onClick={submitNote}
             disabled={submitting || note.length > MAX_NOTA}
           >
-            {submitting ? 'Enviando...' : 'Enviar correção'}
+            {submitting ? 'Enviando...' : isPartial ? 'Enviar ajuste' : 'Enviar correção'}
           </button>
           <button
             className={styles.feedbackNoteSkip}
-            onClick={() => { setNote(''); submitNegative(); }}
+            onClick={() => { setNote(''); submitNote(); }}
             disabled={submitting}
           >
             Pular explicação
@@ -99,7 +110,8 @@ function FeedbackButtons({ messageId, current, onFeedback }) {
     <div className={styles.feedback}>
       <span className={styles.feedbackLabel}>Esta resposta foi útil?</span>
       <button className={styles.feedbackBtn} onClick={handlePositive} title="Útil">👍</button>
-      <button className={styles.feedbackBtn} onClick={handleNegativeClick} title="Não útil">👎</button>
+      <button className={styles.feedbackBtnPartial} onClick={handlePartialClick} title="Boa, mas precisa de ajuste">✏️ Bom, mas...</button>
+      <button className={styles.feedbackBtn} onClick={handleNegativeClick} title="Incorreta">👎</button>
     </div>
   );
 }
