@@ -13,11 +13,21 @@ async function checkUnauthorized(res) {
   if (res.status === 401) {
     let message = 'Sessão expirada. Faça login novamente.';
     try {
-      const data = await res.json();
+      const data = await res.clone().json();
       if (data.code === 'SESSION_KICKED') message = data.error;
     } catch {}
     window.dispatchEvent(new CustomEvent('conduta:unauthorized', { detail: { message } }));
     throw new Error(message);
+  }
+  if (res.status === 403) {
+    let data = {};
+    try { data = await res.clone().json(); } catch {}
+    if (data.code === 'EMAIL_NOT_VERIFIED') {
+      window.dispatchEvent(new CustomEvent('conduta:email-not-verified'));
+      const err = new Error(data.error || 'Email não verificado.');
+      err.code = 'EMAIL_NOT_VERIFIED';
+      throw err;
+    }
   }
   return res;
 }
@@ -43,7 +53,12 @@ export async function login(email, senha) {
     body: JSON.stringify({ email, senha }),
   });
 
-  if (!res.ok) throw new Error('Credenciais inválidas.');
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    const err = new Error(data.error || 'Credenciais inválidas.');
+    err.code = data.code;
+    throw err;
+  }
   return res.json();
 }
 
@@ -407,6 +422,54 @@ export async function classificarLesao(arquivo) {
   if (!res.ok) {
     const data = await res.json().catch(() => ({}));
     throw new Error(data.error || 'Erro ao classificar imagem.');
+  }
+  return res.json();
+}
+
+export async function verifyEmail(token) {
+  const res = await fetch(`${BASE_URL}/auth/verify-email?token=${encodeURIComponent(token)}`);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Link inválido ou expirado.');
+  }
+  return res.json();
+}
+
+export async function resendVerification(email) {
+  const res = await fetch(`${BASE_URL}/auth/resend-verification`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao reenviar email.');
+  }
+  return res.json();
+}
+
+export async function forgotPassword(email) {
+  const res = await fetch(`${BASE_URL}/auth/forgot-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao solicitar redefinição.');
+  }
+  return res.json();
+}
+
+export async function resetPassword(token, nova_senha) {
+  const res = await fetch(`${BASE_URL}/auth/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, nova_senha }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao redefinir senha.');
   }
   return res.json();
 }
