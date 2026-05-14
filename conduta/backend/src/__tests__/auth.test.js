@@ -1,6 +1,12 @@
 const request = require('supertest');
 const bcrypt = require('bcryptjs');
 const pool = require('../db/pg');
+
+jest.mock('../services/email', () => ({
+  sendVerificationEmail: jest.fn().mockResolvedValue(undefined),
+  sendPasswordResetEmail: jest.fn().mockResolvedValue(undefined),
+}));
+
 const app = require('../app');
 
 let testUserId;
@@ -8,8 +14,8 @@ let testUserId;
 beforeAll(async () => {
   const hash = await bcrypt.hash('senha123', 10);
   const res = await pool.query(
-    `INSERT INTO users (email, nome, senha_hash)
-     VALUES ($1, $2, $3) RETURNING id`,
+    `INSERT INTO users (email, nome, senha_hash, email_verified)
+     VALUES ($1, $2, $3, TRUE) RETURNING id`,
     ['test@conduta.dev', 'Dr. Teste', hash]
   );
   testUserId = res.rows[0].id;
@@ -166,8 +172,7 @@ describe('POST /auth/signup', () => {
     const afterSignup = Date.now();
 
     expect(res.status).toBe(201);
-    expect(res.body).toHaveProperty('token');
-    expect(res.body.user).toHaveProperty('email', email);
+    expect(res.body).toHaveProperty('pending', true);
 
     const db = await pool.query(
       'SELECT terms_accepted_at FROM users WHERE email = $1',

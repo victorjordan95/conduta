@@ -12,7 +12,7 @@ beforeAll(async () => {
   await pool.query('DELETE FROM users WHERE email = $1', [TEST_EMAIL]);
   const hash = await bcrypt.hash('senha123', 10);
   await pool.query(
-    `INSERT INTO users (email, nome, senha_hash, plan) VALUES ($1, $2, $3, 'free')`,
+    `INSERT INTO users (email, nome, senha_hash, plan, email_verified) VALUES ($1, $2, $3, 'free', TRUE)`,
     [TEST_EMAIL, 'Dr. Uso', hash]
   );
   const login = await request(app)

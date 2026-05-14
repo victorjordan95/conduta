@@ -1,11 +1,15 @@
 const { Resend } = require('resend');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM = process.env.EMAIL_FROM || 'Conduta <onboarding@resend.dev>';
+let _resend = null;
+function getClient() {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY);
+  return _resend;
+}
 
 async function sendVerificationEmail(to, nome, token) {
+  const FROM = process.env.EMAIL_FROM || 'Conduta <onboarding@resend.dev>';
   const url = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
-  await resend.emails.send({
+  await getClient().emails.send({
     from: FROM,
     to: [to],
     subject: 'Confirme seu email — Conduta',
@@ -30,8 +34,9 @@ async function sendVerificationEmail(to, nome, token) {
 }
 
 async function sendPasswordResetEmail(to, nome, token) {
+  const FROM = process.env.EMAIL_FROM || 'Conduta <onboarding@resend.dev>';
   const url = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
-  await resend.emails.send({
+  await getClient().emails.send({
     from: FROM,
     to: [to],
     subject: 'Redefinição de senha — Conduta',
