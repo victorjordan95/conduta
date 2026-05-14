@@ -140,9 +140,21 @@ export default function AnalysisResult({ messages, streaming, loading, onFeedbac
         ) : (
           <div key={i} className={styles.assistantMessage}>
             <div className={styles.content}>
-              <ReactMarkdown>{msg.content}</ReactMarkdown>
-              {streaming && i === messages.length - 1 && (
-                <span className={styles.cursor} />
+              {streaming && i === messages.length - 1 && !msg.content ? (
+                <div className={styles.skeleton}>
+                  <div className={styles.skeletonLine} style={{ width: '80%' }} />
+                  <div className={styles.skeletonLine} style={{ width: '65%' }} />
+                  <div className={styles.skeletonLine} style={{ width: '90%' }} />
+                  <div className={styles.skeletonLine} style={{ width: '55%' }} />
+                  <div className={styles.skeletonLine} style={{ width: '75%' }} />
+                </div>
+              ) : (
+                <>
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  {streaming && i === messages.length - 1 && (
+                    <span className={styles.cursor} />
+                  )}
+                </>
               )}
             </div>
             {(!streaming || i < messages.length - 1) && (

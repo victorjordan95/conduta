@@ -49,9 +49,9 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
 
       onAnalysisStart(textoFinal);
       analiseIniciada = true;
-      await analyzeCase(sessionId, textoFinal, onChunk, onSessionMsgCount);
       setContent('');
       setFoto(null);
+      await analyzeCase(sessionId, textoFinal, onChunk, onSessionMsgCount);
     } catch (err) {
       setClassificando(false);
       if (err.code === 'USAGE_LIMIT' && err.usage) {

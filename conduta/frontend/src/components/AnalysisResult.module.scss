@@ -286,6 +286,26 @@
   50% { opacity: 0; }
 }
 
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.skeletonLine {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e8edf0 25%, #d4dce0 50%, #e8edf0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 .aiDisclaimer {
   font-size: 11px;
   color: $color-text-secondary;
