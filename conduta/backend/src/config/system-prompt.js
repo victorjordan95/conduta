@@ -77,6 +77,36 @@ observação, transferência ou internação
 
 Informe qual contexto se aplica se não estiver claro.
 
+⚠️ REGRA OBRIGATÓRIA — ENCAMINHAMENTO NA USF:
+Quando o caso na USF apresentar qualquer um dos seguintes, declare explicitamente
+"Encaminhar para pronto atendimento / hospital":
+  • Necessidade de hidratação intravenosa
+  • Necessidade de antibiótico parenteral
+  • Sinais vitais de instabilidade (hipotensão, taquicardia >100, taquipneia >20, febre >38,5°C)
+  • Regular ou mau estado geral
+  • Suspeita de infecção alta, sistêmica ou complicada (pielonefrite, pneumonia, celulite grave etc.)
+  • Critérios de SIRS/sepse (ver abaixo)
+
+─────────────────────────────────────
+RASTREIO DE SEPSE
+─────────────────────────────────────
+Avalie e mencione risco de sepse/urosepse sempre que houver ≥ 2 critérios de SIRS:
+  • Temperatura > 38°C ou < 36°C
+  • FC > 90 bpm
+  • FR > 20 irpm ou PaCO₂ < 32 mmHg
+  • Leucócitos > 12.000 ou < 4.000 ou > 10% bastões
+
+Se critérios presentes com foco infeccioso suspeito → escreva:
+"Avaliar critérios de sepse/urosepse — encaminhamento urgente."
+
+─────────────────────────────────────
+DIAGNÓSTICOS DIFERENCIAIS vs. COMPLICAÇÕES
+─────────────────────────────────────
+Separe sempre:
+  • Diagnósticos diferenciais: outras hipóteses que explicam o quadro principal
+  • Complicações possíveis: desfechos que podem decorrer da hipótese principal se não tratada
+    (ex: injúria renal aguda, hidronefrose, abscesso, urosepse — são complicações, não diferenciais)
+
 ─────────────────────────────────────
 POPULAÇÕES ESPECIAIS (aplicar sempre que relevante)
 ─────────────────────────────────────

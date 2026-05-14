@@ -72,12 +72,23 @@ async function extractAndPersist(responseText, sessionId) {
         `MATCH (n:Diagnostico {nome: $nome}) RETURN n.status AS status LIMIT 1`,
         { nome: d.nome }
       );
-      if (exists.records.length > 0) continue;
+      if (exists.records.length > 0) {
+        // Nó já existe — apenas vincula esta sessão ao nó para aparecer no painel
+        await session.run(
+          `MATCH (n:Diagnostico {nome: $nome})
+           SET n.sessions = CASE
+             WHEN n.sessions IS NULL THEN [$sessionId]
+             ELSE [s IN n.sessions WHERE s <> $sessionId] + [$sessionId]
+           END`,
+          { nome: d.nome, sessionId }
+        );
+        continue;
+      }
 
       await session.run(
         `CREATE (n:Diagnostico {
            nome: $nome, cid: $cid, sinonimos: $sinonimos,
-           status: 'pending', sourceSessionId: $sourceSessionId, createdAt: $createdAt
+           status: 'pending', sourceSessionId: $sourceSessionId, sessions: [$sourceSessionId], createdAt: $createdAt
          })`,
         {
           nome: d.nome,
@@ -97,12 +108,23 @@ async function extractAndPersist(responseText, sessionId) {
         `MATCH (n:Medicamento {nome: $nome}) RETURN n.status AS status LIMIT 1`,
         { nome: m.nome }
       );
-      if (exists.records.length > 0) continue;
+      if (exists.records.length > 0) {
+        // Nó já existe — apenas vincula esta sessão ao nó
+        await session.run(
+          `MATCH (n:Medicamento {nome: $nome})
+           SET n.sessions = CASE
+             WHEN n.sessions IS NULL THEN [$sessionId]
+             ELSE [s IN n.sessions WHERE s <> $sessionId] + [$sessionId]
+           END`,
+          { nome: m.nome, sessionId }
+        );
+        continue;
+      }
 
       await session.run(
         `CREATE (n:Medicamento {
            nome: $nome, classe: $classe, viaAdmin: $viaAdmin,
-           status: 'pending', sourceSessionId: $sourceSessionId, createdAt: $createdAt
+           status: 'pending', sourceSessionId: $sourceSessionId, sessions: [$sourceSessionId], createdAt: $createdAt
          })`,
         {
           nome: m.nome,
