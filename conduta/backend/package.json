@@ -25,6 +25,7 @@
     "pdf-parse": "^2.4.5",
     "pdfkit": "^0.18.0",
     "pg": "^8.11.5",
+    "resend": "^6.12.3",
     "stripe": "^22.1.1"
   },
   "devDependencies": {
