@@ -109,7 +109,8 @@ export default function Dashboard() {
   }, [user]);
 
   useEffect(() => {
-    if (user && !user.coachmarks_welcome_seen) {
+    const localSeen = localStorage.getItem('coachmark_welcome_seen');
+    if (user && !user.coachmarks_welcome_seen && !localSeen) {
       setShowWelcomeTour(true);
     }
   }, [user]);
@@ -155,7 +156,8 @@ export default function Dashboard() {
     setLoadingHistory(false);
     setUserMsgCount(0);
     setSidebarOpen(false);
-    if (user && !user.coachmarks_session_seen) {
+    const localSessionSeen = localStorage.getItem('coachmark_session_seen');
+    if (user && !user.coachmarks_session_seen && !localSessionSeen) {
       setShowSessionTour(true);
     }
   }
@@ -214,6 +216,7 @@ export default function Dashboard() {
           ]}
           onDone={() => {
             setShowWelcomeTour(false);
+            localStorage.setItem('coachmark_welcome_seen', '1');
             if (user && token) saveAuth(token, { ...user, coachmarks_welcome_seen: true });
           }}
         />
@@ -241,6 +244,7 @@ export default function Dashboard() {
           ]}
           onDone={() => {
             setShowSessionTour(false);
+            localStorage.setItem('coachmark_session_seen', '1');
             if (user && token) saveAuth(token, { ...user, coachmarks_session_seen: true });
           }}
         />
