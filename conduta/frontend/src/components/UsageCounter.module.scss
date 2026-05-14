@@ -6,6 +6,12 @@
   background: $color-surface;
 }
 
+.containerCompact {
+  padding: 6px 20px;
+  border-bottom: 1px solid $color-border;
+  background: transparent;
+}
+
 .label {
   display: block;
   font-size: $font-size-sm;

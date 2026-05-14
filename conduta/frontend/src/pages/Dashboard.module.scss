@@ -262,27 +262,8 @@
   }
 }
 
-// ── Clinical Banner ─────────────────────────────────────────────────
-.clinicalBanner {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 20px;
-  background: #f0f4f8;
-  border-bottom: 1px solid $color-border;
-  font-size: $font-size-sm;
-  color: $color-text-secondary;
-  flex-shrink: 0;
-}
-
-.clinicalBannerIcon {
-  font-size: 15px;
-  flex-shrink: 0;
-}
-
 // ── Footer ──────────────────────────────────────────────────────────
 .footer {
-  padding: 10px 20px;
   border-top: 1px solid $color-border;
   font-size: 11px;
   color: $color-text-secondary;
@@ -298,3 +279,24 @@
     }
   }
 }
+
+.footerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 20px;
+  flex-wrap: wrap;
+}
+
+.footerDisclaimer {
+  color: $color-text-secondary;
+  flex: 1;
+  min-width: 0;
+}
+
+.footerLinks {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+

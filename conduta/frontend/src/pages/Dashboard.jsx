@@ -255,16 +255,6 @@ export default function Dashboard() {
           <span className={styles.mobileBrand}>Conduta</span>
         </header>
 
-        <div className={styles.clinicalBanner} role="status" aria-label="Aviso clínico">
-          <span className={styles.clinicalBannerIcon}>⚕</span>
-          <span>
-            As análises do Conduta são sugestões de apoio clínico.
-            A decisão final é sempre responsabilidade do profissional.
-          </span>
-        </div>
-
-        {usage && <UsageCounter used={usage.used} limit={usage.limit} />}
-
         {!activeSessionId ? (
           <div className={styles.empty}>
             <p>Selecione ou inicie um caso</p>
@@ -363,9 +353,18 @@ export default function Dashboard() {
         )}
 
         <footer className={styles.footer}>
-          <a href="/termos" target="_blank" rel="noreferrer">Termos de Uso</a>
-          {' · '}
-          <a href="/privacidade" target="_blank" rel="noreferrer">Política de Privacidade</a>
+          {usage && <UsageCounter used={usage.used} limit={usage.limit} compact />}
+          <div className={styles.footerRow}>
+            <span className={styles.footerDisclaimer}>
+              <span aria-hidden="true">⚕</span>
+              {' '}As análises do Conduta são sugestões de apoio clínico. A decisão final é sempre responsabilidade do profissional.
+            </span>
+            <span className={styles.footerLinks}>
+              <a href="/termos" target="_blank" rel="noreferrer">Termos de Uso</a>
+              {' · '}
+              <a href="/privacidade" target="_blank" rel="noreferrer">Política de Privacidade</a>
+            </span>
+          </div>
         </footer>
       </main>
     </div>
