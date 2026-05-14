@@ -7,6 +7,10 @@ import AdminKnowledge from './pages/AdminKnowledge';
 import LandingPage from './pages/LandingPage';
 import TermosUso from './pages/TermosUso';
 import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
+import VerifyEmailPending from './pages/VerifyEmailPending';
+import VerifyEmail from './pages/VerifyEmail';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function PrivateRoute({ children }) {
   const { token } = useAuth();
@@ -35,6 +39,10 @@ export default function App() {
           <Route path="/cadastro" element={<Register />} />
           <Route path="/termos" element={<TermosUso />} />
           <Route path="/privacidade" element={<PoliticaPrivacidade />} />
+          <Route path="/verify-pending" element={<VerifyEmailPending />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/esqueci-senha" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route
             path="/admin/knowledge"
             element={

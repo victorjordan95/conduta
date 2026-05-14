@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { register } from '../services/api';
 import styles from './Register.module.scss';
 
@@ -39,7 +38,6 @@ export default function Register() {
   const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
   const [termosAceitos, setTermosAceitos] = useState(false);
-  const { saveAuth } = useAuth();
   const navigate = useNavigate();
 
   const senhaValida = REQUISITOS.every((r) => r.test(senha));
@@ -61,9 +59,8 @@ export default function Register() {
 
     setLoading(true);
     try {
-      const data = await register(nome, email, senha, new Date().toISOString());
-      saveAuth(data.token, data.user);
-      navigate('/');
+      await register(nome, email, senha, new Date().toISOString());
+      navigate('/verify-pending', { state: { email } });
     } catch (err) {
       setErro(err.message);
     } finally {

@@ -39,12 +39,19 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    const handler = (e) => {
+    const handleUnauthorized = (e) => {
       setKickMessage(e.detail?.message || null);
       clearAuth();
     };
-    window.addEventListener('conduta:unauthorized', handler);
-    return () => window.removeEventListener('conduta:unauthorized', handler);
+    const handleEmailNotVerified = () => {
+      window.location.href = '/verify-pending';
+    };
+    window.addEventListener('conduta:unauthorized', handleUnauthorized);
+    window.addEventListener('conduta:email-not-verified', handleEmailNotVerified);
+    return () => {
+      window.removeEventListener('conduta:unauthorized', handleUnauthorized);
+      window.removeEventListener('conduta:email-not-verified', handleEmailNotVerified);
+    };
   }, []);
 
   return (

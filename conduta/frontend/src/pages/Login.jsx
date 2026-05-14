@@ -41,6 +41,10 @@ export default function Login() {
       saveAuth(data.token, data.user);
       navigate('/');
     } catch (err) {
+      if (err.code === 'EMAIL_NOT_VERIFIED') {
+        navigate('/verify-pending', { state: { email } });
+        return;
+      }
       setErro(err.message);
     } finally {
       setLoading(false);
@@ -97,6 +101,10 @@ export default function Login() {
           >
             {loading ? 'Verificando...' : 'Entrar'}
           </button>
+
+          <p style={{ textAlign: 'center', marginTop: '12px', fontSize: '13px' }}>
+            <Link to="/esqueci-senha" style={{ color: '#1a6b73' }}>Esqueceu a senha?</Link>
+          </p>
 
           {kickMessage && !erro && <p className={styles.warning}>{kickMessage}</p>}
           {erro && <p className={styles.error}>{erro}</p>}
