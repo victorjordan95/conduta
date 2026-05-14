@@ -147,8 +147,13 @@ export default function Dashboard() {
     }
   }
 
-  async function handleNewSession(id) {
-    await handleSelectSession(id);
+  function handleNewSession(id) {
+    setActiveSessionId(id);
+    setActiveSession({ titulo: 'Novo caso', summary: null });
+    setMessages([]);
+    setStreaming(false);
+    setLoadingHistory(false);
+    setUserMsgCount(0);
     setSidebarOpen(false);
     if (user && !user.coachmarks_session_seen) {
       setShowSessionTour(true);
