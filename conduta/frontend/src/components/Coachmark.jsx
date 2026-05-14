@@ -21,9 +21,9 @@ export default function Coachmark({ type, steps, onDone }) {
     return () => window.removeEventListener('resize', updateRect);
   }, [updateRect]);
 
-  async function handleDone() {
-    try { await markCoachmarks(type); } catch {}
+  function handleDone() {
     onDone();
+    markCoachmarks(type).catch(() => {});
   }
 
   function handleNext() {
