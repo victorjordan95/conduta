@@ -17,7 +17,11 @@ async function authMiddleware(req, res, next) {
       return res.status(401).json({ error: 'Token inválido ou expirado.' });
     }
 
-    const result = await pool.query('SELECT session_version, plan, active FROM users WHERE id = $1', [payload.sub]);
+    const result = await pool.query(
+      'SELECT session_version, plan, active, email_verified FROM users WHERE id = $1',
+      [payload.sub]
+    );
+
     if (!result.rows.length || result.rows[0].session_version !== payload.sv) {
       return res.status(401).json({
         error: 'Sua sessão foi encerrada pois outro acesso foi iniciado.',
@@ -27,6 +31,13 @@ async function authMiddleware(req, res, next) {
 
     if (!result.rows[0].active) {
       return res.status(401).json({ error: 'Conta desativada.' });
+    }
+
+    if (!result.rows[0].email_verified) {
+      return res.status(403).json({
+        error: 'Email não verificado. Verifique sua caixa de entrada.',
+        code: 'EMAIL_NOT_VERIFIED',
+      });
     }
 
     req.userId = payload.sub;
