@@ -51,6 +51,38 @@
 }
 
 @media (max-width: 768px) {
+  .sessionHeader {
+    padding: 8px 14px;
+    gap: 8px;
+  }
+
+  .sessionTitle {
+    font-size: 0.82rem;
+  }
+
+  .pdfBtn {
+    font-size: 0.72rem;
+    padding: 0.25rem 0.65rem;
+  }
+
+  .footerRow {
+    padding: 6px 14px;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .footerLinks {
+    display: none;
+  }
+
+  .footerDisclaimer {
+    font-size: 10px;
+  }
+
+  .entitiesToggle {
+    padding: 0.4rem 14px;
+  }
+
   .mobileHeader {
     display: flex;
     align-items: center;

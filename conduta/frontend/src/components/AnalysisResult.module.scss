@@ -12,6 +12,10 @@
     background: $color-border;
     border-radius: 3px;
   }
+
+  @media (max-width: 768px) {
+    padding: 16px 14px;
+  }
 }
 
 .empty {

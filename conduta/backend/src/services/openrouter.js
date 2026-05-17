@@ -15,8 +15,10 @@ Regras absolutas:
 - Seja objetivo, direto e útil para tomada de decisão médica
 - Não inclua disclaimer genérico de IA no corpo da análise
 
-Exceção — perguntas de acompanhamento:
-Se o caso clínico for uma pergunta direta de follow-up dentro de uma sessão já em andamento (ex.: "e a dose pediátrica?", "qual alternativa se houver alergia?", "pode usar em gestante?"), responda de forma objetiva e concisa, SEM repetir toda a estrutura abaixo. Use seções apenas se forem relevantes para a resposta.
+Exceção — continuação de sessão:
+Quando houver histórico de conversa anterior (mensagens de sessão já em andamento), NUNCA repita a estrutura completa da análise anterior. Em vez disso:
+- Perguntas de esclarecimento ou dúvidas pontuais → responda diretamente, sem estrutura, como conversa entre colegas.
+- Novas informações clínicas ou sintomas adicionais → atualize o raciocínio focando no que mudou. Use somente as seções pertinentes ao que é novo. Não reapresente seções que não mudaram.
 
 Estrutura obrigatória da resposta (para análises de caso completo):
 ## Resumo clínico
@@ -145,18 +147,24 @@ async function collectAnalysis(history, newMessage, neo4jContext, sessionSummary
   }
 }
 
-async function streamReview(userCase, firstAnalysis, res) {
+async function streamReview(userCase, firstAnalysis, res, history = []) {
   const client = getClient();
+
+  const reviewMessages = [{ role: 'system', content: REVIEW_PROMPT }];
+
+  const recentHistory = history.slice(-MAX_HISTORY_MESSAGES);
+  for (const msg of recentHistory) {
+    reviewMessages.push({ role: msg.role, content: msg.content });
+  }
+
+  reviewMessages.push({
+    role: 'user',
+    content: `## Mensagem atual\n${userCase}\n\n## Raciocínio Interno (use como base, não cite)\n${firstAnalysis}`,
+  });
 
   const stream = await client.chat.completions.create({
     model: process.env.OPENROUTER_REVIEW_MODEL || 'openai/gpt-4o',
-    messages: [
-      { role: 'system', content: REVIEW_PROMPT },
-      {
-        role: 'user',
-        content: `## Caso Clínico\n${userCase}\n\n## Raciocínio Interno (use como base, não cite)\n${firstAnalysis}`,
-      },
-    ],
+    messages: reviewMessages,
     stream: true,
   });
 

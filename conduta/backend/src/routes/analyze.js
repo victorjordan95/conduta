@@ -78,7 +78,7 @@ router.post('/', async (req, res) => {
     const firstAnalysis = await collectAnalysis(history, content, context, summaryForStream);
 
     // ── Fase 2: revisão final — única resposta visível ao usuário ──
-    const fullReview = await streamReview(content, firstAnalysis || '', res).catch((err) => {
+    const fullReview = await streamReview(content, firstAnalysis || '', res, history).catch((err) => {
       console.error('[analyze] review error:', err.message);
       return null;
     });
