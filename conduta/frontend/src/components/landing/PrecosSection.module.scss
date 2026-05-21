@@ -153,11 +153,12 @@
   font-size: 13px;
   color: #c0c0c0;
   display: flex;
+  align-items: flex-start;
   gap: 8px;
 }
 
-.check { color: $color-success; font-weight: 700; flex-shrink: 0; }
-.dash  { color: #c0c0c0; flex-shrink: 0; }
+.check { color: $color-success; font-weight: 700; flex-shrink: 0; min-width: 14px; text-align: center; }
+.dash  { color: #c0c0c0; flex-shrink: 0; min-width: 14px; text-align: center; }
 
 .estudante {
   font-size: 13px;
