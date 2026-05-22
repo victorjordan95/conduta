@@ -132,6 +132,7 @@ async function collectAnalysis(history, newMessage, neo4jContext, sessionSummary
         model: process.env.OPENROUTER_MODEL || 'openai/gpt-4o',
         messages,
         stream: false,
+        temperature: 0.2,
       });
       return completion.choices[0]?.message?.content || '';
     } catch (err) {
@@ -166,6 +167,7 @@ async function streamReview(userCase, firstAnalysis, res, history = []) {
     model: process.env.OPENROUTER_REVIEW_MODEL || 'openai/gpt-4o',
     messages: reviewMessages,
     stream: true,
+    temperature: 0.2,
   });
 
   let fullReview = '';

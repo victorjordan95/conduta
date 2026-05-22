@@ -144,3 +144,6 @@ Conduta is a clinical decision support system for general practitioners. Doctors
 | `HF_API_TOKEN` | — | Token Hugging Face Inference API (obrigatório para classificação de lesões) |
 | `HF_SKIN_MODEL` | — | Modelo HF, default `bsenst/skin-cancer-HAM10k` |
 | `VITE_API_URL` | — | Frontend target URL, default `/api` |
+| `RESEND_API_KEY` | ✓ | API key do Resend para envio de emails |
+| `EMAIL_FROM` | — | Remetente dos emails, default `Conduta <onboarding@resend.dev>` |
+| `FRONTEND_URL` | ✓ | URL base do frontend (usado nos links dos emails) |

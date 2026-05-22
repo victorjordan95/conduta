@@ -23,12 +23,22 @@ async function adminMiddleware(req, res, next) {
 
   try {
     const result = await pool.query(
-      'SELECT role FROM users WHERE id = $1',
+      'SELECT role, session_version, active FROM users WHERE id = $1',
       [payload.sub]
     );
 
-    if (result.rows[0]?.role !== 'admin') {
+    const user = result.rows[0];
+
+    if (!user || user.role !== 'admin') {
       return res.status(403).json({ error: 'Acesso negado.' });
+    }
+
+    if (user.session_version !== payload.sv) {
+      return res.status(401).json({ error: 'Sessão encerrada.', code: 'SESSION_KICKED' });
+    }
+
+    if (!user.active) {
+      return res.status(401).json({ error: 'Conta desativada.' });
     }
 
     req.userId = payload.sub;

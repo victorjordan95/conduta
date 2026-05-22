@@ -42,7 +42,7 @@ async function usageCheck(req, res, next) {
     next();
   } catch (err) {
     console.error('[usageCheck] Erro:', err.message);
-    next();
+    return res.status(503).json({ error: 'Serviço temporariamente indisponível. Tente novamente em instantes.' });
   }
 }
 

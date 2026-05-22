@@ -1,7 +1,7 @@
 const express = require('express');
 const pool = require('../db/pg');
 const { collectAnalysis, streamReview } = require('../services/openrouter');
-const { searchClinicalContext } = require('../services/neo4j-search');
+const { searchClinicalContext, searchFollowUpContext } = require('../services/neo4j-search');
 const { searchSimilarCases } = require('../services/case-search');
 const { extractAndPersist } = require('../services/knowledge-extractor');
 const { generateAndSave } = require('../services/session-summarizer');
@@ -60,7 +60,10 @@ router.post('/', async (req, res) => {
           searchClinicalContext(content),
           searchSimilarCases(content, req.userId),
         ])
-      : [null, null];
+      : await Promise.all([
+          searchFollowUpContext(content),
+          Promise.resolve(null),
+        ]);
 
     const contextParts = [neo4jContext, similarCases].filter(Boolean);
     const context = contextParts.length > 0 ? contextParts.join('\n\n---\n\n') : null;

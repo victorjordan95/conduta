@@ -19,7 +19,7 @@ async function authMiddleware(req, res, next) {
     }
 
     const result = await pool.query(
-      'SELECT session_version, plan, active, email_verified, email FROM users WHERE id = $1',
+      'SELECT session_version, plan, active, email_verified, email, role FROM users WHERE id = $1',
       [payload.sub]
     );
 
@@ -42,7 +42,7 @@ async function authMiddleware(req, res, next) {
     }
 
     req.userId = payload.sub;
-    req.userRole = payload.role || 'user';
+    req.userRole = result.rows[0].role || 'user';
     req.userPlan = result.rows[0].plan || 'free';
 
     Sentry.setUser({ id: payload.sub, email: result.rows[0].email });

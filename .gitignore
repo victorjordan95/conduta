@@ -5,3 +5,4 @@ node_modules/
 conduta/setup.sh
 coverage/
 conduta/deploy_hibrido.pdf
+.vercel

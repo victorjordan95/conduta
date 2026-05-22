@@ -99,16 +99,17 @@ router.post('/signup', async (req, res) => {
 
   try {
     const senhaHash = await bcrypt.hash(senha, 10);
-    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const rawVerificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationTokenHash = crypto.createHash('sha256').update(rawVerificationToken).digest('hex');
     const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     await pool.query(
       `INSERT INTO users (email, nome, senha_hash, role, terms_accepted_at, email_verified, email_verification_token, email_verification_expires_at)
        VALUES ($1, $2, $3, 'user', $4, FALSE, $5, $6)`,
-      [email, nome, senhaHash, terms_accepted_at ? new Date() : null, verificationToken, verificationExpires]
+      [email, nome, senhaHash, terms_accepted_at ? new Date() : null, verificationTokenHash, verificationExpires]
     );
 
-    await sendVerificationEmail(email, nome, verificationToken);
+    await sendVerificationEmail(email, nome, rawVerificationToken);
 
     console.log(`[AUTH] SIGNUP pending verification | email=${email} ip=${ip}`);
     res.status(201).json({ pending: true });
@@ -129,6 +130,7 @@ router.get('/verify-email', async (req, res) => {
   }
 
   try {
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
     const result = await pool.query(
       `UPDATE users
        SET email_verified = TRUE,
@@ -139,7 +141,7 @@ router.get('/verify-email', async (req, res) => {
          AND email_verification_expires_at > NOW()
          AND email_verified = FALSE
        RETURNING id, email, nome, role, plan, coachmarks_welcome_seen, coachmarks_session_seen, session_version`,
-      [token]
+      [tokenHash]
     );
 
     if (!result.rows.length) {
@@ -203,15 +205,16 @@ router.post('/resend-verification', async (req, res) => {
       }
     }
 
-    const newToken = crypto.randomBytes(32).toString('hex');
+    const newRawToken = crypto.randomBytes(32).toString('hex');
+    const newTokenHash = crypto.createHash('sha256').update(newRawToken).digest('hex');
     const newExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     await pool.query(
       'UPDATE users SET email_verification_token = $1, email_verification_expires_at = $2 WHERE id = $3',
-      [newToken, newExpires, user.id]
+      [newTokenHash, newExpires, user.id]
     );
 
-    await sendVerificationEmail(email, user.nome, newToken);
+    await sendVerificationEmail(email, user.nome, newRawToken);
 
     res.json({ ok: true });
   } catch (err) {
@@ -235,15 +238,16 @@ router.post('/forgot-password', async (req, res) => {
 
     if (result.rows.length) {
       const user = result.rows[0];
-      const resetToken = crypto.randomBytes(32).toString('hex');
+      const rawResetToken = crypto.randomBytes(32).toString('hex');
+      const resetTokenHash = crypto.createHash('sha256').update(rawResetToken).digest('hex');
       const resetExpires = new Date(Date.now() + 60 * 60 * 1000);
 
       await pool.query(
         'UPDATE users SET password_reset_token = $1, password_reset_expires_at = $2 WHERE id = $3',
-        [resetToken, resetExpires, user.id]
+        [resetTokenHash, resetExpires, user.id]
       );
 
-      await sendPasswordResetEmail(email, user.nome, resetToken);
+      await sendPasswordResetEmail(email, user.nome, rawResetToken);
     }
 
     res.json({ ok: true });
@@ -271,9 +275,10 @@ router.post('/reset-password', async (req, res) => {
   }
 
   try {
+    const incomingHash = crypto.createHash('sha256').update(token).digest('hex');
     const result = await pool.query(
       'SELECT id FROM users WHERE password_reset_token = $1 AND password_reset_expires_at > NOW()',
-      [token]
+      [incomingHash]
     );
 
     if (!result.rows.length) {
@@ -300,7 +305,15 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-router.post('/logout', (req, res) => {
+router.post('/logout', authMiddleware, async (req, res) => {
+  try {
+    await pool.query(
+      'UPDATE users SET session_version = session_version + 1 WHERE id = $1',
+      [req.userId]
+    );
+  } catch (err) {
+    console.error('[AUTH] logout session invalidation error:', err.message);
+  }
   res.json({ message: 'Logout realizado.' });
 });
 

@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { rateLimit, ipKeyGenerator } = require('express-rate-limit');
 const authMiddleware = require('./middleware/auth');
+const adminMiddleware = require('./middleware/admin');
 
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
@@ -62,6 +63,24 @@ const loginLimiter = rateLimit({
   message: { error: 'Muitas tentativas de login. Tente novamente em 15 minutos.' },
 });
 
+// Rate limiting: signup — 5 contas / hora por IP
+const signupLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitos cadastros. Tente novamente em 1 hora.' },
+});
+
+// Rate limiting: reset/verificação — 5 req / 15 min por IP
+const authEmailLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas requisições. Tente novamente em 15 minutos.' },
+});
+
 // Rate limiting: analyze — 10 req / min por usuário (userId populado pelo authMiddleware antes)
 const analyzeLimiter = rateLimit({
   windowMs: 60 * 1000,
@@ -77,10 +96,13 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/auth/login', loginLimiter);
+app.use('/auth/signup', signupLimiter);
+app.use('/auth/forgot-password', authEmailLimiter);
+app.use('/auth/resend-verification', authEmailLimiter);
 app.use('/auth', authRoutes);
-app.use('/admin', adminRoutes);
-app.use('/admin/knowledge', adminKnowledgeRoutes);
-app.use('/admin/feedbacks', adminFeedbackRoutes);
+app.use('/admin', adminMiddleware, adminRoutes);
+app.use('/admin/knowledge', adminMiddleware, adminKnowledgeRoutes);
+app.use('/admin/feedbacks', adminMiddleware, adminFeedbackRoutes);
 app.use('/sessions', sessionsRoutes);
 app.use('/analyze', authMiddleware, usageCheck, analyzeLimiter, analyzeRoutes);
 app.use('/usage', authMiddleware, usageRoutes);
