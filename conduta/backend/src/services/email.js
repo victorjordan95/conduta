@@ -26,7 +26,8 @@ async function sendVerificationEmail(to, nome, token) {
         </a>
         <p style="color:#888;font-size:13px">
           O link expira em 24 horas.<br>
-          Se você não criou uma conta no Conduta, ignore este email.
+          Se você não criou uma conta no Conduta, ignore este email.<br><br>
+          Dúvidas? Fale com a gente: <a href="mailto:app.conduta@gmail.com" style="color:#1a6b73">app.conduta@gmail.com</a>
         </p>
       </div>
     `,
@@ -54,7 +55,8 @@ async function sendPasswordResetEmail(to, nome, token) {
         </a>
         <p style="color:#888;font-size:13px">
           O link expira em 1 hora.<br>
-          Se você não solicitou a redefinição, ignore este email.
+          Se você não solicitou a redefinição, ignore este email.<br><br>
+          Dúvidas? Fale com a gente: <a href="mailto:app.conduta@gmail.com" style="color:#1a6b73">app.conduta@gmail.com</a>
         </p>
       </div>
     `,
