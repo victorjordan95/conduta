@@ -167,3 +167,19 @@
   .conteudo { padding: 1rem; }
   .titulo { font-size: 1.1rem; }
 }
+
+@media (max-width: 480px) {
+  .drugaBadge {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .numero {
+    font-size: 0.65rem;
+    min-width: 16px;
+  }
+
+  .passoTexto {
+    font-size: 0.75rem;
+  }
+}

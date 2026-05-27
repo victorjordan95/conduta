@@ -40,7 +40,16 @@ export default function ProtocoloDetalhe() {
 
   if (!protocolo) return <Navigate to="/protocolos" replace />;
 
-  let contadorAcaoDroga = 0;
+  // Pre-compute step numbers across all phases (alertas don't get a number)
+  let counter = 0;
+  const fasesComNumeros = protocolo.fases.map((fase) => ({
+    ...fase,
+    passos: fase.passos.map((passo) => {
+      if (passo.tipo === 'alerta') return { ...passo, numero: null };
+      counter += 1;
+      return { ...passo, numero: counter };
+    }),
+  }));
 
   return (
     <div className={styles.page}>
@@ -53,26 +62,16 @@ export default function ProtocoloDetalhe() {
       </header>
 
       <main className={styles.conteudo}>
-        {protocolo.fases.map((fase, fi) => {
-          return (
-            <section key={fi} className={styles.fase}>
-              <h2 className={styles.faseNome}>{fase.nome}</h2>
-              <div className={styles.passos}>
-                {fase.passos.map((passo, pi) => {
-                  const isAlerta = passo.tipo === 'alerta';
-                  if (!isAlerta) contadorAcaoDroga += 1;
-                  return (
-                    <Passo
-                      key={pi}
-                      passo={passo}
-                      numero={isAlerta ? null : contadorAcaoDroga}
-                    />
-                  );
-                })}
-              </div>
-            </section>
-          );
-        })}
+        {fasesComNumeros.map((fase, fi) => (
+          <section key={fi} className={styles.fase}>
+            <h2 className={styles.faseNome}>{fase.nome}</h2>
+            <div className={styles.passos}>
+              {fase.passos.map((passo, pi) => (
+                <Passo key={pi} passo={passo} numero={passo.numero} />
+              ))}
+            </div>
+          </section>
+        ))}
 
         <footer className={styles.referencia}>
           <span>📚 Referência: {protocolo.referencia}</span>
