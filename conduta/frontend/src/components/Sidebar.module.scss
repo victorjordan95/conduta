@@ -355,3 +355,23 @@
   justify-content: space-between;
   align-items: center;
 }
+
+// ── Link de protocolos ───────────────────────────────
+.protocolosLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 14px 8px;
+  padding: 8px 12px;
+  border-radius: $border-radius;
+  font-size: $font-size-sm;
+  color: $color-text-sidebar;
+  text-decoration: none;
+  transition: background 0.1s, color 0.1s;
+  font-weight: 500;
+
+  &:hover, &.protocolosLinkActive {
+    background: $color-sidebar-hover;
+    color: white;
+  }
+}

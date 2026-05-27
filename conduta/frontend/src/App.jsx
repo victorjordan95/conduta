@@ -11,6 +11,8 @@ import VerifyEmailPending from './pages/VerifyEmailPending';
 import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import Protocolos from './pages/Protocolos';
+import ProtocoloDetalhe from './pages/ProtocoloDetalhe';
 
 function PrivateRoute({ children }) {
   const { token } = useAuth();
@@ -49,6 +51,22 @@ export default function App() {
               <AdminRoute>
                 <AdminKnowledge />
               </AdminRoute>
+            }
+          />
+          <Route
+            path="/protocolos"
+            element={
+              <PrivateRoute>
+                <Protocolos />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/protocolos/:slug"
+            element={
+              <PrivateRoute>
+                <ProtocoloDetalhe />
+              </PrivateRoute>
             }
           />
           <Route path="*" element={<Navigate to="/" replace />} />

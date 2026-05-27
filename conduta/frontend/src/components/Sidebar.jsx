@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getSessions, createSession, renameSession, deleteSession } from '../services/api';
 import { createCheckoutSession, getBillingPortalUrl } from '../services/api';
@@ -13,6 +13,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
   const [editingId, setEditingId] = useState(null);
   const [editingTitulo, setEditingTitulo] = useState('');
   const [billingLoading, setBillingLoading] = useState(false);
+  const location = useLocation();
 
   async function handleUpgrade() {
     setBillingLoading(true);
@@ -105,6 +106,14 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
       <button className={styles.newCase} onClick={handleNewCase} data-coachmark="new-case">
         + Novo caso
       </button>
+
+      <Link
+        to="/protocolos"
+        className={`${styles.protocolosLink} ${location.pathname.startsWith('/protocolos') ? styles.protocolosLinkActive : ''}`}
+        onClick={onClose}
+      >
+        ⚡ Protocolos
+      </Link>
 
       <input
         className={styles.searchInput}
