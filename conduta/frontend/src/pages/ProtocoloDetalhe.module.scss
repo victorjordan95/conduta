@@ -1,0 +1,169 @@
+// frontend/src/pages/ProtocoloDetalhe.module.scss
+@use '../styles/variables' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg;
+  padding-bottom: 3rem;
+}
+
+.header {
+  background: $color-sidebar;
+  padding: 1.25rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.backLink {
+  color: $color-text-sidebar;
+  font-size: $font-size-sm;
+  text-decoration: none;
+  transition: color 0.15s;
+  align-self: flex-start;
+
+  &:hover { color: white; }
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.icone {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.titulo {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.conteudo {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.fase {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.faseNome {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: $color-accent;
+  background: rgba(26, 107, 115, 0.07);
+  padding: 0.65rem 1rem;
+  margin: 0;
+  border-bottom: 1px solid $color-border;
+}
+
+.passos {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.passoLinha {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.numero {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: $color-text-secondary;
+  min-width: 18px;
+  padding-top: 0.1rem;
+  flex-shrink: 0;
+}
+
+.passoTexto {
+  font-size: 0.83rem;
+  color: $color-text-primary;
+  line-height: 1.5;
+}
+
+// ── Droga ───────────────────────────────────────────
+.drugaBadge {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  flex: 1;
+}
+
+.drugaNome {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1e40af;
+}
+
+.drugaDose {
+  font-size: 0.82rem;
+  color: #1d4ed8;
+
+  &::before { content: '·'; margin-right: 4px; }
+}
+
+.drugaObs {
+  font-size: 0.72rem;
+  color: $color-text-secondary;
+  font-style: italic;
+  width: 100%;
+  margin-top: 1px;
+}
+
+// ── Alerta ───────────────────────────────────────────
+.alerta {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-left: 4px solid #f59e0b;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  color: #92400e;
+  line-height: 1.5;
+}
+
+.alertaIcone {
+  flex-shrink: 0;
+  font-size: 0.9rem;
+}
+
+// ── Rodapé ────────────────────────────────────────────
+.referencia {
+  font-size: 0.75rem;
+  color: $color-text-secondary;
+  border-top: 1px solid $color-border;
+  padding-top: 1rem;
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .conteudo { padding: 1rem; }
+  .titulo { font-size: 1.1rem; }
+}
