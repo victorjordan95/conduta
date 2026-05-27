@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { protocolos } from '../data/protocolos';
 import Protocolos from '../pages/Protocolos';
 
 function renderWithRouter() {
@@ -17,23 +18,24 @@ describe('Protocolos (lista)', () => {
     expect(screen.getByRole('heading', { name: /Sequências Rápidas/i })).toBeInTheDocument();
   });
 
-  it('renderiza 10 cards de protocolos', () => {
+  it('renderiza card para cada protocolo', () => {
     renderWithRouter();
-    const links = screen.getAllByRole('link');
-    const cardLinks = links.filter((l) => l.getAttribute('href')?.startsWith('/protocolos/'));
-    expect(cardLinks).toHaveLength(10);
+    const cards = screen.getAllByTestId('protocolo-card');
+    expect(cards).toHaveLength(protocolos.length);
   });
 
-  it('cada card exibe o título do protocolo', () => {
+  it('renderiza o título de todos os protocolos', () => {
     renderWithRouter();
-    expect(screen.getByText('Sequência Rápida de Intubação')).toBeInTheDocument();
-    expect(screen.getByText('Parada Cardiorrespiratória (ACLS)')).toBeInTheDocument();
-    expect(screen.getByText('Anafilaxia')).toBeInTheDocument();
+    protocolos.forEach((p) => {
+      expect(screen.getByText(p.titulo)).toBeInTheDocument();
+    });
   });
 
   it('o link de cada card aponta para o slug correto', () => {
     renderWithRouter();
-    const sriLink = screen.getByRole('link', { name: /Sequência Rápida de Intubação/i });
-    expect(sriLink).toHaveAttribute('href', '/protocolos/sri');
+    protocolos.forEach((p) => {
+      const link = screen.getByRole('link', { name: new RegExp(p.titulo, 'i') });
+      expect(link).toHaveAttribute('href', `/protocolos/${p.slug}`);
+    });
   });
 });
