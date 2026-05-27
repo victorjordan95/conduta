@@ -29,7 +29,8 @@ describe('ProtocoloDetalhe', () => {
 
   it('renderiza badges de droga com nome e dose', () => {
     renderDetalhe('sri');
-    expect(screen.getByText(/Etomidato/i)).toBeInTheDocument();
+    const etomidatoMatches = screen.getAllByText(/Etomidato/i);
+    expect(etomidatoMatches.length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/0,3 mg\/kg IV/i)).toBeInTheDocument();
   });
 
@@ -53,7 +54,8 @@ describe('ProtocoloDetalhe', () => {
     ['pcr', 'anafilaxia', 'sepse', 'cad'].forEach((slug) => {
       const p = protocolos.find((x) => x.slug === slug);
       const { unmount } = renderDetalhe(slug);
-      expect(screen.getByRole('heading', { name: new RegExp(p.titulo, 'i') })).toBeInTheDocument();
+      const escapedTitulo = p.titulo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      expect(screen.getByRole('heading', { name: new RegExp(escapedTitulo, 'i') })).toBeInTheDocument();
       unmount();
     });
   });
@@ -62,7 +64,8 @@ describe('ProtocoloDetalhe', () => {
     ['sri', 'pcr', 'eap'].forEach((slug) => {
       const p = protocolos.find((x) => x.slug === slug);
       const { unmount } = renderDetalhe(slug);
-      expect(screen.getByText(new RegExp(p.fases[0].nome, 'i'))).toBeInTheDocument();
+      const escapedNome = p.fases[0].nome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      expect(screen.getByText(new RegExp(escapedNome, 'i'))).toBeInTheDocument();
       unmount();
     });
   });

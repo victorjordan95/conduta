@@ -9,7 +9,7 @@ export const protocolos = [
     tags: ['via aérea', 'emergência'],
     fases: [
       {
-        nome: 'Preparação',
+        nome: 'Preparação (0–5 min)',
         passos: [
           { tipo: 'acao', texto: 'Verificar equipamento: laringoscópio (lâmina funcionando), cânula 7,0–8,0 adulto, guia maleável, seringa 10 mL' },
           { tipo: 'acao', texto: 'Confirmar aspiração disponível e funcionando' },
@@ -32,7 +32,7 @@ export const protocolos = [
         passos: [
           { tipo: 'acao', texto: 'Escolher agente indutor conforme hemodinâmica:' },
           { tipo: 'droga', nome: 'Etomidato', dose: '0,3 mg/kg IV', obs: 'hemodinamicamente estável — 1ª escolha' },
-          { tipo: 'droga', nome: 'Cetamina', dose: '1–2 mg/kg IV', obs: 'choque, broncoespasmo ou contraindicação ao indutor de 1ª escolha' },
+          { tipo: 'droga', nome: 'Cetamina', dose: '1–2 mg/kg IV', obs: 'choque, broncoespasmo ou sem acesso a etomidato' },
           { tipo: 'droga', nome: 'Propofol', dose: '1,5–2 mg/kg IV', obs: 'apenas se estável e sem risco de hipotensão' },
           { tipo: 'acao', texto: 'Imediatamente após o indutor, aplicar bloqueador neuromuscular:' },
           { tipo: 'droga', nome: 'Succinilcolina', dose: '1,5 mg/kg IV', obs: '1ª escolha — ação em 45–60s' },
@@ -68,13 +68,13 @@ export const protocolos = [
 
   {
     slug: 'pcr',
-    titulo: 'Parada Cardiorrespiratória',
+    titulo: 'Parada Cardiorrespiratória (ACLS)',
     icone: '❤️',
     categoria: 'cardiovascular',
     tags: ['cardiovascular', 'emergência'],
     fases: [
       {
-        nome: 'Reconhecimento',
+        nome: 'Reconhecimento (0–10s)',
         passos: [
           { tipo: 'acao', texto: 'Verificar responsividade: chamar pelo nome e aplicar estímulo esternal' },
           { tipo: 'acao', texto: 'Checar pulso (carótida) e respiração simultaneamente por < 10s' },
