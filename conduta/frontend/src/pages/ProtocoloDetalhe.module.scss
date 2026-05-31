@@ -139,13 +139,12 @@
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
-  background: #fffbeb;
-  border: 1px solid #fcd34d;
-  border-left: 4px solid #f59e0b;
+  background: $color-warning-bg;
+  border: 1px solid $color-warning-border;
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
   font-size: 0.8rem;
-  color: #92400e;
+  color: $color-warning-text;
   line-height: 1.5;
 }
 
