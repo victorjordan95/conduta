@@ -128,7 +128,15 @@ export default function AnalysisResult({ messages, streaming, loading, onFeedbac
   if (loading) {
     return (
       <div className={styles.container}>
-        <p className={styles.empty}>Carregando histórico...</p>
+        <div className={styles.skeleton}>
+          <div className={styles.skeletonLine} style={{ width: '72%' }} />
+          <div className={styles.skeletonLine} style={{ width: '88%' }} />
+          <div className={styles.skeletonLine} style={{ width: '55%' }} />
+          <div className={styles.skeletonLine} style={{ width: '80%', marginTop: '24px' }} />
+          <div className={styles.skeletonLine} style={{ width: '65%' }} />
+          <div className={styles.skeletonLine} style={{ width: '91%' }} />
+          <div className={styles.skeletonLine} style={{ width: '48%' }} />
+        </div>
       </div>
     );
   }

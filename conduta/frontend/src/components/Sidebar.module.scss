@@ -84,6 +84,11 @@
   }
 }
 
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 .item {
   padding: 9px 12px;
   border-radius: $border-radius;
@@ -95,6 +100,7 @@
   transition: background 0.1s, color 0.1s;
   margin-bottom: 1px;
   position: relative;
+  animation: slideIn 0.18s cubic-bezier(0.0, 0, 0.2, 1) both;
 
   &:hover {
     background: $color-sidebar-hover;

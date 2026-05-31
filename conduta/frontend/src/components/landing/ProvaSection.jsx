@@ -9,10 +9,10 @@ const QUOTE = {
 };
 
 const CREDENCIAIS = [
-  { sigla: 'PCDTs', desc: 'Protocolos Clínicos e Diretrizes Terapêuticas MS' },
-  { sigla: 'CFM',   desc: 'Condutas alinhadas às resoluções do conselho' },
-  { sigla: 'SUS',   desc: 'Foco em atenção primária e pronto atendimento' },
-  { sigla: 'BR',    desc: '100% em português, contexto brasileiro' },
+  { sigla: 'PCDTs', desc: 'Protocolos Clínicos e Diretrizes Terapêuticas MS', href: 'https://www.gov.br/saude/pt-br/assuntos/protocolos-clinicos-e-diretrizes-terapeuticas-pcdt' },
+  { sigla: 'CFM',   desc: 'Condutas alinhadas às resoluções do conselho',       href: 'https://portal.cfm.org.br/' },
+  { sigla: 'SUS',   desc: 'Foco em atenção primária e pronto atendimento',      href: null },
+  { sigla: 'BR',    desc: '100% em português, contexto brasileiro',             href: null },
 ];
 
 export default function ProvaSection() {
@@ -30,7 +30,13 @@ export default function ProvaSection() {
         <div className={styles.credGrid}>
           {CREDENCIAIS.map((c) => (
             <div key={c.sigla} className={styles.cred}>
-              <strong className={styles.credSigla}>{c.sigla}</strong>
+              {c.href ? (
+                <a href={c.href} target="_blank" rel="noreferrer" className={styles.credSiglaLink}>
+                  <strong className={styles.credSigla}>{c.sigla}</strong>
+                </a>
+              ) : (
+                <strong className={styles.credSigla}>{c.sigla}</strong>
+              )}
               <span className={styles.credDesc}>{c.desc}</span>
             </div>
           ))}

@@ -294,6 +294,7 @@ export default function Dashboard() {
             <button className={styles.emptyBtn} onClick={handleCreateNewCase}>
               + Novo caso
             </button>
+            <span className={styles.emptyHint}>ou pressione <kbd className={styles.kbd}>Ctrl+N</kbd></span>
           </div>
         ) : (
           <>
