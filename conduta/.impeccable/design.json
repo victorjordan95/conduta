@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-31T22:30:00Z",
+  "title": "Design System: Conduta",
+  "extensions": {
+    "colorMeta": {
+      "verde-azul-profundo":       { "role": "primary",   "displayName": "Verde-Azul Profundo",     "canonical": "oklch(42% 0.077 193)", "tonalRamp": ["#082426","#0e3e43","#145a61","#1a6b73","#228d99","#56aeb8","#9fd3d8","#eaf2f3"] },
+      "azul-marinho-discreto":     { "role": "secondary", "displayName": "Azul Marinho Discreto",   "canonical": "oklch(22% 0.028 233)", "tonalRamp": ["#070d13","#0e1820","#162230","#1e2a35","#263545","#3d5165","#7b9bae","#d0e3ec"] },
+      "cinza-tela":                { "role": "neutral",   "displayName": "Cinza Tela",              "canonical": "oklch(95% 0.006 233)", "tonalRamp": ["#8e9bab","#a8b3be","#c2cbd4","#d9dfe6","#e8ecf0","#f0f2f5","#f4f5f7","#f9fafb"] },
+      "tinta-escura":              { "role": "neutral",   "displayName": "Tinta Escura",            "canonical": "oklch(18% 0.030 276)", "tonalRamp": ["#0a0a1a","#121220","#1a1a2e","#252537","#3a3a55","#5a5a80","#9494b8","#d4d4e8"] },
+      "diagnostico-fundo":         { "role": "semantic",  "displayName": "Âmbar Diagnóstico",       "canonical": "#fef3c7", "tonalRamp": ["#92400e","#b45309","#d97706","#f59e0b","#fbbf24","#fde68a","#fef3c7","#fffbeb"] },
+      "medicamento-fundo":         { "role": "semantic",  "displayName": "Verde Medicamento",       "canonical": "#d1fae5", "tonalRamp": ["#065f46","#047857","#059669","#34d399","#6ee7b7","#a7f3d0","#d1fae5","#ecfdf5"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display",  "purpose": "Hero headline na landing page. Usado uma vez por página." },
+      "headline": { "displayName": "Headline", "purpose": "Títulos de seção da landing. Nunca no app." },
+      "title":    { "displayName": "Title",    "purpose": "Subtítulos e destaques contextuais." },
+      "body":     { "displayName": "Body",     "purpose": "Texto de análise, mensagens, descrições. Máx 65–75ch." },
+      "label":    { "displayName": "Label",    "purpose": "Labels de campo, botões menores, nomes de usuário." }
+    },
+    "shadows": [
+      { "name": "ambient-low", "value": "0 1px 3px rgba(0, 0, 0, 0.08)", "purpose": "Elementos levemente elevados; hero preview card." },
+      { "name": "float",       "value": "0 4px 12px rgba(0, 0, 0, 0.10)", "purpose": "Dropdowns e painéis flutuantes. Único nível perceptível." },
+      { "name": "sidebar-mobile", "value": "4px 0 24px rgba(0, 0, 0, 0.35)", "purpose": "Sidebar sobreposta no mobile." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Transições padrão de estado (hover, focus)." },
+      { "name": "ease-out",      "value": "cubic-bezier(0.0, 0, 0.2, 1)", "purpose": "Entrada de elementos (sidebar mobile deslizando)." },
+      { "name": "duration-fast", "value": "0.1s", "purpose": "Hover em itens de lista." },
+      { "name": "duration-base", "value": "0.15s", "purpose": "Transições de botão e cor." },
+      { "name": "duration-slow", "value": "0.25s", "purpose": "Sidebar mobile, overlay." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "768px", "purpose": "Sidebar colapsa; mobile header aparece." },
+      { "name": "sm",     "value": "640px", "purpose": "Landing: hero font-size reduz; nav links somem." },
+      { "name": "xs",     "value": "480px", "purpose": "Navbar: brand menor, actions compactam." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação primária em superfícies claras. Landing CTAs e botão de novo caso.",
+      "html": "<button class=\"ds-btn-primary\">Começar grátis</button>",
+      "css": ".ds-btn-primary { background: #1a6b73; color: #ffffff; padding: 14px 32px; border-radius: 6px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; font-weight: 700; border: none; cursor: pointer; transition: background 0.15s; display: inline-block; text-decoration: none; } .ds-btn-primary:hover { background: #145a61; } .ds-btn-primary:focus-visible { outline: 2px solid #1a6b73; outline-offset: 2px; border-radius: 6px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Ação secundária. Gerenciar assinatura, exportar PDF, cancelar confirmação.",
+      "html": "<button class=\"ds-btn-ghost\">Gerenciar assinatura</button>",
+      "css": ".ds-btn-ghost { background: transparent; color: #5a6a7a; padding: 8px 16px; border-radius: 6px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.78rem; font-weight: 400; border: 1px solid #dde3ec; cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s; } .ds-btn-ghost:hover { border-color: #5a6a7a; color: #1a1a2e; background: #f4f5f7; } .ds-btn-ghost:focus-visible { outline: 2px solid #1a6b73; outline-offset: 2px; }"
+    },
+    {
+      "name": "Sidebar New Case Button",
+      "kind": "button",
+      "refersTo": "button-sidebar",
+      "description": "Ação primária dentro da sidebar dark. Verde-azul sobre azul-marinho.",
+      "html": "<button class=\"ds-btn-sidebar\">+ Novo caso</button>",
+      "css": ".ds-btn-sidebar { background: #1a6b73; color: #ffffff; padding: 9px 14px; border-radius: 6px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; font-weight: 600; border: none; cursor: pointer; width: 100%; text-align: left; transition: background 0.15s; } .ds-btn-sidebar:hover { background: #145a61; } .ds-btn-sidebar:focus-visible { outline: 2px solid #1a6b73; outline-offset: 2px; }"
+    },
+    {
+      "name": "Tag Diagnóstico",
+      "kind": "chip",
+      "refersTo": "tag-diagnostico",
+      "description": "Entidade clínica extraída: diagnóstico. Âmbar semântico. Nunca reutilizar para outros fins.",
+      "html": "<span class=\"ds-tag-diag\">Hipertensão arterial (I10)</span>",
+      "css": ".ds-tag-diag { background: #fef3c7; color: #92400e; border-radius: 4px; padding: 0.15rem 0.5rem; font-size: 0.75rem; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; display: inline-block; cursor: default; }"
+    },
+    {
+      "name": "Tag Medicamento",
+      "kind": "chip",
+      "refersTo": "tag-medicamento",
+      "description": "Entidade clínica extraída: medicamento. Verde semântico. Nunca reutilizar para outros fins.",
+      "html": "<span class=\"ds-tag-med\">Losartana 50mg · SRAA</span>",
+      "css": ".ds-tag-med { background: #d1fae5; color: #065f46; border-radius: 4px; padding: 0.15rem 0.5rem; font-size: 0.75rem; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; display: inline-block; cursor: default; }"
+    },
+    {
+      "name": "Session List Item",
+      "kind": "nav",
+      "refersTo": "button-sidebar",
+      "description": "Item de histórico de casos na sidebar. Título truncado + data relativa.",
+      "html": "<div class=\"ds-session ds-session--active\"><div class=\"ds-session-meta\"><span class=\"ds-session-title\">Criança, 4 anos, febre persistente</span><span class=\"ds-session-date\">Ontem</span></div></div>",
+      "css": ".ds-session { padding: 9px 12px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; transition: background 0.1s, color 0.1s; color: #b0c4cc; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 13px; } .ds-session:hover, .ds-session--active { background: #263545; color: #ffffff; } .ds-session-meta { display: flex; flex-direction: column; flex: 1; min-width: 0; } .ds-session-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-session-date { font-size: 10px; color: rgba(176, 196, 204, 0.45); margin-top: 1px; white-space: nowrap; }"
+    },
+    {
+      "name": "Search Input (Sidebar)",
+      "kind": "input",
+      "refersTo": "button-ghost",
+      "description": "Campo de busca em superfície dark. Fundo semi-transparente, border sutil.",
+      "html": "<input class=\"ds-search\" type=\"text\" placeholder=\"Buscar caso...\" />",
+      "css": ".ds-search { width: 100%; padding: 7px 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; color: #ffffff; font-size: 13px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; box-sizing: border-box; outline: none; transition: border-color 0.15s; } .ds-search::placeholder { color: rgba(176,196,204,0.45); } .ds-search:focus { border-color: rgba(255,255,255,0.25); }"
+    },
+    {
+      "name": "Landing Badge",
+      "kind": "chip",
+      "refersTo": "tag-diagnostico",
+      "description": "Badge pill no Hero da landing. Identifica a audiência-alvo do produto.",
+      "html": "<div class=\"ds-badge\">Para médicos e residentes</div>",
+      "css": ".ds-badge { display: inline-block; background: #eaf2f3; color: #1a6b73; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 14px; border-radius: 20px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Caderno Clínico",
+    "overview": "O sistema de design do Conduta é modelado em torno de um bom prontuário: hierarquia clara, densidade informacional calibrada, sem ruído decorativo. Um médico experiente olha para um prontuário bem feito e reconhece imediatamente o que precisa de atenção, o que é contexto, e o que é ação. A interface deve funcionar da mesma forma.\n\nA dualidade dark/light não é estética — é estrutural. A sidebar azul-marinho cria o espaço de navegação e orientação; o conteúdo claro é onde o trabalho acontece. Essa separação de planos comunica função antes de qualquer elemento ser lido. A paleta é intencionalmente contida: o verde-azul profundo aparece em menos de 10% de qualquer tela e sua raridade é a sinalização.\n\nEste sistema rejeita explicitamente: interfaces genéricas de IA, software hospitalar dos anos 2000, SaaS americano genérico (navy-and-gold, hero-metric template), e apps de telemedicina consumer.",
+    "keyCharacteristics": [
+      "Bimodal dark/light: sidebar Azul Marinho Discreto + conteúdo Cinza Tela",
+      "Acento Verde-Azul Profundo usado com parcimônia; presença rara = sinal forte",
+      "Tipografia única (Inter) em múltiplos pesos, sem fontes de display",
+      "Elevação flat-by-default; sombras apenas em elementos flutuantes",
+      "Sem side-stripe borders, sem gradient text, sem hero-metric template",
+      "Tokens semânticos para cada estado clínico (diagnóstico, medicamento, alerta, perigo, sucesso)"
+    ],
+    "rules": [
+      { "name": "The One Voice Rule",         "body": "O Verde-Azul Profundo é o único acento cromático em superfícies claras. Não introduzir segundo acento. Os estados clínicos são funcionais, não decorativos.", "section": "colors" },
+      { "name": "The Sidebar Contract Rule",  "body": "O Texto Sidebar (#b0c4cc) existe exclusivamente em superfícies Azul Marinho. Se um elemento migrar para superfície clara, o texto muda para Tinta Secundária.", "section": "colors" },
+      { "name": "The Weight-Before-Size Rule","body": "Hierarquia é construída primeiro em peso (400→600→700→800), depois em tamanho. Nunca aumentar tamanho para criar destaque sem razão funcional.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule",   "body": "Superfícies são planas em repouso. Sombra aparece apenas em resposta a elevação real (dropdown flutuando sobre conteúdo, sidebar sobreposta no mobile).", "section": "elevation" },
+      { "name": "The Tonal Layering Rule",    "body": "Profundidade percebida dentro de uma mesma superfície é comunicada por cor de fundo (#f4f5f7 → #fafafa → #ffffff), nunca por sombra.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do usar Verde-Azul Profundo em menos de 10% de qualquer tela.",
+      "Do comunicar hierarquia através de peso tipográfico antes de tamanho.",
+      "Do usar #dde3ec como único valor de borda em superfícies claras.",
+      "Do distinguir mensagens do médico com cor de fundo (Verde-Azul Sutil), não com border-left.",
+      "Do aplicar focus-visible com anel Verde-Azul Profundo (2px, offset 2px) em todos os elementos interativos.",
+      "Do confirmar ações destrutivas inline no dropdown, não em window.confirm().",
+      "Do usar tokens semânticos de estado clínico: âmbar para diagnósticos, verde-menta para medicamentos."
+    ],
+    "donts": [
+      "Don't usar border-left maior que 1px como acento colorido em cards, alertas ou lista de itens.",
+      "Don't usar gradiente em texto (background-clip: text). Nunca.",
+      "Don't usar glassmorphism decorativamente.",
+      "Don't criar grids de cards idênticos (ícone + título + parágrafo, repetido).",
+      "Don't abrir modais como primeira resposta a ações do usuário.",
+      "Don't introduzir um segundo acento cromático em superfícies claras.",
+      "Don't fazer o produto parecer ChatGPT: caixa de texto centralizada sem identidade clínica.",
+      "Don't fazer o produto parecer software hospitalar dos anos 2000.",
+      "Don't fazer o produto parecer SaaS americano (hero-metric template, navy-and-gold).",
+      "Don't fazer o produto parecer app de telemedicina consumer.",
+      "Don't usar emojis em botões ou itens de menu da interface do app."
+    ]
+  }
+}
