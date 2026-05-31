@@ -2,9 +2,17 @@
 @use '../../styles/variables' as *;
 
 .section {
-  background: $color-surface;
-  border-top: 1px solid $color-border;
-  border-bottom: 1px solid $color-border;
+  background: $color-sidebar;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: $color-text-sidebar;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
 .momentos {
@@ -31,20 +39,20 @@
 .momentoTitulo {
   font-size: 15px;
   font-weight: 700;
-  color: $color-text-primary;
+  color: white;
   display: block;
   margin-bottom: 4px;
 }
 
 .momentoDesc {
   font-size: 14px;
-  color: $color-text-secondary;
+  color: $color-text-sidebar;
   line-height: 1.6;
 }
 
 .resolucao {
-  background: $color-success-bg;
-  border: 1px solid $color-success-border;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   padding: 20px 24px;
   max-width: 560px;
@@ -52,14 +60,14 @@
 
   strong {
     font-size: 15px;
-    color: $color-text-primary;
+    color: white;
     display: block;
     margin-bottom: 6px;
   }
 
   p {
     font-size: 14px;
-    color: $color-text-secondary;
+    color: $color-text-sidebar;
     line-height: 1.6;
   }
 }

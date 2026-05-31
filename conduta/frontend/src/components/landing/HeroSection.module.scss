@@ -26,14 +26,16 @@
 }
 
 .headline {
-  font-size: 48px;
+  font-size: clamp(42px, 7vw, 76px);
   font-weight: 800;
   color: $color-text-primary;
-  line-height: 1.15;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
   margin-bottom: 20px;
 
   @media (max-width: 640px) {
-    font-size: 32px;
+    font-size: 34px;
+    line-height: 1.12;
   }
 }
 
