@@ -46,6 +46,28 @@
   gap: 16px;
 }
 
+.links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-right: 8px;
+
+  @media (max-width: 480px) {
+    display: none;
+  }
+}
+
+.navLink {
+  font-size: 13px;
+  color: $color-text-secondary;
+  font-weight: 500;
+  transition: color 0.15s;
+
+  &:hover {
+    color: $color-text-primary;
+  }
+}
+
 .loginLink {
   font-size: 13px;
   color: $color-text-secondary;

@@ -4,7 +4,7 @@ import CaseInput from '../components/CaseInput';
 import AnalysisResult from '../components/AnalysisResult';
 import UsageCounter from '../components/UsageCounter';
 import Coachmark from '../components/Coachmark';
-import { getSession, submitFeedback, getUsage, downloadSessionPdf, getSessionEntities } from '../services/api';
+import { getSession, createSession, submitFeedback, getUsage, downloadSessionPdf, getSessionEntities } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import styles from './Dashboard.module.scss';
 
@@ -42,14 +42,14 @@ function EntitiesPanel({ sessionId }) {
   return (
     <div className={styles.entitiesPanel} data-coachmark="entities">
       <button className={styles.entitiesToggle} onClick={handleToggle}>
-        {open ? '▴' : '▾'} Entidades extraídas{entities !== null ? ` (${total})` : ''}
+        {open ? '▴' : '▾'} Achados identificados{entities !== null ? ` (${total})` : ''}
       </button>
       {open && (
         <div className={styles.entitiesBody}>
-          {loading && <span className={styles.entitiesInfo}>Carregando...</span>}
-          {error && <span className={styles.entitiesError}>{error}</span>}
+          {loading && <span className={styles.entitiesInfo}>Buscando achados do caso...</span>}
+          {error && <span className={styles.entitiesError}>Não foi possível carregar os achados. Tente novamente.</span>}
           {entities !== null && total === 0 && !loading && (
-            <span className={styles.entitiesInfo}>Nenhuma entidade encontrada.</span>
+            <span className={styles.entitiesInfo}>Nenhum diagnóstico ou medicamento identificado neste caso.</span>
           )}
           {entities && entities.diagnosticos.length > 0 && (
             <div className={styles.entitiesGroup}>
@@ -122,6 +122,15 @@ export default function Dashboard() {
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);
+
+  async function handleCreateNewCase() {
+    try {
+      const session = await createSession('Novo caso');
+      handleNewSession(session.id);
+    } catch (err) {
+      console.error('Erro ao criar sessão:', err.message);
+    }
+  }
 
   async function refreshUsage() {
     if (user?.plan === 'free') {
@@ -234,11 +243,11 @@ export default function Dashboard() {
             {
               target: 'results',
               title: 'Resultado da análise',
-              text: 'Após cada resposta, avalie com 👍 ou 👎. Feedbacks negativos corretos e validados pelo time rendem +2 análises extras.',
+              text: 'Avalie cada resposta com 👍 ou 👎. Feedbacks negativos revisados pela equipe podem render análises extras.',
             },
             {
               target: 'entities',
-              title: 'Entidades extraídas',
+              title: 'Achados identificados',
               text: 'Clique para ver diagnósticos e medicamentos detectados automaticamente no caso.',
             },
           ]}
@@ -266,8 +275,12 @@ export default function Dashboard() {
 
         {!activeSessionId ? (
           <div className={styles.empty}>
-            <p>Selecione ou inicie um caso</p>
-            <span>Use o painel lateral para criar um novo caso ou retomar um anterior</span>
+            <div className={styles.emptyIcon} aria-hidden="true">⚕</div>
+            <p>Pronto para seu próximo caso</p>
+            <span>Descreva o caso como em um prontuário e receba análise clínica em segundos.</span>
+            <button className={styles.emptyBtn} onClick={handleCreateNewCase}>
+              + Novo caso
+            </button>
           </div>
         ) : (
           <>

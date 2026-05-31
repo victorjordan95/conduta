@@ -10,6 +10,9 @@ export default function Navbar() {
           <span className={navStyles.dot} />
           Conduta
         </Link>
+        <div className={navStyles.links}>
+          <a href="#precos" className={navStyles.navLink}>Planos</a>
+        </div>
         <div className={navStyles.actions}>
           <Link to="/login" className={navStyles.loginLink}>Entrar</Link>
           <Link to="/login" className={styles.ctaButton} style={{ padding: '8px 20px', fontSize: '13px' }}>

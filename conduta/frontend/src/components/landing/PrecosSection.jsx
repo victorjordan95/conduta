@@ -55,7 +55,7 @@ function ItemPlano({ item, pro = false }) {
 export default function PrecosSection() {
   return (
     <section id="precos" className={styles.section}>
-      <div className={shared.section}>
+      <div className={shared.sectionWide}>
         <p className={shared.sectionLabel}>Planos</p>
         <h2 className={shared.sectionTitle}>
           Comece grátis.<br />Evolua quando precisar.

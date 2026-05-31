@@ -43,7 +43,7 @@ export const protocolos = [
       {
         nome: 'Intubação (30–60s após paralisia)',
         passos: [
-          { tipo: 'acao', texto: 'Aplicar pressão cricóide (manobra de Sellick) se risco de aspiração — liberar imediatamente se dificultar visualização' },
+          { tipo: 'acao', texto: 'Pressão cricóide (Sellick): uso rotineiro NÃO recomendado — RCT com 3.472 pacientes não demonstrou redução de aspiração e aumentou dificuldade de laringoscopia (Birenbaum et al.). Omitir na prática padrão; liberar imediatamente se dificultar visualização (DAS 2022; BJA Education 2022)' },
           { tipo: 'acao', texto: 'Realizar laringoscopia direta ou videolaringoscopia' },
           { tipo: 'acao', texto: 'Passar cânula com guia, retirar o guia após passagem pelas cordas vocais' },
           { tipo: 'acao', texto: 'Inflar cuff com 5–10 mL de ar' },
@@ -63,7 +63,7 @@ export const protocolos = [
         ],
       },
     ],
-    referencia: 'Miller\'s Anesthesia 9ª ed. / UpToDate: Rapid sequence intubation in adults (2024)',
+    referencia: 'Miller\'s Anesthesia 9ª ed. / UpToDate: Rapid sequence intubation in adults (2024) / DAS RSI Guidelines (BJA Education 2022)',
   },
 
   {
@@ -99,7 +99,8 @@ export const protocolos = [
           { tipo: 'acao', texto: 'Reiniciar RCP imediatamente após o choque — não pausar para checar ritmo' },
           { tipo: 'acao', texto: 'Checar ritmo após 2 min de RCP; se chocável → desfibrilar novamente' },
           { tipo: 'droga', nome: 'Epinefrina', dose: '1 mg IV/IO a cada 3–5 min', obs: 'iniciar após o 2º choque sem retorno de circulação' },
-          { tipo: 'droga', nome: 'Amiodarona', dose: '300 mg IV/IO (1ª dose); 150 mg (2ª dose)', obs: 'após o 3º choque sem retorno; alternativa: Lidocaína 1–1,5 mg/kg' },
+          { tipo: 'droga', nome: 'Amiodarona', dose: '300 mg IV/IO (1ª dose); 150 mg (2ª dose)', obs: 'após o 3º choque sem retorno; alternativa equivalente: Lidocaína 1–1,5 mg/kg (ALPS trial)' },
+          { tipo: 'acao', texto: 'FV refratária (≥ 3 choques sem RCE): considerar desfibrilação sequencial dupla (DSED) ou mudança de vetor (anterior-posterior) — ambos superiores à desfibrilação padrão em FV refratária (DOSE VF, NEJM 2022; ILCOR CoSTR 2023)' },
         ],
       },
       {
@@ -118,13 +119,13 @@ export const protocolos = [
           { tipo: 'acao', texto: 'O₂ alvo: SpO₂ 94–98% — evitar hiperóxia (↑ lesão cerebral)' },
           { tipo: 'acao', texto: 'PA sistólica alvo: ≥ 90 mmHg; PAM ≥ 65 mmHg' },
           { tipo: 'droga', nome: 'Norepinefrina', dose: '0,1–0,5 mcg/kg/min IV', obs: 'se hipotensão pós-RCE' },
-          { tipo: 'acao', texto: 'Controle de temperatura alvo (CTT): 32–36°C por 24h em pacientes sem comando' },
+          { tipo: 'acao', texto: 'Controle de temperatura: manter 32–37,5°C — alvo mínimo é prevenir febre (temperatura > 37,5°C) por ≥ 36h. Hipotermia ativa (32–36°C) não é mandatória — individualizar; normotermia estrita é aceitável (TTM2, NEJM 2021; AHA 2025 Part 11)' },
           { tipo: 'acao', texto: 'ECG 12 derivações imediatamente — descartar IAMCSST (angioplastia emergencial se identificado)' },
           { tipo: 'acao', texto: 'Internação em UTI' },
         ],
       },
     ],
-    referencia: 'AHA ACLS Guidelines 2020 (atualização 2023)',
+    referencia: 'AHA Guidelines para RCP e ECC 2025 — Part 9: ACLS (Circulation. DOI: 10.1161/CIR.0000000000001376) / Part 11: Post-Cardiac Arrest Care (DOI: 10.1161/CIR.0000000000001375)',
   },
 
   {
@@ -158,7 +159,7 @@ export const protocolos = [
         nome: 'Tratamento de Suporte (2ª linha)',
         passos: [
           { tipo: 'droga', nome: 'Difenidramina', dose: '25–50 mg IV/IM', obs: 'anti-histamínico H1 — alivia urticária e prurido' },
-          { tipo: 'droga', nome: 'Ranitidina', dose: '50 mg IV em 20 min', obs: 'anti-histamínico H2 — benefício adicional modesto' },
+          { tipo: 'droga', nome: 'Famotidina', dose: '20 mg IV em 15–30 min', obs: 'anti-histamínico H2 — substitui a ranitidina (retirada do mercado mundial em 2020 por contaminação com NDMA). Benefício limitado e não recomendado de rotina (WAO 2023); pode aliviar urticária quando associada a anti-H1' },
           { tipo: 'droga', nome: 'Metilprednisolona', dose: '125 mg IV', obs: 'previne reação bifásica — efeito em 4–6h' },
           { tipo: 'droga', nome: 'Salbutamol inalatório', dose: '2,5–5 mg nebulizado', obs: 'se broncoespasmo persistente após epinefrina' },
         ],
@@ -212,6 +213,7 @@ export const protocolos = [
           { tipo: 'acao', texto: 'Verificar contraindicações ANTES de administrar:' },
           { tipo: 'acao', texto: 'Contraindicações absolutas: cirurgia maior ou trauma grave < 3 meses, AVC hemorrágico prévio, sangramento ativo, PA > 185/110 não controlada, INR > 1,7, plaquetas < 100.000' },
           { tipo: 'droga', nome: 'Alteplase (rt-PA)', dose: '0,9 mg/kg IV (máx 90 mg): 10% em bolus 1 min + 90% em infusão 60 min', obs: 'iniciar dentro de 60 min da chegada (meta "porta-agulha" < 60 min)' },
+          { tipo: 'droga', nome: 'Tenecteplase (TNK)', dose: '0,25 mg/kg IV bolus único (máx 25 mg)', obs: 'alternativa equivalente à Alteplase — administração mais simples (bolus único vs infusão 60 min). Classe I, NE-A (AHA/ASA 2026). No Brasil: uso off-label em AVC; disponível para IAM' },
           { tipo: 'acao', texto: 'Controle de PA antes e durante o tPA: manter < 185/110 mmHg' },
           { tipo: 'droga', nome: 'Labetalol', dose: '10–20 mg IV', obs: 'se PA > 185/110 antes do tPA' },
         ],
@@ -232,12 +234,12 @@ export const protocolos = [
           { tipo: 'acao', texto: 'PA sistólica alvo: < 140 mmHg (iniciar imediatamente)' },
           { tipo: 'droga', nome: 'Labetalol', dose: '10–20 mg IV bolus, repetir a cada 10 min (máx 300 mg)', obs: '1ª escolha' },
           { tipo: 'droga', nome: 'Nicardipina', dose: '5 mg/h IV (aumentar 2,5 mg/h a cada 5–15 min, máx 15 mg/h)', obs: 'alternativa ao labetalol' },
-          { tipo: 'acao', texto: 'Reverter anticoagulação se em uso: Vit K + CCP (ou FFP se CCP indisponível) para warfarina; Andexanet alfa para apixabana/rivaroxabana' },
+          { tipo: 'acao', texto: 'Reverter anticoagulação se em uso: Vit K 10 mg IV + CCP 4 fatores (ou FFP se CCP indisponível) para warfarina; Andexanet alfa para apixabana/rivaroxabana; Idarucizumabe 5 g IV (Praxbind) para dabigatrana; Sulfato de protamina para heparina' },
           { tipo: 'acao', texto: 'Avaliação neurocirúrgica urgente' },
         ],
       },
     ],
-    referencia: 'AHA/ASA Stroke Guidelines 2019 (atualização 2023)',
+    referencia: '2026 Guideline for the Early Management of Patients With Acute Ischemic Stroke — AHA/ASA (Stroke. 2026. DOI: 10.1161/STR.0000000000000513)',
   },
 
   {
@@ -265,7 +267,7 @@ export const protocolos = [
           { tipo: 'acao', texto: 'Foco abdominal: Piperacilina-Tazobactam 4,5 g IV a cada 6h' },
           { tipo: 'acao', texto: 'Foco urinário sem fator de risco: Ceftriaxona 1–2 g IV' },
           { tipo: 'acao', texto: 'Suspeita de bacteremia/neutropênico: Meropenem 1 g IV a cada 8h + Vancomicina 25–30 mg/kg (dose de ataque)' },
-          { tipo: 'acao', texto: 'Reposição volêmica: Ringer Lactato (preferencial) ou SF 0,9% — 30 mL/kg IV em 3h se PA baixa ou lactato ≥ 4 mmol/L' },
+          { tipo: 'acao', texto: 'Reposição volêmica: Ringer Lactato (preferencial) ou SF 0,9% — 30 mL/kg IV em até 3h se PA baixa ou lactato ≥ 4 mmol/L. Após a carga inicial: reavaliar responsividade a fluidos (elevação passiva dos membros, variação de pressão de pulso) antes de continuar infusão' },
         ],
       },
       {
@@ -316,7 +318,7 @@ export const protocolos = [
           { tipo: 'acao', texto: 'Iniciar antiepiléptico de segunda linha imediatamente se crise continua após benzodiazepínico' },
           { tipo: 'droga', nome: 'Valproato de Sódio', dose: '40 mg/kg IV em 10 min (máx 3.000 mg)', obs: '1ª escolha na fase 2 — menos hipotensão' },
           { tipo: 'droga', nome: 'Levetiracetam', dose: '60 mg/kg IV em 15 min (máx 4.500 mg)', obs: 'alternativa ao valproato — boa tolerabilidade' },
-          { tipo: 'droga', nome: 'Fenitoína', dose: '20 mg/kg IV (máx 50 mg/min)', obs: 'monitorar ECG e PA: risco de hipotensão e arritmia; evitar em crianças' },
+          { tipo: 'droga', nome: 'Fenitoína', dose: '20 mg/kg IV (máx 50 mg/min)', obs: 'perfil de segurança INFERIOR ao Valproato e Levetiracetam (hipotensão, arritmias, síndrome de hipersensibilidade, necrose por extravasamento) — usar apenas se ambos indisponíveis (ESETT trial, NEJM 2019; ILAE 2022). Monitorar ECG e PA. Evitar em crianças.' },
           { tipo: 'droga', nome: 'Fosfenitoína', dose: '20 mg EFT/kg IV ou IM', obs: 'pró-fármaco da fenitoína — infusão mais rápida, menos cardiotóxico' },
           { tipo: 'alerta', texto: 'Valproato CONTRAINDICADO em doenças mitocondriais, gestação (1º trimestre) e hepatopatia grave' },
         ],
@@ -342,7 +344,7 @@ export const protocolos = [
         ],
       },
     ],
-    referencia: 'Epilepsy Foundation EME Guidelines 2016 / ILAE 2022 / Protocolo HCFMUSP',
+    referencia: 'Epilepsy Foundation EME Guidelines 2016 / ILAE 2022 / ESETT Trial NEJM 2019 / Protocolo HCFMUSP',
   },
 
   {
@@ -365,7 +367,7 @@ export const protocolos = [
       {
         nome: 'Reposição Hídrica',
         passos: [
-          { tipo: 'droga', nome: 'SF 0,9%', dose: '1 L IV na 1ª hora', obs: 'todos os pacientes — exceto ICC grave ou insuficiência renal terminal' },
+          { tipo: 'droga', nome: 'Ringer Lactato ou SF 0,9%', dose: '1 L IV na 1ª hora', obs: 'Ringer Lactato preferível — menor risco de acidose hiperclorêmica (meta-análise de 11 RCTs, Frontiers Endocrinol. 2024; ADA 2024). SF 0,9% aceitável. Exceto ICC grave ou insuficiência renal terminal' },
           { tipo: 'acao', texto: 'Próximas 4h: SF 0,9% 500 mL/h (ajustar conforme PA, diurese e sódio corrigido)' },
           { tipo: 'acao', texto: 'Quando glicemia < 250 mg/dL: trocar para SG 5% + SF 0,45% (manter glicemia 150–250 mg/dL até resolução da acidose)' },
           { tipo: 'acao', texto: 'Colocar sonda vesical se paciente obnubilado — medir diurese hora a hora' },
@@ -401,7 +403,7 @@ export const protocolos = [
         ],
       },
     ],
-    referencia: 'ADA Standards of Care 2024 / Kitabchi et al. Diabetes Care 2009',
+    referencia: 'ADA Standards of Care 2024 / Kitabchi et al. Diabetes Care 2009 / Fluidos na CAD: meta-análise Frontiers Endocrinol. 2024 (11 RCTs, 753 pacientes)',
   },
 
   {
@@ -429,7 +431,7 @@ export const protocolos = [
           { tipo: 'droga', nome: 'Clopidogrel', dose: '300–600 mg VO (dose de ataque)', obs: 'se Ticagrelor indisponível ou contraindicado' },
           { tipo: 'droga', nome: 'Heparina não fracionada', dose: '60 UI/kg IV bolus (máx 4.000 UI) + 12 UI/kg/h (máx 1.000 UI/h)', obs: 'iniciar em todos os SCA confirmados' },
           { tipo: 'acao', texto: 'O₂ suplementar apenas se SpO₂ < 90% — hiperóxia é prejudicial na SCA' },
-          { tipo: 'droga', nome: 'Morfina', dose: '2–4 mg IV + 2 mg a cada 5–15 min', obs: 'dor refratária a nitratos — usar com cautela (↓ absorção de antiagregantes orais)' },
+          { tipo: 'droga', nome: 'Morfina', dose: '2–4 mg IV + 2 mg a cada 5–15 min', obs: 'uso DESENCORAJADO (ESC 2023 Classe IIb) — retarda absorção de Ticagrelor e Clopidogrel em até 2h, reduzindo inibição plaquetária no momento do cateterismo. Usar apenas se dor intratável após nitratos' },
           { tipo: 'droga', nome: 'Nitrato', dose: 'Isossorbida 5 mg SL a cada 5 min (3 doses)', obs: 'se PA > 90/60 — CONTRAINDICADO se uso de inibidor de PDE5 < 24–48h' },
         ],
       },
@@ -451,6 +453,7 @@ export const protocolos = [
           { tipo: 'droga', nome: 'Betabloqueador', dose: 'Metoprolol 25–50 mg VO 2x/dia', obs: 'iniciar nas primeiras 24h se sem contraindicação (BAV, broncoespasmo, FC < 60, choque)' },
           { tipo: 'droga', nome: 'IECA', dose: 'Ramipril 2,5–5 mg VO/dia', obs: 'iniciar nas primeiras 24h se FEVE reduzida ou parede anterior comprometida' },
           { tipo: 'droga', nome: 'Estatina de alta intensidade', dose: 'Atorvastatina 80 mg VO/dia', obs: 'iniciar antes da alta — reduz eventos isquêmicos recorrentes' },
+          { tipo: 'droga', nome: 'Colchicina', dose: '0,5 mg VO 1x/dia por ≥ 6 meses', obs: 'considerar para redução do risco inflamatório residual — Classe IIb, NE-A (ESC 2023; COLCOT trial: ↓ 23% em MACE)' },
         ],
       },
     ],
@@ -490,7 +493,7 @@ export const protocolos = [
           { tipo: 'droga', nome: 'Isossorbida SL', dose: '5 mg SL a cada 5 min (3 doses)', obs: 'se PA sistólica ≥ 90 mmHg' },
           { tipo: 'droga', nome: 'Nitroglicerina IV', dose: '10–20 mcg/min (titular até 200 mcg/min)', obs: 'se sem melhora com SL; suspender se PA < 90 mmHg' },
           { tipo: 'alerta', texto: 'NÃO usar nitrato se uso de inibidor de PDE5 (sildenafila, tadalafila) nas últimas 24–48h — risco de hipotensão grave irreversível' },
-          { tipo: 'droga', nome: 'Morfina', dose: '2–4 mg IV', obs: 'ansiólise e vasodilatação — usar com cautela em hipóxia grave (↓ drive respiratório)' },
+          { tipo: 'droga', nome: 'Morfina', dose: '2–4 mg IV', obs: 'evidência de benefício limitada — estudos observacionais associam morfina no EAP a maior uso de VM, maior tempo de UTI e maior mortalidade (Eur J Heart Fail 2020). Usar com extrema cautela, apenas se agitação intratável após VNI + diurético + nitrato' },
         ],
       },
       {
@@ -539,9 +542,9 @@ export const protocolos = [
           { tipo: 'acao', texto: 'Meta: reduzir PAM em 20–25% na 1ª hora (não normalizar imediatamente)' },
           { tipo: 'acao', texto: 'UTI/semi-intensiva com monitorização invasiva da PA quando disponível' },
           { tipo: 'droga', nome: 'Nitroprussiato de Sódio', dose: '0,3–0,5 mcg/kg/min IV (titular até 2 mcg/kg/min)', obs: 'uso ≤ 72h — risco de toxicidade por tiocianato (especialmente DRC); evitar em gestante e hipertensão intracraniana' },
-          { tipo: 'droga', nome: 'Labetalol', dose: '20 mg IV bolus lento (2 min); repetir 40–80 mg a cada 10 min (máx 300 mg)', obs: 'preferencial em dissecção de aorta e gestante (eclâmpsia/pré-eclâmpsia)' },
+          { tipo: 'droga', nome: 'Labetalol', dose: '20 mg IV bolus lento (2 min); repetir 40–80 mg a cada 10 min (máx 300 mg)', obs: 'preferencial em dissecção de aorta (atenolol/esmolol como alternativa). ATENÇÃO: formulação IV não disponível no Brasil — em gestante com eclâmpsia usar Hidralazina IV (ver abaixo)' },
           { tipo: 'droga', nome: 'Nicardipina', dose: '5 mg/h IV (aumentar 2,5 mg/h a cada 5–15 min; máx 15 mg/h)', obs: 'preferencial em AVC e encefalopatia hipertensiva' },
-          { tipo: 'droga', nome: 'Hidralazina', dose: '10–20 mg IV lento (a cada 20 min, máx 30–40 mg/episódio)', obs: 'gestante com eclâmpsia/pré-eclâmpsia grave; resposta imprevisível' },
+          { tipo: 'droga', nome: 'Hidralazina', dose: '5–10 mg IV bolus lento (repetir a cada 20 min; máx 30 mg)', obs: 'padrão brasileiro para gestante com eclâmpsia/pré-eclâmpsia grave (labetalol IV indisponível no Brasil). Resposta imprevisível — monitorar PA a cada 5 min' },
           { tipo: 'droga', nome: 'Furosemida', dose: '40–80 mg IV', obs: 'se EAP associado — não usar como anti-hipertensivo isolado sem sobrecarga de volume' },
         ],
       },

@@ -47,7 +47,7 @@ function FaqItem({ pergunta }) {
 export default function FaqSection() {
   return (
     <section className={styles.section}>
-      <div className={shared.section}>
+      <div className={shared.sectionCompact}>
         <p className={shared.sectionLabel}>Dúvidas frequentes</p>
         <h2 className={shared.sectionTitle}>Antes de começar</h2>
 

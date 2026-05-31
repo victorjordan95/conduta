@@ -24,7 +24,7 @@ const MOMENTOS = [
 export default function DorSection() {
   return (
     <section className={styles.section}>
-      <div className={shared.section}>
+      <div className={shared.sectionCompact}>
         <p className={shared.sectionLabel}>Você já passou por isso</p>
 
         <div className={styles.momentos}>

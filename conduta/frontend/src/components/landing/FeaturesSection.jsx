@@ -32,7 +32,7 @@ const FEATURES = [
 export default function FeaturesSection() {
   return (
     <section className={styles.section}>
-      <div className={shared.section}>
+      <div className={shared.sectionWide}>
         <p className={shared.sectionLabel}>Por que o Conduta funciona</p>
         <h2 className={shared.sectionTitle}>
           Não é o Google.<br />Não é o ChatGPT.<br />É clínico.

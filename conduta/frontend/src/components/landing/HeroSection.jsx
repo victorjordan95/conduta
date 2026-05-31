@@ -7,7 +7,7 @@ export default function HeroSection() {
   return (
     <section className={styles.hero}>
       <div className={styles.inner}>
-        <div className={styles.badge}>Para médicos em formação</div>
+        <div className={styles.badge}>Para médicos e residentes</div>
 
         <h1 className={styles.headline}>
           Aquela dúvida clínica<br />

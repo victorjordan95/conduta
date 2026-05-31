@@ -13,7 +13,15 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
   const [editingId, setEditingId] = useState(null);
   const [editingTitulo, setEditingTitulo] = useState('');
   const [billingLoading, setBillingLoading] = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [sidebarError, setSidebarError] = useState(null);
   const location = useLocation();
+
+  useEffect(() => {
+    if (!sidebarError) return;
+    const t = setTimeout(() => setSidebarError(null), 4000);
+    return () => clearTimeout(t);
+  }, [sidebarError]);
 
   async function handleUpgrade() {
     setBillingLoading(true);
@@ -21,7 +29,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
       const { url } = await createCheckoutSession();
       window.location.href = url;
     } catch (err) {
-      window.alert('Erro ao abrir pagamento. Tente novamente.');
+      setSidebarError('Não foi possível abrir o pagamento. Tente novamente.');
     } finally {
       setBillingLoading(false);
     }
@@ -33,7 +41,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
       const { url } = await getBillingPortalUrl();
       window.location.href = url;
     } catch (err) {
-      window.alert('Erro ao abrir portal. Tente novamente.');
+      setSidebarError('Não foi possível abrir o portal. Tente novamente.');
     } finally {
       setBillingLoading(false);
     }
@@ -68,19 +76,18 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
       const updated = await renameSession(id, t);
       setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, titulo: updated.titulo } : s)));
     } catch (err) {
-      window.alert('Erro ao renomear sessão. Tente novamente.');
+      setSidebarError('Não foi possível renomear o caso. Tente novamente.');
       console.error(err);
     }
   }
 
   async function handleDelete(id) {
-    if (!window.confirm('Excluir este caso? Esta ação não pode ser desfeita.')) return;
     try {
       await deleteSession(id);
       setSessions((prev) => prev.filter((s) => s.id !== id));
       onSessionDeleted?.(id);
     } catch (err) {
-      window.alert('Erro ao excluir sessão. Tente novamente.');
+      setSidebarError('Não foi possível excluir o caso. Tente novamente.');
       console.error(err);
     }
   }
@@ -107,13 +114,15 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
         + Novo caso
       </button>
 
-      <Link
-        to="/protocolos"
-        className={`${styles.protocolosLink} ${location.pathname.startsWith('/protocolos') ? styles.protocolosLinkActive : ''}`}
-        onClick={onClose}
-      >
-        ⚡ Protocolos
-      </Link>
+      {user?.role === 'admin' && (
+        <Link
+          to="/protocolos"
+          className={`${styles.protocolosLink} ${location.pathname.startsWith('/protocolos') ? styles.protocolosLinkActive : ''}`}
+          onClick={onClose}
+        >
+          ⚡ Protocolos
+        </Link>
+      )}
 
       <input
         className={styles.searchInput}
@@ -165,23 +174,37 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
                   </button>
                   {menuOpenId === s.id && (
                     <div className={styles.dropdown} onClick={(e) => e.stopPropagation()}>
-                      <button
-                        onClick={() => {
-                          setMenuOpenId(null);
-                          setEditingId(s.id);
-                          setEditingTitulo(s.titulo);
-                        }}
-                      >
-                        ✏️ Renomear
-                      </button>
-                      <button
-                        onClick={() => {
-                          setMenuOpenId(null);
-                          handleDelete(s.id);
-                        }}
-                      >
-                        🗑️ Excluir
-                      </button>
+                      {deleteConfirmId === s.id ? (
+                        <div className={styles.deleteConfirm}>
+                          <span className={styles.deleteConfirmLabel}>Excluir este caso?</span>
+                          <div className={styles.deleteConfirmBtns}>
+                            <button onClick={() => { setDeleteConfirmId(null); setMenuOpenId(null); }}>Cancelar</button>
+                            <button
+                              className={styles.deleteConfirmYes}
+                              onClick={() => { setDeleteConfirmId(null); setMenuOpenId(null); handleDelete(s.id); }}
+                            >
+                              Excluir
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => {
+                              setMenuOpenId(null);
+                              setEditingId(s.id);
+                              setEditingTitulo(s.titulo);
+                            }}
+                          >
+                            Renomear
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirmId(s.id)}
+                          >
+                            Excluir
+                          </button>
+                        </>
+                      )}
                     </div>
                   )}
                 </>
@@ -197,6 +220,9 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
       </div>
 
       <div className={styles.footer}>
+        {sidebarError && (
+          <div className={styles.sidebarError} role="alert">{sidebarError}</div>
+        )}
         {user?.role === 'admin' && (
           <Link to="/admin/knowledge" className={styles.adminLink}>
             Painel de administração
@@ -208,7 +234,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
             onClick={handleUpgrade}
             disabled={billingLoading}
           >
-            {billingLoading ? '...' : '⭐ Assinar Pro'}
+            {billingLoading ? 'Aguarde...' : 'Assinar Pro'}
           </button>
         )}
         {user?.role !== 'admin' && user?.plan === 'pro' && (

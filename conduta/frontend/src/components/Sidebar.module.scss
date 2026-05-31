@@ -112,7 +112,7 @@
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 6px;
 }
 
 .userName {
@@ -251,7 +251,7 @@
   right: 0;
   top: calc(100% + 2px);
   z-index: 200;
-  background: #1e2d3d;
+  background: $color-sidebar-elevated;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
@@ -281,6 +281,62 @@
       }
     }
   }
+}
+
+// ── Confirmação de exclusão inline ─────────────────────────────
+.deleteConfirm {
+  padding: 0.5rem 0.75rem 0.6rem;
+}
+
+.deleteConfirmLabel {
+  display: block;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.4rem;
+}
+
+.deleteConfirmBtns {
+  display: flex;
+  gap: 0.4rem;
+
+  button {
+    flex: 1;
+    padding: 0.3rem 0;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    transition: background 0.1s, color 0.1s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+    }
+  }
+}
+
+.deleteConfirmYes {
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  color: #fca5a5 !important;
+
+  &:hover {
+    background: rgba(220, 38, 38, 0.2) !important;
+    color: #fca5a5 !important;
+  }
+}
+
+// ── Erro inline sidebar ─────────────────────────────────────────
+.sidebarError {
+  margin-bottom: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  background: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: $border-radius;
+  font-size: 0.75rem;
+  color: #fca5a5;
+  line-height: 1.4;
 }
 
 .editInput {

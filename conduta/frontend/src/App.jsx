@@ -56,17 +56,17 @@ export default function App() {
           <Route
             path="/protocolos"
             element={
-              <PrivateRoute>
+              <AdminRoute>
                 <Protocolos />
-              </PrivateRoute>
+              </AdminRoute>
             }
           />
           <Route
             path="/protocolos/:slug"
             element={
-              <PrivateRoute>
+              <AdminRoute>
                 <ProtocoloDetalhe />
-              </PrivateRoute>
+              </AdminRoute>
             }
           />
           <Route path="*" element={<Navigate to="/" replace />} />

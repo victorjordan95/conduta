@@ -1,22 +1,45 @@
 $color-bg: #f4f5f7;
+$color-bg-subtle: #fafafa;
 $color-surface: #ffffff;
 $color-sidebar: #1e2a35;
 $color-sidebar-hover: #263545;
+$color-sidebar-elevated: #1e2d3d;
 $color-border: #dde3ec;
 $color-accent: #1a6b73;
 $color-accent-hover: #145a61;
+$color-accent-subtle: #eaf2f3;
 $color-text-primary: #1a1a2e;
 $color-text-secondary: #5a6a7a;
+$color-text-muted: #9ca3af;
 $color-text-sidebar: #b0c4cc;
+
+// Semantic feedback
 $color-danger: #c0392b;
+$color-danger-bg: #fff7ed;
+$color-danger-border: #ea580c;
+$color-danger-text: #7c2d12;
 $color-warning: #e67e22;
+$color-warning-bg: #fffbeb;
+$color-warning-border: #f59e0b;
+$color-warning-text: #92400e;
 $color-success: #27ae60;
+$color-success-bg: #f0fdf4;
+$color-success-border: #86efac;
+
+// Entity tags
+$color-entity-diag-bg: #fef3c7;
+$color-entity-diag-text: #92400e;
+$color-entity-med-bg: #d1fae5;
+$color-entity-med-text: #065f46;
 
 $font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 $font-size-base: 14px;
-$font-size-sm: 12px;
+$font-size-sm: 13px;
 $font-size-lg: 16px;
 $font-size-xl: 20px;
+$line-height-base: 1.6;
+$line-height-tight: 1.3;
+$line-height-relaxed: 1.75;
 
 $sidebar-width: 260px;
 $border-radius: 6px;
