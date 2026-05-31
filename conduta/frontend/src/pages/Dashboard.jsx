@@ -123,6 +123,19 @@ export default function Dashboard() {
     }
   }, []);
 
+  useEffect(() => {
+    function handleKeyDown(e) {
+      const tag = document.activeElement?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        e.preventDefault();
+        handleCreateNewCase();
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   async function handleCreateNewCase() {
     try {
       const session = await createSession('Novo caso');

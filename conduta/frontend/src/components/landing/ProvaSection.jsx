@@ -20,7 +20,7 @@ export default function ProvaSection() {
     <section className={styles.section}>
       <div className={shared.section}>
         <p className={shared.sectionLabel}>Feito por quem entende</p>
-        <h2 className={shared.sectionTitle}>Para quem está começando.</h2>
+        <h2 className={shared.sectionTitle}>Referências que sustentam cada análise.</h2>
 
         <blockquote className={styles.quote}>
           <p>"{QUOTE.texto}"</p>

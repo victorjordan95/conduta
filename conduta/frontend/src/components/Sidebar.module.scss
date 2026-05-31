@@ -208,12 +208,24 @@
   position: relative;
 }
 
-.itemTitle {
+.itemMeta {
+  display: flex;
+  flex-direction: column;
   flex: 1;
+  min-width: 0;
+}
+
+.itemTitle {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 0;
+}
+
+.itemDate {
+  font-size: 10px;
+  color: rgba(176, 196, 204, 0.45);
+  margin-top: 1px;
+  white-space: nowrap;
 }
 
 .menuBtn {

@@ -5,6 +5,16 @@ import { getSessions, createSession, renameSession, deleteSession } from '../ser
 import { createCheckoutSession, getBillingPortalUrl } from '../services/api';
 import styles from './Sidebar.module.scss';
 
+function formatDataRelativa(dateStr) {
+  if (!dateStr) return '';
+  const data = new Date(dateStr);
+  const diff = Math.floor((new Date() - data) / (1000 * 60 * 60 * 24));
+  if (diff === 0) return 'Hoje';
+  if (diff === 1) return 'Ontem';
+  if (diff < 7) return `há ${diff} dias`;
+  return data.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });
+}
+
 export default function Sidebar({ activeSessionId, onSelectSession, onNewSession, onSessionDeleted, isOpen, onClose }) {
   const { user, clearAuth } = useAuth();
   const [sessions, setSessions] = useState([]);
@@ -161,7 +171,10 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
                 />
               ) : (
                 <>
+                  <div className={styles.itemMeta}>
                   <span className={styles.itemTitle} title={s.titulo}>{s.titulo}</span>
+                  <span className={styles.itemDate}>{formatDataRelativa(s.created_at)}</span>
+                </div>
                   <button
                     className={`${styles.menuBtn} ${(s.id === activeSessionId || s.id === menuOpenId) ? styles.menuBtnVisible : ''}`}
                     onClick={(e) => {
