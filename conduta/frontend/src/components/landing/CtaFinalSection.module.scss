@@ -23,7 +23,7 @@
 }
 
 .accent {
-  color: $color-accent;
+  color: #4dbec9; // lighter teal — $color-accent (#1a6b73) fails contrast on sidebar-dark
 }
 
 .sub {

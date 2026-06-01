@@ -8,7 +8,7 @@ import { getSession, createSession, submitFeedback, getUsage, downloadSessionPdf
 import { useAuth } from '../context/AuthContext';
 import styles from './Dashboard.module.scss';
 
-function EntitiesPanel({ sessionId }) {
+function EntitiesPanel({ sessionId, prefetchedEntities }) {
   const [open, setOpen] = useState(false);
   const [entities, setEntities] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -20,6 +20,12 @@ function EntitiesPanel({ sessionId }) {
     setLoading(false);
     setError(null);
   }, [sessionId]);
+
+  useEffect(() => {
+    if (prefetchedEntities !== null) {
+      setEntities((prev) => prev ?? prefetchedEntities);
+    }
+  }, [prefetchedEntities]);
 
   async function handleToggle() {
     if (!sessionId) return;
@@ -47,11 +53,12 @@ function EntitiesPanel({ sessionId }) {
         aria-expanded={open}
         aria-controls="entities-body"
       >
-        {open ? '▴' : '▾'} Achados identificados{entities !== null ? ` (${total})` : ''}
+        <span aria-hidden="true">{open ? '▴' : '▾'}</span>
+        {' '}Achados identificados{entities !== null ? ` (${total})` : ''}
       </button>
       {open && (
         <div id="entities-body" className={styles.entitiesBody}>
-          {loading && <span className={styles.entitiesInfo}>Buscando achados do caso...</span>}
+          {loading && <span className={styles.entitiesLoading}>Buscando achados...</span>}
           {error && <span className={styles.entitiesError}>Não foi possível carregar os achados. Tente novamente.</span>}
           {entities !== null && total === 0 && !loading && (
             <span className={styles.entitiesInfo}>Nenhum diagnóstico ou medicamento identificado neste caso.</span>
@@ -106,6 +113,9 @@ export default function Dashboard() {
   const [showWelcomeTour, setShowWelcomeTour] = useState(false);
   const [showSessionTour, setShowSessionTour] = useState(false);
   const [userMsgCount, setUserMsgCount] = useState(0);
+  const [pdfLoading, setPdfLoading] = useState(false);
+  const [pdfError, setPdfError] = useState(null);
+  const [prefetchedEntities, setPrefetchedEntities] = useState(null);
 
   useEffect(() => {
     if (user?.plan === 'free') {
@@ -163,6 +173,8 @@ export default function Dashboard() {
     setStreaming(false);
     setLoadingHistory(true);
     setUserMsgCount(0);
+    setPdfError(null);
+    setPrefetchedEntities(null);
     try {
       const data = await getSession(id);
       setMessages(data.messages.map((m) => ({ id: m.id, role: m.role, content: m.content, feedback: m.feedback })));
@@ -182,6 +194,7 @@ export default function Dashboard() {
     setStreaming(false);
     setLoadingHistory(false);
     setUserMsgCount(0);
+    setPrefetchedEntities(null);
     setSidebarOpen(false);
     const localSessionSeen = localStorage.getItem('coachmark_session_seen');
     if (user && !user.coachmarks_session_seen && !localSessionSeen) {
@@ -198,6 +211,8 @@ export default function Dashboard() {
   }
 
   async function handleDownloadPdf() {
+    setPdfLoading(true);
+    setPdfError(null);
     try {
       const blob = await downloadSessionPdf(activeSessionId);
       const url = URL.createObjectURL(blob);
@@ -209,7 +224,9 @@ export default function Dashboard() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (err) {
-      console.error('Erro ao exportar PDF:', err.message);
+      setPdfError('Não foi possível exportar o PDF. Tente novamente.');
+    } finally {
+      setPdfLoading(false);
     }
   }
 
@@ -306,9 +323,19 @@ export default function Dashboard() {
             <div className={styles.sessionHeader}>
               <span className={styles.sessionTitle}>{activeSession?.titulo || ''}</span>
               {activeSession?.summary && (
-                <button className={styles.pdfBtn} onClick={handleDownloadPdf}>
-                  ↓ Exportar PDF
-                </button>
+                <>
+                  <button
+                    className={styles.pdfBtn}
+                    onClick={handleDownloadPdf}
+                    aria-label="Exportar caso como PDF"
+                    disabled={pdfLoading}
+                  >
+                    {pdfLoading ? 'Exportando...' : '↓ Exportar PDF'}
+                  </button>
+                  {pdfError && (
+                    <span className={styles.pdfError} role="alert">{pdfError}</span>
+                  )}
+                </>
               )}
             </div>
             <AnalysisResult
@@ -322,7 +349,7 @@ export default function Dashboard() {
                 );
               }}
             />
-            <EntitiesPanel sessionId={activeSessionId} />
+            <EntitiesPanel sessionId={activeSessionId} prefetchedEntities={prefetchedEntities} />
             {userMsgCount >= 16 && (
               <div className={styles.bannerCritico} role="alert">
                 <span>Sessão longa — considere iniciar uma nova sessão para manter a precisão das respostas.</span>
@@ -388,6 +415,15 @@ export default function Dashboard() {
                     });
                   })
                   .catch(console.error);
+                getSessionEntities(capturedId)
+                  .then((data) => {
+                    setActiveSessionId((current) => {
+                      if (current !== capturedId) return current;
+                      setPrefetchedEntities(data);
+                      return current;
+                    });
+                  })
+                  .catch(() => {});
               }}
             />
           </>

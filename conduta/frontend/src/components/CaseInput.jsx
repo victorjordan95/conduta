@@ -29,8 +29,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
     e.target.value = '';
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function submitCase() {
     if (!content.trim() || analyzing || limitReached) return;
 
     setError('');
@@ -65,6 +64,11 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
     }
   }
 
+  function handleSubmit(e) {
+    e.preventDefault();
+    submitCase();
+  }
+
   const statusText = classificando
     ? 'Classificando imagem...'
     : analyzing
@@ -83,7 +87,10 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
       )}
       <div className={styles.labelRow}>
         <span className={styles.label}>Caso clínico</span>
-        <span className={styles.hint}>Texto livre — descreva com os dados que você tem</span>
+        <span className={styles.hint}>
+          Texto livre — descreva com os dados que você tem{' '}
+          <kbd className={styles.kbd}>Ctrl+Enter</kbd> para enviar
+        </span>
       </div>
       <form onSubmit={handleSubmit}>
         <div className={styles.inputRow}>
@@ -91,6 +98,12 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
             className={styles.textarea}
             value={content}
             onChange={(e) => setContent(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                submitCase();
+              }
+            }}
             placeholder="Descreva o caso como escreveria num prontuário — idade, queixa principal, sinais vitais, tempo de evolução, comorbidades..."
             disabled={analyzing || limitReached}
           />

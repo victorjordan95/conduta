@@ -26,8 +26,9 @@ const PERGUNTAS = [
   },
 ];
 
-function FaqItem({ pergunta }) {
+function FaqItem({ pergunta, id }) {
   const [aberto, setAberto] = useState(false);
+  const answerId = `faq-answer-${id}`;
 
   return (
     <div className={`${styles.item} ${aberto ? styles.aberto : ''}`}>
@@ -35,25 +36,26 @@ function FaqItem({ pergunta }) {
         className={styles.pergunta}
         onClick={() => setAberto((v) => !v)}
         aria-expanded={aberto}
+        aria-controls={answerId}
       >
         {pergunta.q}
-        <span className={styles.icon}>{aberto ? '−' : '+'}</span>
+        <span className={styles.icon} aria-hidden="true">{aberto ? '−' : '+'}</span>
       </button>
-      {aberto && <p className={styles.resposta}>{pergunta.a}</p>}
+      {aberto && <p id={answerId} className={styles.resposta}>{pergunta.a}</p>}
     </div>
   );
 }
 
 export default function FaqSection() {
   return (
-    <section className={styles.section}>
+    <section id="faq" className={styles.section}>
       <div className={shared.sectionCompact}>
         <p className={shared.sectionLabel}>Dúvidas frequentes</p>
         <h2 className={shared.sectionTitle}>Antes de começar</h2>
 
         <div className={styles.lista}>
-          {PERGUNTAS.map((p) => (
-            <FaqItem key={p.q} pergunta={p} />
+          {PERGUNTAS.map((p, i) => (
+            <FaqItem key={p.q} pergunta={p} id={i} />
           ))}
         </div>
       </div>

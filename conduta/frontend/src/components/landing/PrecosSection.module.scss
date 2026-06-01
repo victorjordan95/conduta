@@ -22,7 +22,7 @@
   flex: 1;
   background: $color-surface;
   border: 1px solid $color-border;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 28px 24px;
   position: relative;
 }
@@ -151,14 +151,14 @@
 
 .itemInativo {
   font-size: 13px;
-  color: #c0c0c0;
+  color: $color-text-muted;
   display: flex;
   align-items: flex-start;
   gap: 8px;
 }
 
 .check { color: $color-success; font-weight: 700; flex-shrink: 0; min-width: 14px; text-align: center; }
-.dash  { color: #c0c0c0; flex-shrink: 0; min-width: 14px; text-align: center; }
+.dash  { color: $color-text-muted; flex-shrink: 0; min-width: 14px; text-align: center; }
 
 .estudante {
   font-size: 13px;

@@ -27,8 +27,8 @@
 .badge {
   display: inline-block;
   background: rgba(26, 107, 115, 0.18);
-  color: $color-accent;
-  border: 1px solid rgba(26, 107, 115, 0.3);
+  color: #4dbec9; // lighter teal — $color-accent (#1a6b73) fails contrast on sidebar-dark
+  border: 1px solid rgba(77, 190, 201, 0.25);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.5px;

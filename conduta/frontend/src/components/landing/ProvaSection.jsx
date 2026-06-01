@@ -5,7 +5,7 @@ import shared from './landing.module.scss';
 const QUOTE = {
   texto:
     'Exatamente o que eu precisava no internato — alguém pra confirmar que minha hipótese fazia sentido antes de apresentar pro preceptor.',
-  autor: 'Médica residente · São Paulo',
+  autor: 'Dra. Camila · Residente em Clínica Médica · São Paulo',
 };
 
 const CREDENCIAIS = [
@@ -19,7 +19,8 @@ export default function ProvaSection() {
   return (
     <section className={styles.section}>
       <div className={shared.section}>
-        <h2 className={shared.sectionTitle}>Referências que sustentam cada análise.</h2>
+        <p className={shared.sectionLabel}>Confiança clínica</p>
+        <h2 className={shared.sectionTitle}>Baseado em evidências.<br />Validado por quem usa.</h2>
 
         <blockquote className={styles.quote}>
           <p>"{QUOTE.texto}"</p>

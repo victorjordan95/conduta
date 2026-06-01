@@ -213,6 +213,13 @@
   white-space: nowrap;
 }
 
+.pdfError {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  color: $color-danger;
+  white-space: nowrap;
+}
+
 .pdfBtn {
   flex-shrink: 0;
   padding: 0.3rem 0.85rem;
@@ -225,7 +232,7 @@
   white-space: nowrap;
 
   &:hover {
-    background: #f3f4f6;
+    background: $color-bg;
     color: $color-text-primary;
   }
 }
@@ -297,6 +304,17 @@
 .entitiesInfo {
   font-size: 0.78rem;
   color: $color-text-muted;
+}
+
+@keyframes entitiesPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.entitiesLoading {
+  font-size: 0.78rem;
+  color: $color-text-muted;
+  animation: entitiesPulse 1.4s ease-in-out infinite;
 }
 
 .entitiesError {

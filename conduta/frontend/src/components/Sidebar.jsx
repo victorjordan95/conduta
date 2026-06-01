@@ -120,7 +120,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
         </div>
       </div>
 
-      <button className={styles.newCase} onClick={handleNewCase} data-coachmark="new-case">
+      <button className={styles.newCase} onClick={handleNewCase} data-coachmark="new-case" title="Novo caso (Ctrl+N)">
         + Novo caso
       </button>
 
@@ -151,7 +151,6 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
           <li
             key={s.id}
             className={`${styles.item} ${s.id === activeSessionId ? styles.active : ''}`}
-            onClick={() => { if (editingId !== s.id) onSelectSession(s.id); }}
           >
             <div className={styles.itemInner}>
               {editingId === s.id ? (
@@ -173,10 +172,15 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
                 />
               ) : (
                 <>
-                  <div className={styles.itemMeta}>
-                  <span className={styles.itemTitle} title={s.titulo}>{s.titulo}</span>
-                  <span className={styles.itemDate}>{formatDataRelativa(s.created_at)}</span>
-                </div>
+                  <button
+                    className={styles.itemBtn}
+                    onClick={() => onSelectSession(s.id)}
+                  >
+                    <div className={styles.itemMeta}>
+                      <span className={styles.itemTitle} title={s.titulo}>{s.titulo}</span>
+                      <span className={styles.itemDate}>{formatDataRelativa(s.created_at)}</span>
+                    </div>
+                  </button>
                   <button
                     className={`${styles.menuBtn} ${(s.id === activeSessionId || s.id === menuOpenId) ? styles.menuBtnVisible : ''}`}
                     onClick={(e) => {
@@ -228,9 +232,10 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
           </li>
         ))}
         {sessoesFiltradas.length === 0 && search.trim() && (
-          <li style={{ padding: '0.5rem 0.75rem', fontSize: '0.78rem', color: 'rgba(176,196,204,0.5)', listStyle: 'none' }}>
-            Nenhum caso encontrado.
-          </li>
+          <li className={styles.emptyList}>Nenhum caso encontrado.</li>
+        )}
+        {sessions.length === 0 && !search.trim() && (
+          <li className={styles.emptyList}>Seus casos aparecerão aqui. Clique em "+ Novo caso" para começar.</li>
         )}
       </ul>
 

@@ -1,5 +1,5 @@
 // frontend/src/components/landing/DemoSection.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import styles from './DemoSection.module.scss';
 import shared from './landing.module.scss';
 
@@ -8,11 +8,16 @@ const FASE = { INICIAL: 0, USUARIO: 1, ANALISANDO: 2, RESPOSTA: 3 };
 export default function DemoSection() {
   const [fase, setFase] = useState(FASE.INICIAL);
 
-  useEffect(() => {
+  const play = useCallback(() => {
+    setFase(FASE.INICIAL);
     const t1 = setTimeout(() => setFase(FASE.USUARIO), 600);
     const t2 = setTimeout(() => setFase(FASE.ANALISANDO), 1800);
     const t3 = setTimeout(() => setFase(FASE.RESPOSTA), 3200);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, []);
+
+  useEffect(() => {
+    return play();
   }, []);
 
   return (
@@ -72,6 +77,11 @@ export default function DemoSection() {
                   🚨 NÃO aguardar evolução. Encaminhamento imediato.
                 </div>
               </div>
+            )}
+            {fase === FASE.RESPOSTA && (
+              <button className={`${styles.replayBtn} ${styles.fadeIn}`} onClick={play} aria-label="Reiniciar demonstração">
+                ↺ Reiniciar
+              </button>
             )}
           </div>
         </div>

@@ -54,7 +54,7 @@
   margin-right: 8px;
 
   @media (max-width: 480px) {
-    display: none;
+    gap: 16px;
   }
 }
 
@@ -80,6 +80,22 @@
   }
 }
 
+.ctaBtn {
+  display: inline-block;
+  background: $color-accent;
+  color: white;
+  padding: 8px 20px;
+  border-radius: $border-radius;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.15s ease-out;
+
+  &:hover {
+    background: $color-accent-hover;
+  }
+}
+
 @media (max-width: 480px) {
   .brand {
     font-size: 14px;
@@ -90,7 +106,16 @@
     gap: 10px;
   }
 
+  .navLink {
+    font-size: 11px;
+  }
+
   .loginLink {
+    display: none;
+  }
+
+  .ctaBtn {
     font-size: 12px;
+    padding: 7px 14px;
   }
 }
