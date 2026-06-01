@@ -41,11 +41,16 @@ function EntitiesPanel({ sessionId }) {
 
   return (
     <div className={styles.entitiesPanel} data-coachmark="entities">
-      <button className={styles.entitiesToggle} onClick={handleToggle}>
+      <button
+        className={styles.entitiesToggle}
+        onClick={handleToggle}
+        aria-expanded={open}
+        aria-controls="entities-body"
+      >
         {open ? '▴' : '▾'} Achados identificados{entities !== null ? ` (${total})` : ''}
       </button>
       {open && (
-        <div className={styles.entitiesBody}>
+        <div id="entities-body" className={styles.entitiesBody}>
           {loading && <span className={styles.entitiesInfo}>Buscando achados do caso...</span>}
           {error && <span className={styles.entitiesError}>Não foi possível carregar os achados. Tente novamente.</span>}
           {entities !== null && total === 0 && !loading && (
