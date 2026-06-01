@@ -146,4 +146,7 @@ Conduta is a clinical decision support system for general practitioners. Doctors
 | `VITE_API_URL` | — | Frontend target URL, default `/api` |
 | `RESEND_API_KEY` | ✓ | API key do Resend para envio de emails |
 | `EMAIL_FROM` | — | Remetente dos emails, default `Conduta <onboarding@resend.dev>` |
-| `FRONTEND_URL` | ✓ | URL base do frontend (usado nos links dos emails) |
+| `FRONTEND_URL` | ✓ | URL base do frontend (usado nos links dos emails e redirect do Stripe) |
+| `STRIPE_SECRET_KEY` | ✓ | Chave secreta Stripe (`sk_live_...` prod, `sk_test_...` dev) |
+| `STRIPE_WEBHOOK_SECRET` | ✓ | Secret do webhook Stripe (`whsec_...`), gerado no Dashboard |
+| `STRIPE_PRICE_ID` | ✓ | ID do preço mensal Pro no Stripe Dashboard (`price_...`) |
