@@ -53,50 +53,60 @@ function EntitiesPanel({ sessionId, prefetchedEntities }) {
         aria-expanded={open}
         aria-controls="entities-body"
       >
-        <span aria-hidden="true">{open ? '▴' : '▾'}</span>
-        {' '}Achados identificados{entities !== null ? ` (${total})` : ''}
+        <span
+          aria-hidden="true"
+          className={`${styles.entitiesChevron}${open ? ` ${styles.entitiesChevronOpen}` : ''}`}
+        >▾</span>
+        Achados identificados{entities !== null ? ` (${total})` : ''}
       </button>
-      {open && (
-        <div id="entities-body" className={styles.entitiesBody}>
-          {loading && <span className={styles.entitiesLoading}>Buscando achados...</span>}
-          {error && <span className={styles.entitiesError}>Não foi possível carregar os achados. Tente novamente.</span>}
-          {entities !== null && total === 0 && !loading && (
-            <span className={styles.entitiesInfo}>Nenhum diagnóstico ou medicamento identificado neste caso.</span>
-          )}
-          {entities && entities.diagnosticos.length > 0 && (
-            <div className={styles.entitiesGroup}>
-              <span className={styles.entitiesLabel}>Diagnósticos</span>
-              <div className={styles.entitiesTags}>
-                {entities.diagnosticos.map((d, i) => (
-                  <span
-                    key={i}
-                    className={styles.tagDiag}
-                    title={d.status === 'pending' ? 'Aguardando revisão' : 'Verificado'}
-                  >
-                    {d.nome}{d.cid ? ` (${d.cid})` : ''}
-                  </span>
-                ))}
+      <div
+        id="entities-body"
+        className={`${styles.entitiesBodyWrapper}${open ? ` ${styles.entitiesBodyWrapperOpen}` : ''}`}
+      >
+        <div className={styles.entitiesBodyInner}>
+          <div className={styles.entitiesBody}>
+            {loading && <span className={styles.entitiesLoading}>Buscando achados...</span>}
+            {error && <span className={styles.entitiesError}>Não foi possível carregar os achados. Tente novamente.</span>}
+            {entities !== null && total === 0 && !loading && (
+              <span className={styles.entitiesInfo}>Nenhum diagnóstico ou medicamento identificado neste caso.</span>
+            )}
+            {entities && entities.diagnosticos.length > 0 && (
+              <div className={styles.entitiesGroup}>
+                <span className={styles.entitiesLabel}>Diagnósticos</span>
+                <div className={styles.entitiesTags}>
+                  {entities.diagnosticos.map((d, i) => (
+                    <span
+                      key={i}
+                      className={styles.tagDiag}
+                      style={{ animationDelay: `${i * 40}ms` }}
+                      title={d.status === 'pending' ? 'Aguardando revisão' : 'Verificado'}
+                    >
+                      {d.nome}{d.cid ? ` (${d.cid})` : ''}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-          {entities && entities.medicamentos.length > 0 && (
-            <div className={styles.entitiesGroup}>
-              <span className={styles.entitiesLabel}>Medicamentos</span>
-              <div className={styles.entitiesTags}>
-                {entities.medicamentos.map((m, i) => (
-                  <span
-                    key={i}
-                    className={styles.tagMed}
-                    title={m.status === 'pending' ? 'Aguardando revisão' : 'Verificado'}
-                  >
-                    {m.nome}{m.classe ? ` · ${m.classe}` : ''}
-                  </span>
-                ))}
+            )}
+            {entities && entities.medicamentos.length > 0 && (
+              <div className={styles.entitiesGroup}>
+                <span className={styles.entitiesLabel}>Medicamentos</span>
+                <div className={styles.entitiesTags}>
+                  {entities.medicamentos.map((m, i) => (
+                    <span
+                      key={i}
+                      className={styles.tagMed}
+                      style={{ animationDelay: `${(entities.diagnosticos.length + i) * 40}ms` }}
+                      title={m.status === 'pending' ? 'Aguardando revisão' : 'Verificado'}
+                    >
+                      {m.nome}{m.classe ? ` · ${m.classe}` : ''}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

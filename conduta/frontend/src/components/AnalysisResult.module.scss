@@ -171,11 +171,15 @@
   cursor: pointer;
   font-size: 16px;
   line-height: 1;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s cubic-bezier(0.25, 1, 0.5, 1);
 
   &:hover {
     background: #eaf2f3;
     border-color: $color-accent;
+  }
+
+  &:active {
+    transform: scale(0.88);
   }
 }
 
@@ -188,19 +192,29 @@
   font-size: $font-size-sm;
   color: $color-text-secondary;
   line-height: 1;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s cubic-bezier(0.25, 1, 0.5, 1);
 
   &:hover {
     background: $color-warning-bg;
     border-color: $color-warning;
     color: $color-warning;
   }
+
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+@keyframes feedbackIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .feedbackDone {
   margin-top: 12px;
   font-size: $font-size-sm;
   color: $color-text-secondary;
+  animation: feedbackIn 200ms cubic-bezier(0.25, 1, 0.5, 1) both;
 }
 
 .feedbackNote {
@@ -209,6 +223,7 @@
   flex-direction: column;
   gap: 8px;
   max-width: 560px;
+  animation: feedbackIn 200ms cubic-bezier(0.25, 1, 0.5, 1) both;
 }
 
 .feedbackNoteLabel {
@@ -275,8 +290,10 @@
   font-size: $font-size-sm;
   font-weight: 600;
   cursor: pointer;
+  transition: background 0.15s, transform 0.1s cubic-bezier(0.25, 1, 0.5, 1);
 
   &:hover:not(:disabled) { background: $color-accent-hover; }
+  &:active:not(:disabled) { transform: scale(0.96); }
   &:disabled { opacity: 0.6; cursor: default; }
 }
 
@@ -288,8 +305,10 @@
   font-size: $font-size-sm;
   color: $color-text-secondary;
   cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s cubic-bezier(0.25, 1, 0.5, 1);
 
   &:hover:not(:disabled) { border-color: $color-text-secondary; }
+  &:active:not(:disabled) { transform: scale(0.96); }
   &:disabled { opacity: 0.6; cursor: default; }
 }
 

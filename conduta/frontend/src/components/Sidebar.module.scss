@@ -56,10 +56,14 @@
   font-weight: 600;
   width: calc(100% - 28px);
   text-align: left;
-  transition: background 0.15s;
+  transition: background 0.15s, transform 0.1s $ease-out-quart;
 
   &:hover {
     background: $color-accent-hover;
+  }
+
+  &:active {
+    transform: scale(0.97);
   }
 }
 
@@ -301,6 +305,11 @@
   pointer-events: auto;
 }
 
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 .dropdown {
   position: absolute;
   right: 0;
@@ -312,6 +321,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   overflow: hidden;
   min-width: 130px;
+  animation: dropdownIn 150ms $ease-out-quart both;
 
   button {
     display: block;
@@ -383,6 +393,11 @@
 }
 
 // ── Erro inline sidebar ─────────────────────────────────────────
+@keyframes sidebarErrorIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .sidebarError {
   margin-bottom: 0.5rem;
   padding: 0.45rem 0.75rem;
@@ -392,6 +407,7 @@
   font-size: 0.75rem;
   color: #fca5a5;
   line-height: 1.4;
+  animation: sidebarErrorIn 200ms $ease-out-quart both;
 }
 
 .editInput {
@@ -416,9 +432,10 @@
   font-weight: 600;
   cursor: pointer;
   margin-bottom: 0.5rem;
-  transition: background 0.15s;
+  transition: background 0.15s, transform 0.1s $ease-out-quart;
 
   &:hover:not(:disabled) { background: $color-accent-hover; }
+  &:active:not(:disabled) { transform: scale(0.97); }
   &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 

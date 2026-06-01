@@ -79,10 +79,14 @@
   font-size: $font-size-sm;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.15s, transform 0.1s $ease-out-quart;
 
   &:hover {
     background: $color-accent-hover;
+  }
+
+  &:active {
+    transform: scale(0.97);
   }
 }
 
@@ -230,10 +234,15 @@
   cursor: pointer;
   color: $color-text-secondary;
   white-space: nowrap;
+  transition: background 0.15s, color 0.15s, transform 0.1s $ease-out-quart;
 
   &:hover {
     background: $color-bg;
     color: $color-text-primary;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
   }
 }
 
@@ -253,14 +262,49 @@
   cursor: pointer;
   font-size: 0.78rem;
   color: $color-text-secondary;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.15s;
 
   &:hover {
     color: $color-text-primary;
   }
 }
 
+.entitiesChevron {
+  display: inline-block;
+  transition: transform 220ms $ease-out-quart;
+  line-height: 1;
+}
+
+.entitiesChevronOpen {
+  transform: rotate(-180deg);
+}
+
+// Grid-based expand/collapse — no JS height measurement needed
+.entitiesBodyWrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 220ms $ease-out-quart;
+}
+
+.entitiesBodyWrapperOpen {
+  grid-template-rows: 1fr;
+}
+
+.entitiesBodyInner {
+  overflow: hidden;
+  min-height: 0;
+}
+
 .entitiesBody {
   padding: 0 1.25rem 0.75rem;
+}
+
+@keyframes tagIn {
+  from { opacity: 0; transform: scale(0.9) translateY(3px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .entitiesGroup {
@@ -290,6 +334,7 @@
   padding: 0.15rem 0.5rem;
   font-size: 0.75rem;
   cursor: default;
+  animation: tagIn 200ms $ease-out-quart both;
 }
 
 .tagMed {
@@ -299,6 +344,7 @@
   padding: 0.15rem 0.5rem;
   font-size: 0.75rem;
   cursor: default;
+  animation: tagIn 200ms $ease-out-quart both;
 }
 
 .entitiesInfo {
@@ -323,6 +369,11 @@
 }
 
 // ── Banners de sessão longa ─────────────────────────────────────
+@keyframes bannerIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .bannerAviso {
   flex-shrink: 0;
   padding: 8px 20px;
@@ -330,6 +381,7 @@
   border-top: 1px solid $color-warning-border;
   color: $color-warning-text;
   font-size: 0.8rem;
+  animation: bannerIn 250ms $ease-out-quart both;
 }
 
 .bannerCritico {
@@ -343,6 +395,7 @@
   border-top: 1px solid $color-danger-border;
   color: $color-danger-text;
   font-size: 0.8rem;
+  animation: bannerIn 250ms $ease-out-quart both;
 }
 
 .bannerBtn {
