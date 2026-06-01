@@ -23,15 +23,12 @@
 }
 
 .headline {
-  font-size: 36px;
+  font-family: $font-family-display;
+  font-size: clamp(32px, 4vw, 48px);
   font-weight: 800;
   color: white;
-  line-height: 1.25;
+  line-height: 1.1;
   margin-bottom: 16px;
-
-  @media (max-width: 640px) {
-    font-size: 26px;
-  }
 }
 
 .accent {

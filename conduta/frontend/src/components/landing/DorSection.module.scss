@@ -6,13 +6,13 @@
 }
 
 .label {
-  font-size: 11px;
+  font-family: $font-family-display;
+  font-size: 20px;
   font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
   color: $color-text-sidebar;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   text-align: center;
+  letter-spacing: 0;
 }
 
 .momentos {
@@ -51,18 +51,19 @@
 }
 
 .resolucao {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
   border-radius: 8px;
-  padding: 20px 24px;
+  padding: 24px 28px;
   max-width: 560px;
   margin: 0 auto;
 
   strong {
-    font-size: 15px;
-    color: white;
+    font-family: $font-family-display;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   p {
