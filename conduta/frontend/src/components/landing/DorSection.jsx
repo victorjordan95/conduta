@@ -43,7 +43,7 @@ export default function DorSection() {
           <strong>O Conduta foi feito para esse momento.</strong>
           <p>Análise clínica contextualizada, em segundos, sem julgamento.</p>
           <Link to="/login" className={shared.ctaButton} style={{ marginTop: '16px', display: 'inline-block' }}>
-            Experimentar agora — grátis
+            Experimentar agora, grátis
           </Link>
         </div>
       </div>

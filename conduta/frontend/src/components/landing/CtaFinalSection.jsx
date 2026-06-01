@@ -7,8 +7,6 @@ export default function CtaFinalSection() {
   return (
     <section className={styles.section}>
       <div className={styles.inner}>
-        <p className={styles.label}>Pronto para começar?</p>
-
         <h2 className={styles.headline}>
           A próxima dúvida clínica<br />
           <span className={styles.accent}>não precisa ser solitária.</span>

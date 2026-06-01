@@ -19,7 +19,6 @@ export default function DemoSection() {
     <section className={styles.section}>
       <div className={shared.section}>
         <div className={styles.header}>
-          <p className={shared.sectionLabel}>Veja como funciona</p>
           <h2 className={shared.sectionTitle}>Descreva o caso.<br />Receba a análise.</h2>
           <p className={shared.sectionSubtitle}>
             Em linguagem natural, do jeito que você relataria para um colega.
@@ -29,7 +28,7 @@ export default function DemoSection() {
         <div className={styles.chatWrap}>
           <div className={styles.chatBar}>
             <span className={styles.chatDot} />
-            <span className={styles.chatBarTitle}>Conduta — Nova análise</span>
+            <span className={styles.chatBarTitle}>Conduta: Nova análise</span>
           </div>
 
           <div className={styles.chatBody}>

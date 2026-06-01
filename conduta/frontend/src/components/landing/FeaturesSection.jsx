@@ -33,7 +33,6 @@ export default function FeaturesSection() {
   return (
     <section className={styles.section}>
       <div className={shared.sectionWide}>
-        <p className={shared.sectionLabel}>Por que o Conduta funciona</p>
         <h2 className={shared.sectionTitle}>
           Não é o Google.<br />Não é o ChatGPT.<br />É clínico.
         </h2>
@@ -57,7 +56,7 @@ export default function FeaturesSection() {
             <strong>Seus dados são seus</strong>
             <p>
               Nenhuma informação de paciente é armazenada com identificação. Você
-              analisa casos — o Conduta não arquiva prontuários.
+              analisa casos; o Conduta não arquiva prontuários.
             </p>
           </div>
         </div>

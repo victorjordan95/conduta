@@ -17,7 +17,7 @@ export default function HeroSection() {
 
           <p className={styles.sub}>
             Assistente clínico com IA que analisa o caso, sugere conduta e aponta
-            red flags — em segundos.
+            red flags em segundos.
           </p>
 
           <div className={styles.ctaGroup}>

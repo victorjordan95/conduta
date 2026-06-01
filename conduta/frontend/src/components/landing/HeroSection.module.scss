@@ -12,7 +12,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 72px;
-  align-items: center;
+  align-items: start;
 
   @media (max-width: 820px) {
     grid-template-columns: 1fr;

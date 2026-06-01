@@ -30,46 +30,36 @@
   }
 }
 
-.credGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  max-width: 600px;
+.credList {
+  list-style: none;
+  padding: 0;
   margin: 0 auto;
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr 1fr;
-  }
+  max-width: 540px;
+  border-top: 1px solid $color-border;
 }
 
-.cred {
-  background: $color-surface;
-  border: 1px solid $color-border;
-  border-radius: 8px;
-  padding: 16px 12px;
-  text-align: center;
+.credRow {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: baseline;
+  gap: 28px;
+  padding: 16px 0;
+  border-bottom: 1px solid $color-border;
 }
 
 .credSigla {
-  font-size: 18px;
+  font-family: $font-family-display;
+  font-size: 22px;
   font-weight: 800;
   color: $color-accent;
-}
-
-.credSiglaLink {
+  min-width: 64px;
+  flex-shrink: 0;
   text-decoration: none;
 
-  &:hover .credSigla {
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
+  &:hover { text-decoration: underline; text-underline-offset: 2px; }
 }
 
 .credDesc {
-  font-size: 11px;
+  font-size: 13px;
   color: $color-text-secondary;
-  line-height: 1.4;
+  line-height: 1.45;
 }

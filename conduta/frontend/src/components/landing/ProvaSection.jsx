@@ -19,7 +19,6 @@ export default function ProvaSection() {
   return (
     <section className={styles.section}>
       <div className={shared.section}>
-        <p className={shared.sectionLabel}>Feito por quem entende</p>
         <h2 className={shared.sectionTitle}>Referências que sustentam cada análise.</h2>
 
         <blockquote className={styles.quote}>
@@ -27,20 +26,20 @@ export default function ProvaSection() {
           <footer>— {QUOTE.autor}</footer>
         </blockquote>
 
-        <div className={styles.credGrid}>
+        <ul className={styles.credList}>
           {CREDENCIAIS.map((c) => (
-            <div key={c.sigla} className={styles.cred}>
+            <li key={c.sigla} className={styles.credRow}>
               {c.href ? (
-                <a href={c.href} target="_blank" rel="noreferrer" className={styles.credSiglaLink}>
-                  <strong className={styles.credSigla}>{c.sigla}</strong>
+                <a href={c.href} target="_blank" rel="noreferrer" className={styles.credSigla}>
+                  {c.sigla}
                 </a>
               ) : (
-                <strong className={styles.credSigla}>{c.sigla}</strong>
+                <span className={styles.credSigla}>{c.sigla}</span>
               )}
               <span className={styles.credDesc}>{c.desc}</span>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );
