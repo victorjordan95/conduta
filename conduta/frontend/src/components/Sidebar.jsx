@@ -59,7 +59,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
 
   useEffect(() => {
     getSessions().then(setSessions).catch(console.error);
-  }, [activeSessionId]);
+  }, []);
 
   useEffect(() => {
     if (!menuOpenId) return;
@@ -134,7 +134,9 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
         </Link>
       )}
 
+      <label htmlFor="sidebar-search" className={styles.srOnly}>Buscar caso</label>
       <input
+        id="sidebar-search"
         className={styles.searchInput}
         type="text"
         placeholder="Buscar caso..."
@@ -144,9 +146,9 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
 
       <div className={styles.sectionLabel}>Casos anteriores</div>
 
-      <div className={styles.list}>
+      <ul className={styles.list} role="list">
         {sessoesFiltradas.map((s) => (
-          <div
+          <li
             key={s.id}
             className={`${styles.item} ${s.id === activeSessionId ? styles.active : ''}`}
             onClick={() => { if (editingId !== s.id) onSelectSession(s.id); }}
@@ -223,14 +225,14 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
                 </>
               )}
             </div>
-          </div>
+          </li>
         ))}
         {sessoesFiltradas.length === 0 && search.trim() && (
-          <p style={{ padding: '0.5rem 0.75rem', fontSize: '0.78rem', color: 'rgba(176,196,204,0.5)' }}>
+          <li style={{ padding: '0.5rem 0.75rem', fontSize: '0.78rem', color: 'rgba(176,196,204,0.5)', listStyle: 'none' }}>
             Nenhum caso encontrado.
-          </p>
+          </li>
         )}
-      </div>
+      </ul>
 
       <div className={styles.footer}>
         {sidebarError && (
