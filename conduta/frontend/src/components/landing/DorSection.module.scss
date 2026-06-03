@@ -29,11 +29,16 @@
   align-items: flex-start;
 }
 
-.emoji {
-  font-size: 28px;
+.num {
+  font-size: 13px;
+  font-weight: 700;
+  color: $color-accent;
   flex-shrink: 0;
-  line-height: 1;
-  margin-top: 2px;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  min-width: 24px;
+  margin-top: 1px;
+  opacity: 0.8;
 }
 
 .momentoTitulo {

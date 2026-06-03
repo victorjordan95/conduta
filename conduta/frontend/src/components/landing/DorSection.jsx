@@ -5,17 +5,17 @@ import shared from './landing.module.scss';
 
 const MOMENTOS = [
   {
-    emoji: '😰',
+    num: '01',
     titulo: 'Preceptor ocupado, caso que não fecha',
     descricao: 'A pressão do tempo real sem rede de apoio por perto.',
   },
   {
-    emoji: '🌀',
+    num: '02',
     titulo: '4 abas abertas, 3 diagnósticos na cabeça',
     descricao: 'Informação demais, síntese de menos. O Google não sabe o contexto do seu paciente.',
   },
   {
-    emoji: '🤔',
+    num: '03',
     titulo: '"Será que estou fazendo a coisa certa?"',
     descricao: 'A dúvida que ninguém fala em voz alta, mas todo mundo sente nos primeiros anos.',
   },
@@ -30,7 +30,7 @@ export default function DorSection() {
         <div className={styles.momentos}>
           {MOMENTOS.map((m) => (
             <div key={m.titulo} className={styles.momento}>
-              <span className={styles.emoji}>{m.emoji}</span>
+              <span className={styles.num}>{m.num}</span>
               <div>
                 <strong className={styles.momentoTitulo}>{m.titulo}</strong>
                 <p className={styles.momentoDesc}>{m.descricao}</p>

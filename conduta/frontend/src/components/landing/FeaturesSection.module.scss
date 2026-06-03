@@ -36,11 +36,6 @@
   .cardDesc   { color: $color-text-sidebar; }
 }
 
-.emoji {
-  font-size: 28px;
-  line-height: 1;
-}
-
 .cardTitulo {
   font-size: 15px;
   font-weight: 700;
@@ -57,9 +52,6 @@
   background: $color-sidebar;
   border-radius: 10px;
   padding: 20px 24px;
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
   margin-top: 8px;
 
   strong {
@@ -75,10 +67,4 @@
     color: $color-text-sidebar;
     line-height: 1.6;
   }
-}
-
-.privIcon {
-  font-size: 24px;
-  flex-shrink: 0;
-  margin-top: 2px;
 }

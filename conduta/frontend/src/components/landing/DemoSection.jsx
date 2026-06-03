@@ -74,7 +74,7 @@ export default function DemoSection() {
                   </span>
                 </div>
                 <div className={styles.urgencia}>
-                  🚨 NÃO aguardar evolução. Encaminhamento imediato.
+                  NÃO aguardar evolução. Encaminhamento imediato.
                 </div>
               </div>
             )}
