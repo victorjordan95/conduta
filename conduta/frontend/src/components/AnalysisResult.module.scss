@@ -112,6 +112,28 @@
       border-top: 1px solid $color-border;
       margin: 16px 0;
     }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 12px 0;
+      font-size: $font-size-sm;
+    }
+
+    th,
+    td {
+      border: 1px solid $color-border;
+      padding: 6px 10px;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.5;
+      color: $color-text-primary;
+    }
+
+    th {
+      background: $color-accent-subtle;
+      font-weight: 600;
+    }
   }
 }
 

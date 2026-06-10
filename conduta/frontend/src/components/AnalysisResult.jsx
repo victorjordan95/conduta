@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import styles from './AnalysisResult.module.scss';
 
 function FeedbackButtons({ messageId, current, onFeedback }) {
@@ -170,7 +171,7 @@ export default function AnalysisResult({ messages, streaming, loading, onFeedbac
                 </div>
               ) : (
                 <>
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
                   {streaming && i === messages.length - 1 && (
                     <span className={styles.cursor} />
                   )}
