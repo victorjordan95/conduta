@@ -1,0 +1,2 @@
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS prontuario TEXT;
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS prontuario_msg_count INTEGER;
