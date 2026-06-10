@@ -3,6 +3,7 @@ const pool = require('../db/pg');
 const authMiddleware = require('../middleware/auth');
 const driver = require('../db/neo4j');
 const PDFDocument = require('pdfkit');
+const { gerarResumoProntuario } = require('../services/prontuario');
 
 const router = express.Router();
 
@@ -194,6 +195,43 @@ router.get('/:id/entities', async (req, res) => {
     res.json({ diagnosticos: [], medicamentos: [] });
   } finally {
     if (neo4jSession) await neo4jSession.close();
+  }
+});
+
+router.post('/:id/prontuario', async (req, res) => {
+  try {
+    const sessionResult = await pool.query(
+      'SELECT id, prontuario, prontuario_msg_count FROM sessions WHERE id = $1 AND user_id = $2',
+      [req.params.id, req.userId]
+    );
+    if (sessionResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Sessão não encontrada.' });
+    }
+
+    const msgResult = await pool.query(
+      `SELECT role, content FROM messages WHERE session_id = $1 ORDER BY created_at ASC`,
+      [req.params.id]
+    );
+    const messages = msgResult.rows;
+
+    if (!messages.some((m) => m.role === 'assistant')) {
+      return res.status(400).json({ error: 'Sessão ainda não possui análise para resumir.' });
+    }
+
+    const sessao = sessionResult.rows[0];
+    if (sessao.prontuario && sessao.prontuario_msg_count === messages.length) {
+      return res.json({ prontuario: sessao.prontuario, cached: true });
+    }
+
+    const prontuario = await gerarResumoProntuario(messages);
+    await pool.query(
+      'UPDATE sessions SET prontuario = $1, prontuario_msg_count = $2 WHERE id = $3',
+      [prontuario, messages.length, req.params.id]
+    );
+    res.json({ prontuario, cached: false });
+  } catch (err) {
+    console.error('[sessions] prontuario:', err.message);
+    res.status(500).json({ error: 'Erro ao gerar resumo para prontuário.' });
   }
 });
 
