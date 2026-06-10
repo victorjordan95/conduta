@@ -10,6 +10,10 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
   const [error, setError] = useState('');
   const [foto, setFoto] = useState(null);
   const [classificando, setClassificando] = useState(false);
+  const [mode, setMode] = useState(() => {
+    const saved = localStorage.getItem('conduta_mode');
+    return saved === 'rapida' ? 'rapida' : 'completa';
+  });
   const fileInputRef = useRef(null);
 
   const fotoUrl = useMemo(() => (foto ? URL.createObjectURL(foto) : null), [foto]);
@@ -22,6 +26,11 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
 
   const isPro = user?.role === 'admin';
   const limitReached = usage && usage.limit !== null && usage.used >= usage.limit;
+
+  function handleModeChange(novoModo) {
+    setMode(novoModo);
+    localStorage.setItem('conduta_mode', novoModo);
+  }
 
   function handleFotoChange(e) {
     const arquivo = e.target.files?.[0];
@@ -50,7 +59,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
       analiseIniciada = true;
       setContent('');
       setFoto(null);
-      await analyzeCase(sessionId, textoFinal, onChunk, onSessionMsgCount);
+      await analyzeCase(sessionId, textoFinal, onChunk, onSessionMsgCount, mode);
     } catch (err) {
       setClassificando(false);
       if (err.code === 'USAGE_LIMIT' && err.usage) {
@@ -90,6 +99,33 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
         <span className={styles.hint}>
           Texto livre — descreva com os dados que você tem{' '}
           <kbd className={styles.kbd}>Ctrl+Enter</kbd> para enviar
+        </span>
+      </div>
+      <div className={styles.modeToggle} role="radiogroup" aria-label="Modo de análise">
+        <button
+          type="button"
+          role="radio"
+          aria-checked={mode === 'rapida'}
+          className={`${styles.modeBtn}${mode === 'rapida' ? ` ${styles.modeBtnActive}` : ''}`}
+          onClick={() => handleModeChange('rapida')}
+          disabled={analyzing}
+        >
+          Conduta rápida
+        </button>
+        <button
+          type="button"
+          role="radio"
+          aria-checked={mode === 'completa'}
+          className={`${styles.modeBtn}${mode === 'completa' ? ` ${styles.modeBtnActive}` : ''}`}
+          onClick={() => handleModeChange('completa')}
+          disabled={analyzing}
+        >
+          Análise completa
+        </button>
+        <span className={styles.modeHint}>
+          {mode === 'rapida'
+            ? 'Resposta objetiva para casos simples'
+            : 'Hipóteses, raciocínio, conduta e alertas'}
         </span>
       </div>
       <form onSubmit={handleSubmit}>

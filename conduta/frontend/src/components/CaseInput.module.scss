@@ -40,6 +40,45 @@
   vertical-align: middle;
 }
 
+.modeToggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.modeBtn {
+  padding: 4px 12px;
+  font-size: $font-size-sm;
+  border: 1px solid $color-border;
+  background: transparent;
+  color: $color-text-secondary;
+  cursor: pointer;
+  border-radius: $border-radius;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    border-color: $color-accent;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.modeBtnActive {
+  background: $color-accent;
+  border-color: $color-accent;
+  color: #fff;
+}
+
+.modeHint {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-left: 8px;
+}
+
 .inputRow {
   display: flex;
   align-items: flex-end;

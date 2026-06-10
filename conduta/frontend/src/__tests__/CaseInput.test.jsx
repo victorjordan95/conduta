@@ -25,6 +25,7 @@ const defaultProps = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  localStorage.clear();
   useAuth.mockReturnValue({ user: { plan: 'free', role: 'user' } });
   analyzeCase.mockResolvedValue();
 });
@@ -82,7 +83,8 @@ describe('CaseInput', () => {
         'abc',
         'Paciente com febre',
         expect.any(Function),
-        expect.any(Function)
+        expect.any(Function),
+        'completa'
       );
     });
   });
@@ -111,14 +113,44 @@ describe('CaseInput', () => {
         'abc',
         expect.stringContaining('Melanoma'),
         expect.any(Function),
-        expect.any(Function)
+        expect.any(Function),
+        'completa'
       );
       expect(analyzeCase).toHaveBeenCalledWith(
         'abc',
         expect.stringContaining('Lesão suspeita'),
         expect.any(Function),
-        expect.any(Function)
+        expect.any(Function),
+        'completa'
       );
     });
+  });
+
+  it('renderiza toggle de modo com análise completa ativa por padrão', () => {
+    render(<CaseInput {...defaultProps} />);
+    const completa = screen.getByRole('radio', { name: /análise completa/i });
+    const rapida = screen.getByRole('radio', { name: /conduta rápida/i });
+    expect(completa).toHaveAttribute('aria-checked', 'true');
+    expect(rapida).toHaveAttribute('aria-checked', 'false');
+  });
+
+  it('modo rápido é enviado no analyzeCase e persiste em localStorage', async () => {
+    render(<CaseInput {...defaultProps} />);
+    fireEvent.click(screen.getByRole('radio', { name: /conduta rápida/i }));
+    fireEvent.change(screen.getByPlaceholderText(/descreva o caso/i), {
+      target: { value: 'Caso simples' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /analisar/i }));
+
+    await waitFor(() => {
+      expect(analyzeCase).toHaveBeenCalledWith(
+        'abc',
+        'Caso simples',
+        expect.any(Function),
+        expect.any(Function),
+        'rapida'
+      );
+    });
+    expect(localStorage.getItem('conduta_mode')).toBe('rapida');
   });
 });

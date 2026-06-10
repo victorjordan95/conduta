@@ -120,11 +120,11 @@ export async function submitFeedback(messageId, feedback, note) {
  * Chama onChunk(string) a cada fragmento recebido.
  * Chama onSessionMsgCount(number) quando recebe session_msg_count.
  */
-export async function analyzeCase(sessionId, content, onChunk, onSessionMsgCount) {
+export async function analyzeCase(sessionId, content, onChunk, onSessionMsgCount, mode = 'completa') {
   const res = await fetch(`${BASE_URL}/analyze`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
-    body: JSON.stringify({ session_id: sessionId, content }),
+    body: JSON.stringify({ session_id: sessionId, content, mode }),
   });
 
   await checkUnauthorized(res);
@@ -398,6 +398,19 @@ export async function getSessionEntities(id) {
   });
   await checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao buscar entidades.');
+  return res.json();
+}
+
+export async function gerarProntuario(sessionId) {
+  const res = await fetch(`${BASE_URL}/sessions/${sessionId}/prontuario`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao gerar resumo para prontuário.');
+  }
   return res.json();
 }
 
