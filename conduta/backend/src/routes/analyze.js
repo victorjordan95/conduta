@@ -1,6 +1,6 @@
 const express = require('express');
 const pool = require('../db/pg');
-const { collectAnalysis, streamReview } = require('../services/openrouter');
+const { collectAnalysis, streamReview, streamQuick } = require('../services/openrouter');
 const { searchClinicalContext, searchFollowUpContext } = require('../services/neo4j-search');
 const { searchSimilarCases } = require('../services/case-search');
 const { extractAndPersist } = require('../services/knowledge-extractor');
@@ -10,10 +10,14 @@ const { embed } = require('../services/embeddings');
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-  const { session_id, content } = req.body;
+  const { session_id, content, mode = 'completa' } = req.body;
 
   if (!session_id || !content) {
     return res.status(400).json({ error: 'session_id e content são obrigatórios.' });
+  }
+
+  if (!['rapida', 'completa'].includes(mode)) {
+    return res.status(400).json({ error: "mode deve ser 'rapida' ou 'completa'." });
   }
 
   if (content.length > 8000) {
@@ -77,14 +81,23 @@ router.post('/', async (req, res) => {
     res.flushHeaders();
     res.write(`data: ${JSON.stringify({ session_msg_count: sessionMsgCount })}\n\n`);
 
-    // ── Fase 1: análise primária silenciosa (contexto interno) ──
-    const firstAnalysis = await collectAnalysis(history, content, context, summaryForStream);
+    let fullReview;
+    if (mode === 'rapida') {
+      // ── Modo conduta rápida: chamada única streaming ──
+      fullReview = await streamQuick(history, content, context, summaryForStream, res).catch((err) => {
+        console.error('[analyze] quick error:', err.message);
+        return null;
+      });
+    } else {
+      // ── Fase 1: análise primária silenciosa (contexto interno) ──
+      const firstAnalysis = await collectAnalysis(history, content, context, summaryForStream);
 
-    // ── Fase 2: revisão final — única resposta visível ao usuário ──
-    const fullReview = await streamReview(content, firstAnalysis || '', res, history).catch((err) => {
-      console.error('[analyze] review error:', err.message);
-      return null;
-    });
+      // ── Fase 2: revisão final — única resposta visível ao usuário ──
+      fullReview = await streamReview(content, firstAnalysis || '', res, history).catch((err) => {
+        console.error('[analyze] review error:', err.message);
+        return null;
+      });
+    }
 
     if (fullReview) {
       await pool.query(
