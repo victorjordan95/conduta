@@ -4,7 +4,8 @@ import CaseInput from '../components/CaseInput';
 import AnalysisResult from '../components/AnalysisResult';
 import UsageCounter from '../components/UsageCounter';
 import Coachmark from '../components/Coachmark';
-import { getSession, createSession, submitFeedback, getUsage, downloadSessionPdf, getSessionEntities } from '../services/api';
+import ProntuarioModal from '../components/ProntuarioModal';
+import { getSession, createSession, submitFeedback, getUsage, downloadSessionPdf, getSessionEntities, gerarProntuario } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import styles from './Dashboard.module.scss';
 
@@ -126,6 +127,10 @@ export default function Dashboard() {
   const [pdfLoading, setPdfLoading] = useState(false);
   const [pdfError, setPdfError] = useState(null);
   const [prefetchedEntities, setPrefetchedEntities] = useState(null);
+  const [prontuarioOpen, setProntuarioOpen] = useState(false);
+  const [prontuarioLoading, setProntuarioLoading] = useState(false);
+  const [prontuarioTexto, setProntuarioTexto] = useState(null);
+  const [prontuarioError, setProntuarioError] = useState(null);
 
   useEffect(() => {
     if (user?.plan === 'free') {
@@ -185,6 +190,9 @@ export default function Dashboard() {
     setUserMsgCount(0);
     setPdfError(null);
     setPrefetchedEntities(null);
+    setProntuarioOpen(false);
+    setProntuarioTexto(null);
+    setProntuarioError(null);
     try {
       const data = await getSession(id);
       setMessages(data.messages.map((m) => ({ id: m.id, role: m.role, content: m.content, feedback: m.feedback })));
@@ -205,6 +213,9 @@ export default function Dashboard() {
     setLoadingHistory(false);
     setUserMsgCount(0);
     setPrefetchedEntities(null);
+    setProntuarioOpen(false);
+    setProntuarioTexto(null);
+    setProntuarioError(null);
     setSidebarOpen(false);
     const localSessionSeen = localStorage.getItem('coachmark_session_seen');
     if (user && !user.coachmarks_session_seen && !localSessionSeen) {
@@ -217,6 +228,20 @@ export default function Dashboard() {
       setActiveSessionId(null);
       setActiveSession(null);
       setMessages([]);
+    }
+  }
+
+  async function handleProntuario() {
+    setProntuarioOpen(true);
+    setProntuarioLoading(true);
+    setProntuarioError(null);
+    try {
+      const { prontuario } = await gerarProntuario(activeSessionId);
+      setProntuarioTexto(prontuario);
+    } catch (err) {
+      setProntuarioError(err.message || 'Erro ao gerar resumo.');
+    } finally {
+      setProntuarioLoading(false);
     }
   }
 
@@ -332,6 +357,15 @@ export default function Dashboard() {
           <>
             <div className={styles.sessionHeader}>
               <span className={styles.sessionTitle}>{activeSession?.titulo || ''}</span>
+              {messages.some((m) => m.role === 'assistant' && m.content) && !streaming && (
+                <button
+                  className={styles.pdfBtn}
+                  onClick={handleProntuario}
+                  aria-label="Gerar resumo para prontuário"
+                >
+                  ⎘ Resumo p/ prontuário
+                </button>
+              )}
               {activeSession?.summary && (
                 <>
                   <button
@@ -437,6 +471,16 @@ export default function Dashboard() {
               }}
             />
           </>
+        )}
+
+        {prontuarioOpen && (
+          <ProntuarioModal
+            texto={prontuarioTexto}
+            loading={prontuarioLoading}
+            error={prontuarioError}
+            onClose={() => setProntuarioOpen(false)}
+            onRetry={handleProntuario}
+          />
         )}
 
         <footer className={styles.footer}>
