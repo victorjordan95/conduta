@@ -57,7 +57,7 @@ Conduta is a clinical decision support system for general practitioners. Doctors
 
 **PostgreSQL schema highlights:**
 - Users: `id (UUID)`, `email`, `nome`, `senha_hash`, `role (user|admin)`, `plan (free|pro)`, `session_version`
-- Sessions: `id`, `user_id`, `titulo`, `summary (JSONB: {hipotese, conduta, alertas[]})`
+- Sessions: `id`, `user_id`, `titulo`, `summary (JSONB: {hipotese, conduta, alertas[]})`, `prontuario`, `prontuario_msg_count` (cache do resumo de evolução — invalidado quando a contagem de mensagens muda)
 - Messages: `id`, `session_id`, `role (user|assistant)`, `content`, `feedback`, `feedback_note`, `embedding (vector(1536))`
 - HNSW index on `messages.embedding` — do not drop it, cosine similarity search depends on it
 - Monthly usage counted via composite index `idx_messages_session_created_user`
@@ -75,6 +75,8 @@ Conduta is a clinical decision support system for general practitioners. Doctors
 - Admin routes use `adminMiddleware` which also runs JWT validation — no need to add `authMiddleware` separately
 - Non-critical service failures (Neo4j down, embedding error) must never crash the analyze endpoint — log and degrade gracefully
 - The `/analyze` endpoint responds with SSE (`text/event-stream`) — do not add `res.json()` calls after streaming starts
+- `/analyze` accepts `mode: 'rapida' | 'completa'` (default `completa`) — `rapida` uses a single streaming LLM call (`streamQuick`/`QUICK_PROMPT`); `completa` runs the 2-phase pipeline (`collectAnalysis` + `streamReview`)
+- `POST /sessions/:id/prontuario` generates a medical-record summary via LLM, cached in `sessions.prontuario` keyed by message count
 - `session_version` in JWT payload is checked on every request — incrementing it (on new login) invalidates all other sessions for that user
 
 ---
@@ -101,7 +103,7 @@ Conduta is a clinical decision support system for general practitioners. Doctors
 
 - Auth state lives in `AuthContext` (localStorage persistence) — do not manage tokens outside of it
 - `api.js` in `services/` is the single gateway for all backend calls — add new calls there, never inline `fetch` in components
-- `analyzeCase()` in `api.js` uses SSE — call `onChunk(chunk)` callback on each streamed token
+- `analyzeCase()` in `api.js` uses SSE — call `onChunk(chunk)` callback on each streamed token; 5th param is `mode` (`rapida`/`completa`), user preference persisted in `localStorage('conduta_mode')`
 - Messages are added to state optimistically before the server confirms IDs
 - `UsageCounter` is rendered only for `plan=free` users — hide it for pro/admin
 
