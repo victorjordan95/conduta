@@ -130,7 +130,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
           className={`${styles.protocolosLink} ${location.pathname.startsWith('/protocolos') ? styles.protocolosLinkActive : ''}`}
           onClick={onClose}
         >
-          ⚡ Protocolos
+          Protocolos
         </Link>
       )}
 

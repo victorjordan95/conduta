@@ -313,7 +313,7 @@ export default function Dashboard() {
             {
               target: 'results',
               title: 'Resultado da análise',
-              text: 'Avalie cada resposta com 👍 ou 👎. Feedbacks negativos revisados pela equipe podem render análises extras.',
+              text: 'Avalie cada resposta como útil ou incorreta. Feedbacks negativos revisados pela equipe podem render análises extras.',
             },
             {
               target: 'entities',
@@ -362,8 +362,9 @@ export default function Dashboard() {
                   className={styles.pdfBtn}
                   onClick={handleProntuario}
                   aria-label="Gerar resumo para prontuário"
+                  disabled={prontuarioLoading}
                 >
-                  ⎘ Resumo p/ prontuário
+                  {prontuarioLoading ? 'Gerando...' : '⎘ Resumo p/ prontuário'}
                 </button>
               )}
               {activeSession?.summary && (

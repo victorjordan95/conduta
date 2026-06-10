@@ -3,6 +3,43 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import styles from './AnalysisResult.module.scss';
 
+function IconePolegar({ baixo }) {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={baixo ? { transform: 'rotate(180deg)' } : undefined}
+    >
+      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+    </svg>
+  );
+}
+
+function IconeLapis() {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 18.5 2 20l1.5-5.5L17 3z" />
+    </svg>
+  );
+}
+
 function FeedbackButtons({ messageId, current, onFeedback }) {
   const [sentValue, setSentValue] = useState(null);
   const [askingNote, setAskingNote] = useState(null); // null | 'negative' | 'partial'
@@ -57,10 +94,10 @@ function FeedbackButtons({ messageId, current, onFeedback }) {
     return (
       <div className={styles.feedbackDone}>
         {displayValue === 'positive'
-          ? '👍 Obrigado — o conhecimento desta resposta foi reforçado.'
+          ? 'Obrigado. O conhecimento desta resposta foi reforçado.'
           : displayValue === 'partial'
-          ? '✏️ Ajuste registrado — obrigado pelo retorno.'
-          : '👎 Correção registrada — casos similares serão alertados.'}
+          ? 'Ajuste registrado. Obrigado pelo retorno.'
+          : 'Correção registrada. Casos similares serão alertados.'}
       </div>
     );
   }
@@ -110,9 +147,15 @@ function FeedbackButtons({ messageId, current, onFeedback }) {
   return (
     <div className={styles.feedback}>
       <span className={styles.feedbackLabel}>Esta resposta foi útil?</span>
-      <button className={styles.feedbackBtn} onClick={handlePositive} title="Útil">👍</button>
-      <button className={styles.feedbackBtnPartial} onClick={handlePartialClick} title="Boa, mas precisa de ajuste">✏️ Bom, mas...</button>
-      <button className={styles.feedbackBtn} onClick={handleNegativeClick} title="Incorreta">👎</button>
+      <button className={styles.feedbackBtn} onClick={handlePositive} title="Útil" aria-label="Resposta útil">
+        <IconePolegar />
+      </button>
+      <button className={styles.feedbackBtnPartial} onClick={handlePartialClick} title="Boa, mas precisa de ajuste">
+        <IconeLapis /> Bom, mas...
+      </button>
+      <button className={styles.feedbackBtn} onClick={handleNegativeClick} title="Incorreta" aria-label="Resposta incorreta">
+        <IconePolegar baixo />
+      </button>
     </div>
   );
 }

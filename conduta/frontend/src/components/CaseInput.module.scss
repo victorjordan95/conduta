@@ -48,17 +48,19 @@
 }
 
 .modeBtn {
-  padding: 4px 12px;
+  padding: 5px 12px;
+  min-height: 32px;
   font-size: $font-size-sm;
   border: 1px solid $color-border;
   background: transparent;
   color: $color-text-secondary;
   cursor: pointer;
   border-radius: $border-radius;
-  transition: all 0.15s ease;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 
   &:hover:not(:disabled) {
     border-color: $color-accent;
+    color: $color-text-primary;
   }
 
   &:disabled {
@@ -75,8 +77,27 @@
 
 .modeHint {
   font-size: $font-size-sm;
-  color: $color-text-secondary;
+  color: $color-text-muted;
   margin-left: 8px;
+}
+
+.errorText {
+  color: $color-danger;
+}
+
+@media (max-width: 520px) {
+  .modeHint {
+    display: none;
+  }
+
+  .modeBtn {
+    min-height: 40px;
+    flex: 1;
+  }
+
+  .modeToggle {
+    width: 100%;
+  }
 }
 
 .inputRow {

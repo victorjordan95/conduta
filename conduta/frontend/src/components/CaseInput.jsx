@@ -184,7 +184,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
                   onClick={() => fileInputRef.current?.click()}
                   disabled={analyzing}
                 >
-                  📎 Anexar foto de lesão de pele
+                  Anexar foto de lesão de pele
                 </button>
                 <p className={styles.fotoAviso}>
                   Apenas fotos de lesões cutâneas. Não adequado para radiografias, fraturas ou outras imagens médicas.
@@ -196,7 +196,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
         {(error || statusText) && (
           <div className={styles.statusLine}>
             {error
-              ? <span style={{ color: '#c0392b' }}>{error}</span>
+              ? <span className={styles.errorText} role="alert">{error}</span>
               : <span className={styles.progress}>{statusText}</span>
             }
           </div>

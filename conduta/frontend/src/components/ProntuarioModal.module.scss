@@ -1,5 +1,15 @@
 @use '../styles/variables' as *;
 
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 .overlay {
   position: fixed;
   inset: 0;
@@ -9,6 +19,7 @@
   justify-content: center;
   z-index: 1000;
   padding: 16px;
+  animation: overlayIn 150ms ease-out both;
 }
 
 .modal {
@@ -20,7 +31,8 @@
   display: flex;
   flex-direction: column;
   padding: 20px 24px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  box-shadow: $shadow-md;
+  animation: modalIn 200ms $ease-out-quart both;
 }
 
 .header {
@@ -32,6 +44,7 @@
 
 .title {
   font-size: $font-size-lg;
+  font-weight: 700;
   margin: 0;
   color: $color-text-primary;
 }
@@ -42,17 +55,34 @@
   font-size: $font-size-base;
   cursor: pointer;
   color: $color-text-secondary;
-  padding: 4px 8px;
+  padding: 8px 10px;
+  margin: -8px -10px -8px 0;
+  border-radius: $border-radius;
+  transition: color 0.15s, background 0.15s;
 
   &:hover {
     color: $color-text-primary;
+    background: $color-bg;
   }
 }
 
-.status {
-  color: $color-text-secondary;
-  padding: 24px 0;
-  text-align: center;
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px 0 16px;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.skeletonLine {
+  height: 12px;
+  border-radius: 4px;
+  background: $color-bg;
+  animation: skeletonPulse 1.4s ease-in-out infinite;
 }
 
 .errorBox {
@@ -61,7 +91,7 @@
 }
 
 .error {
-  color: #c0392b;
+  color: $color-danger;
   margin-bottom: 12px;
 }
 
@@ -74,9 +104,15 @@
   color: #fff;
   cursor: pointer;
   font-size: $font-size-sm;
+  font-weight: 600;
+  transition: background 0.15s, transform 0.1s $ease-out-quart;
 
   &:hover {
     background: $color-accent-hover;
+  }
+
+  &:active {
+    transform: scale(0.97);
   }
 }
 
@@ -85,7 +121,7 @@
   font-family: inherit;
   font-size: $font-size-sm;
   line-height: 1.55;
-  background: $color-accent-subtle;
+  background: $color-bg;
   border: 1px solid $color-border;
   border-radius: $border-radius;
   padding: 14px 16px;
