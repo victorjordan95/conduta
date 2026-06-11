@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<!--
+  Fonte do og-image.png (cover de WhatsApp/Open Graph), fiel ao HeroSection da landing.
+  Regenerar após mudar o hero:
+    npx playwright screenshot --browser=chromium --channel=msedge --viewport-size="1200,630" \
+      --wait-for-timeout=4000 "file:///<caminho>/frontend/scripts/og-image.html" public/og-image.png
+  Depois, incrementar o ?v= do og:image em index.html para invalidar o cache do WhatsApp.
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1200px;
+    height: 630px;
+    background: #1e2a35;
+    font-family: 'Barlow', sans-serif;
+    overflow: hidden;
+  }
+
+  .canvas {
+    width: 1200px;
+    height: 630px;
+    padding: 56px 64px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  /* ── Coluna de texto (espelha HeroSection) ── */
+  .badge {
+    display: inline-block;
+    background: rgba(26, 107, 115, 0.18);
+    color: #4dbec9;
+    border: 1px solid rgba(77, 190, 201, 0.25);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 24px;
+    margin-bottom: 26px;
+  }
+
+  .headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 58px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin-bottom: 22px;
+    white-space: nowrap;
+  }
+
+  .accent { color: #4dbec9; }
+
+  .sub {
+    font-size: 19px;
+    color: rgba(176, 196, 204, 0.85);
+    line-height: 1.55;
+    margin-bottom: 30px;
+    max-width: 400px;
+  }
+
+  .ctaGroup {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+
+  .ctaBtn {
+    display: inline-block;
+    background: #1a6b73;
+    color: #fff;
+    padding: 13px 30px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 17px;
+    white-space: nowrap;
+  }
+
+  .ctaMeta {
+    font-size: 14px;
+    color: rgba(176, 196, 204, 0.55);
+    white-space: nowrap;
+  }
+
+  /* ── Card de preview (espelha .preview do hero) ── */
+  .preview {
+    background: #1e2d3d;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+  }
+
+  .previewHeader {
+    background: rgba(0, 0, 0, 0.25);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .previewDot {
+    width: 10px;
+    height: 10px;
+    background: #1a6b73;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .previewTitle {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: rgba(176, 196, 204, 0.6);
+  }
+
+  .previewInput {
+    font-size: 15px;
+    color: rgba(176, 196, 204, 0.9);
+    font-weight: 600;
+    padding: 20px 24px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .previewOutput {
+    padding: 20px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .outputLine {
+    font-size: 15px;
+    color: rgba(176, 196, 204, 0.75);
+    line-height: 1.5;
+  }
+
+  .success { color: #27ae60; font-weight: 700; }
+  .warning { color: #e67e22; font-weight: 700; }
+  .muted   { color: rgba(176, 196, 204, 0.55); font-weight: 600; }
+
+  .domain {
+    margin-top: 18px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: rgba(176, 196, 204, 0.45);
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div>
+      <div class="badge">Para médicos e residentes</div>
+      <h1 class="headline">
+        Aquela dúvida clínica<br />
+        que você não quer ter<br />
+        <span class="accent">agora tem resposta.</span>
+      </h1>
+      <p class="sub">
+        Assistente clínico com IA que analisa o caso, sugere conduta e aponta red flags em segundos.
+      </p>
+      <div class="ctaGroup">
+        <span class="ctaBtn">Começar grátis</span>
+        <span class="ctaMeta">15 análises/mês · sem cartão</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="preview">
+        <div class="previewHeader">
+          <span class="previewDot"></span>
+          <span class="previewTitle">Análise em andamento</span>
+        </div>
+        <div class="previewInput">
+          → Criança, 4 anos, febre há 3 dias, sem foco aparente...
+        </div>
+        <div class="previewOutput">
+          <div class="outputLine">
+            <span class="success">✓ Hipótese principal:</span> IVAS viral
+          </div>
+          <div class="outputLine">
+            <span class="warning">⚠ Red flag:</span> Febre &gt; 39°C por mais de 5 dias — investigar foco
+          </div>
+          <div class="outputLine">
+            <span class="muted">→ Conduta:</span> Antitérmico + reavaliação em 48h
+          </div>
+          <div class="outputLine">
+            <span class="muted">→ Encaminhamento:</span> SE febre persistir ou surgir petéquias
+          </div>
+        </div>
+      </div>
+      <div class="domain">conduta.online</div>
+    </div>
+  </div>
+</body>
+</html>
