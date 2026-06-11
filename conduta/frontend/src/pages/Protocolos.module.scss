@@ -3,123 +3,343 @@
 .page {
   min-height: 100vh;
   background: $color-bg;
-  padding: 0 0 3rem;
+  padding: 0 0 4rem;
 }
 
+// ── Header ──────────────────────────────────────────────────────
 .header {
   background: $color-sidebar;
-  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.headerInner {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 1.75rem;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 1rem;
 }
 
 .backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
   color: $color-text-sidebar;
   font-size: $font-size-sm;
+  font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
-  margin-top: 0.25rem;
-  transition: color 0.15s;
+  flex-shrink: 0;
+  padding: 4px 8px 4px 4px;
+  border-radius: $border-radius;
+  transition: color 0.15s, background 0.15s;
 
-  &:hover { color: white; }
+  svg { transition: transform 0.15s $ease-out-quart; }
+
+  &:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.06);
+    svg { transform: translateX(-2px); }
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.4);
+    outline-offset: 2px;
+  }
+}
+
+.headerDivisor {
+  width: 1px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+.headerTexto {
+  min-width: 0;
 }
 
 .titulo {
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-size: 1.4rem;
+  font-weight: 800;
   color: white;
   margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
 }
 
 .subtitulo {
   font-size: $font-size-sm;
   color: $color-text-sidebar;
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
+// ── Toolbar (busca + filtros) ───────────────────────────────────
+.toolbar {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.buscaWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 200px;
+  max-width: 360px;
+}
+
+.buscaIcone {
+  position: absolute;
+  left: 12px;
+  display: flex;
+  color: $color-text-muted;
+  pointer-events: none;
+}
+
+.busca {
+  width: 100%;
+  padding: 9px 12px 9px 36px;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  background: $color-surface;
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &::placeholder { color: $color-text-muted; }
+
+  &:focus {
+    outline: none;
+    border-color: $color-accent;
+    box-shadow: 0 0 0 3px rgba(26, 107, 115, 0.12);
+  }
+
+  // remove o X nativo do type=search (estilizamos nosso próprio fluxo)
+  &::-webkit-search-cancel-button { -webkit-appearance: none; }
+}
+
+.buscaAtalho {
+  position: absolute;
+  right: 10px;
+  display: inline-block;
+  padding: 1px 6px;
+  background: $color-bg;
+  border: 1px solid $color-border;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: $color-text-muted;
+  pointer-events: none;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filtro,
+.filtroAtivo {
+  padding: 6px 13px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.filtro {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  color: $color-text-secondary;
+
+  &:hover {
+    border-color: $color-accent;
+    color: $color-accent;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+.filtroAtivo {
+  background: $color-accent;
+  border: 1px solid $color-accent;
+  color: white;
+
+  &:hover { background: $color-accent-hover; border-color: $color-accent-hover; }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+// ── Grid de cards ───────────────────────────────────────────────
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  padding: 1.5rem;
-  max-width: 1000px;
+  gap: 0.9rem;
+  padding: 1.25rem 1.5rem 0;
+  max-width: 1040px;
   margin: 0 auto;
 }
 
 .card {
+  position: relative;
   background: $color-surface;
   border: 1px solid $color-border;
-  border-radius: 10px;
-  padding: 1.25rem 1rem 1rem;
+  border-radius: $border-radius;
+  padding: 1.1rem 1.1rem 0.9rem;
   text-decoration: none;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
+  gap: 0.6rem;
+  min-height: 132px;
+  transition: border-color 0.18s $ease-out-quart, box-shadow 0.18s $ease-out-quart, transform 0.18s $ease-out-quart;
 
   &:hover {
+    border-color: $color-accent;
     box-shadow: $shadow-md;
     transform: translateY(-2px);
-    border-color: $color-accent;
   }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+
+  &:active { transform: translateY(0); }
+}
+
+.cardTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .icone {
-  font-size: 2rem;
-  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: $border-radius;
+  flex-shrink: 0;
 }
 
 .cardTitulo {
-  font-size: 0.88rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: $color-text-primary;
   margin: 0;
-  line-height: 1.35;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: auto;
-  padding-top: 0.25rem;
+  line-height: 1.3;
+  flex: 1;
 }
 
 .categoriaBadge {
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 2px 7px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  padding: 3px 8px;
   border-radius: 20px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
-.tag {
+.cardRodape {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 0.3rem;
   font-size: 0.7rem;
-  color: $color-text-secondary;
-  background: $color-bg;
-  padding: 2px 7px;
-  border-radius: 20px;
-  border: 1px solid $color-border;
+  color: $color-text-muted;
 }
 
-// Cores por categoria
-.catViaAerea    { background: #dbeafe; color: #1e40af; }
+.cardFases {
+  font-weight: 600;
+}
+
+.cardAno {
+  position: relative;
+  padding-left: 9px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: $color-text-muted;
+  }
+}
+
+// ── Cores por categoria (ícone usa text-color via currentColor; badge usa fundo+texto) ──
+.catViaAerea       { background: #dbeafe; color: #1e40af; }
 .catCardiovascular { background: #fee2e2; color: #991b1b; }
-.catNeurologico { background: #ede9fe; color: #5b21b6; }
-.catMetabolico  { background: #ffedd5; color: #9a3412; }
-.catInfeccioso  { background: #dcfce7; color: #166534; }
+.catNeurologico    { background: #ede9fe; color: #5b21b6; }
+.catMetabolico     { background: #ffedd5; color: #9a3412; }
+.catInfeccioso     { background: #dcfce7; color: #166534; }
+
+// ── Estado vazio ────────────────────────────────────────────────
+.vazio {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+}
+
+.vazioLimpar {
+  padding: 7px 16px;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $color-accent;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover { background: $color-accent-subtle; border-color: $color-accent; }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
 
 @media (max-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-    padding: 1rem;
-  }
+  .grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 480px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+@media (max-width: 520px) {
+  .toolbar { padding-top: 1rem; }
+  .buscaWrapper { max-width: none; }
+  .grid { grid-template-columns: 1fr; }
+  .card { min-height: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .backLink svg { transition: border-color 0.15s, box-shadow 0.15s; transform: none; }
+  .card:hover { transform: none; }
 }

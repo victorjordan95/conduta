@@ -89,7 +89,7 @@ export const protocolos = [
           { tipo: 'acao', texto: 'Minimizar interrupções: pausas < 10s para análise de ritmo ou desfibrilação' },
           { tipo: 'acao', texto: 'Relação compressão:ventilação = 30:2 sem via aérea avançada; contínua (10 vent/min) com via aérea avançada' },
           { tipo: 'acao', texto: 'Trocar o compressor a cada 2 min para evitar fadiga' },
-          { tipo: 'acao', texto: 'Garantir acesso venoso ou intraósseo (IO)' },
+          { tipo: 'acao', texto: 'Garantir acesso vascular: via IV preferida sobre intraóssea (IO) para administração de drogas (AHA 2025); usar IO se acesso IV não obtido rapidamente' },
         ],
       },
       {
@@ -100,7 +100,7 @@ export const protocolos = [
           { tipo: 'acao', texto: 'Checar ritmo após 2 min de RCP; se chocável → desfibrilar novamente' },
           { tipo: 'droga', nome: 'Epinefrina', dose: '1 mg IV/IO a cada 3–5 min', obs: 'iniciar após o 2º choque sem retorno de circulação' },
           { tipo: 'droga', nome: 'Amiodarona', dose: '300 mg IV/IO (1ª dose); 150 mg (2ª dose)', obs: 'após o 3º choque sem retorno; alternativa equivalente: Lidocaína 1–1,5 mg/kg (ALPS trial)' },
-          { tipo: 'acao', texto: 'FV refratária (≥ 3 choques sem RCE): considerar desfibrilação sequencial dupla (DSED) ou mudança de vetor (anterior-posterior) — ambos superiores à desfibrilação padrão em FV refratária (DOSE VF, NEJM 2022; ILCOR CoSTR 2023)' },
+          { tipo: 'acao', texto: 'FV refratária (≥ 3 choques sem RCE): considerar desfibrilação sequencial dupla (DSED) ou mudança de vetor (anterior-posterior). Sinal promissor no DOSE VF (NEJM 2022), mas a AHA 2025 classifica como "não estabelecido" — considerar caso a caso, sem afirmar superioridade comprovada' },
         ],
       },
       {
@@ -160,7 +160,7 @@ export const protocolos = [
         passos: [
           { tipo: 'droga', nome: 'Difenidramina', dose: '25–50 mg IV/IM', obs: 'anti-histamínico H1 — alivia urticária e prurido' },
           { tipo: 'droga', nome: 'Famotidina', dose: '20 mg IV em 15–30 min', obs: 'anti-histamínico H2 — substitui a ranitidina (retirada do mercado mundial em 2020 por contaminação com NDMA). Benefício limitado e não recomendado de rotina (WAO 2023); pode aliviar urticária quando associada a anti-H1' },
-          { tipo: 'droga', nome: 'Metilprednisolona', dose: '125 mg IV', obs: 'previne reação bifásica — efeito em 4–6h' },
+          { tipo: 'droga', nome: 'Metilprednisolona', dose: '125 mg IV', obs: 'adjuvante de 2ª linha; NÃO previne reação bifásica de forma confiável (evidência fraca, WAO 2023) — não substitui epinefrina nem observação prolongada' },
           { tipo: 'droga', nome: 'Salbutamol inalatório', dose: '2,5–5 mg nebulizado', obs: 'se broncoespasmo persistente após epinefrina' },
         ],
       },
@@ -215,7 +215,7 @@ export const protocolos = [
           { tipo: 'droga', nome: 'Alteplase (rt-PA)', dose: '0,9 mg/kg IV (máx 90 mg): 10% em bolus 1 min + 90% em infusão 60 min', obs: 'iniciar dentro de 60 min da chegada (meta "porta-agulha" < 60 min)' },
           { tipo: 'droga', nome: 'Tenecteplase (TNK)', dose: '0,25 mg/kg IV bolus único (máx 25 mg)', obs: 'alternativa equivalente à Alteplase — administração mais simples (bolus único vs infusão 60 min). Classe I, NE-A (AHA/ASA 2026). No Brasil: uso off-label em AVC; disponível para IAM' },
           { tipo: 'acao', texto: 'Controle de PA antes e durante o tPA: manter < 185/110 mmHg' },
-          { tipo: 'droga', nome: 'Labetalol', dose: '10–20 mg IV', obs: 'se PA > 185/110 antes do tPA' },
+          { tipo: 'droga', nome: 'Labetalol', dose: '10–20 mg IV', obs: 'se PA > 185/110 antes do tPA. ATENÇÃO: formulação IV não disponível no Brasil — usar Nicardipina IV ou Esmolol IV; Nitroprussiato como alternativa' },
         ],
       },
       {
@@ -232,8 +232,8 @@ export const protocolos = [
         nome: 'AVC Hemorrágico',
         passos: [
           { tipo: 'acao', texto: 'PA sistólica alvo: < 140 mmHg (iniciar imediatamente)' },
-          { tipo: 'droga', nome: 'Labetalol', dose: '10–20 mg IV bolus, repetir a cada 10 min (máx 300 mg)', obs: '1ª escolha' },
-          { tipo: 'droga', nome: 'Nicardipina', dose: '5 mg/h IV (aumentar 2,5 mg/h a cada 5–15 min, máx 15 mg/h)', obs: 'alternativa ao labetalol' },
+          { tipo: 'droga', nome: 'Nicardipina', dose: '5 mg/h IV (aumentar 2,5 mg/h a cada 5–15 min, máx 15 mg/h)', obs: '1ª escolha no Brasil (labetalol IV indisponível)' },
+          { tipo: 'droga', nome: 'Labetalol', dose: '10–20 mg IV bolus, repetir a cada 10 min (máx 300 mg)', obs: '1ª escolha onde disponível — formulação IV NÃO disponível no Brasil' },
           { tipo: 'acao', texto: 'Reverter anticoagulação se em uso: Vit K 10 mg IV + CCP 4 fatores (ou FFP se CCP indisponível) para warfarina; Andexanet alfa para apixabana/rivaroxabana; Idarucizumabe 5 g IV (Praxbind) para dabigatrana; Sulfato de protamina para heparina' },
           { tipo: 'acao', texto: 'Avaliação neurocirúrgica urgente' },
         ],
@@ -250,9 +250,10 @@ export const protocolos = [
     tags: ['infecção', 'emergência'],
     fases: [
       {
-        nome: 'Reconhecimento — qSOFA',
+        nome: 'Reconhecimento e Triagem',
         passos: [
-          { tipo: 'acao', texto: 'qSOFA ≥ 2 pontos → suspeita de sepse: FR ≥ 22/min (1 pt), alteração mental / Glasgow < 15 (1 pt), PAS ≤ 100 mmHg (1 pt)' },
+          { tipo: 'acao', texto: 'Usar ferramenta de triagem padronizada (NEWS2 ou SIRS) para rastreio — a Surviving Sepsis Campaign desaconselha qSOFA como ferramenta ISOLADA de triagem' },
+          { tipo: 'acao', texto: 'qSOFA ≥ 2 pontos (auxílio à beira-leito, não rastreio único): FR ≥ 22/min (1 pt), alteração mental / Glasgow < 15 (1 pt), PAS ≤ 100 mmHg (1 pt)' },
           { tipo: 'acao', texto: 'Choque séptico: sepse + necessidade de vasopressor + lactato > 2 mmol/L após reposição adequada' },
           { tipo: 'acao', texto: 'SOFA score para confirmar disfunção orgânica (aumento ≥ 2 pontos em relação ao basal)' },
         ],
@@ -290,7 +291,7 @@ export const protocolos = [
         ],
       },
     ],
-    referencia: 'Surviving Sepsis Campaign International Guidelines 2021',
+    referencia: 'Surviving Sepsis Campaign International Guidelines 2021 (atualização 2024–2025)',
   },
 
   {
@@ -357,8 +358,9 @@ export const protocolos = [
       {
         nome: 'Diagnóstico',
         passos: [
-          { tipo: 'acao', texto: 'Critérios diagnósticos: Glicemia > 250 mg/dL + pH arterial < 7,3 + Bicarbonato < 18 mEq/L + Cetonas positivas (urina ou sangue)' },
-          { tipo: 'acao', texto: 'Calcular anion gap = Na - (Cl + HCO₃) → normal: 8–12; na CAD tipicamente > 16' },
+          { tipo: 'acao', texto: 'Critérios diagnósticos (ADA/EASD 2024): Glicemia ≥ 200 mg/dL OU diabetes conhecido + β-hidroxibutirato ≥ 3,0 mmol/L (ou cetonúria ≥ 2+) + pH arterial < 7,3 e/ou Bicarbonato < 18 mEq/L' },
+          { tipo: 'alerta', texto: 'Cetoacidose euglicêmica: pacientes em uso de inibidor de SGLT2 (dapagliflozina, empagliflozina, canagliflozina) podem cursar com glicemia < 250 mg/dL — NÃO afastar CAD pela glicemia normal/baixa' },
+          { tipo: 'acao', texto: 'Anion gap = Na - (Cl + HCO₃) auxilia na monitorização (normal 8–12; na CAD tipicamente > 16), mas deixou de ser critério diagnóstico ou de resolução (ADA/EASD 2024)' },
           { tipo: 'acao', texto: 'Calcular déficit hídrico (média 3–5 L em adultos, até 10 L em casos graves)' },
           { tipo: 'acao', texto: 'Exames: gasometria, eletrólitos, função renal, hemograma, cetonúria, ECG (hipercalemia)' },
           { tipo: 'alerta', texto: 'O potássio sérico PARECE normal ou alto na apresentação (acidose redistribui K⁺ para extracelular), mas o potássio corporal TOTAL está depletado — repor assim que diurese retomar e K < 5,5' },
@@ -398,12 +400,12 @@ export const protocolos = [
           { tipo: 'acao', texto: 'Glicemia capilar: a cada 1h' },
           { tipo: 'acao', texto: 'Eletrólitos (K⁺, Na⁺): a cada 2h nas primeiras 6h, depois a cada 4h' },
           { tipo: 'acao', texto: 'Gasometria arterial: a cada 4h' },
-          { tipo: 'acao', texto: 'Critérios de resolução (TODOS os 3): pH > 7,3 + Bicarbonato > 18 mEq/L + Anion gap normalizado (< 12)' },
+          { tipo: 'acao', texto: 'Critérios de resolução (ADA/EASD 2024): β-hidroxibutirato < 3,0 mmol/L + pH ≥ 7,3 + Bicarbonato ≥ 15 mEq/L + paciente tolerando via oral (anion gap não é mais critério)' },
           { tipo: 'alerta', texto: 'NÃO usar bicarbonato de sódio na CAD (exceto pH < 7,0 com instabilidade hemodinâmica) — aumenta risco de hipocalemia e acidose paradoxal no SNC' },
         ],
       },
     ],
-    referencia: 'ADA Standards of Care 2024 / Kitabchi et al. Diabetes Care 2009 / Fluidos na CAD: meta-análise Frontiers Endocrinol. 2024 (11 RCTs, 753 pacientes)',
+    referencia: 'Consenso ADA/EASD de Crises Hiperglicêmicas 2024 (Diabetes Care) / ADA Standards of Care 2026 / Fluidos na CAD: meta-análise Frontiers Endocrinol. 2024 (11 RCTs, 753 pacientes)',
   },
 
   {
@@ -453,11 +455,11 @@ export const protocolos = [
           { tipo: 'droga', nome: 'Betabloqueador', dose: 'Metoprolol 25–50 mg VO 2x/dia', obs: 'iniciar nas primeiras 24h se sem contraindicação (BAV, broncoespasmo, FC < 60, choque)' },
           { tipo: 'droga', nome: 'IECA', dose: 'Ramipril 2,5–5 mg VO/dia', obs: 'iniciar nas primeiras 24h se FEVE reduzida ou parede anterior comprometida' },
           { tipo: 'droga', nome: 'Estatina de alta intensidade', dose: 'Atorvastatina 80 mg VO/dia', obs: 'iniciar antes da alta — reduz eventos isquêmicos recorrentes' },
-          { tipo: 'droga', nome: 'Colchicina', dose: '0,5 mg VO 1x/dia por ≥ 6 meses', obs: 'considerar para redução do risco inflamatório residual — Classe IIb, NE-A (ESC 2023; COLCOT trial: ↓ 23% em MACE)' },
+          { tipo: 'droga', nome: 'Colchicina', dose: '0,5 mg VO 1x/dia por ≥ 6 meses', obs: 'Classe IIb — benefício incerto: COLCOT e LoDoCo2 positivos, mas CLEAR-SYNERGY/OASIS-9 (2024, n=7.062) foi neutro. Decisão individualizada' },
         ],
       },
     ],
-    referencia: 'ESC Guidelines on Acute Coronary Syndromes 2023',
+    referencia: '2025 ACC/AHA/ACEP/NAEMSP/SCAI Guideline for the Management of Patients With Acute Coronary Syndromes (Circulation 2025) / ESC Guidelines on Acute Coronary Syndromes 2023',
   },
 
   {
@@ -507,7 +509,7 @@ export const protocolos = [
         ],
       },
     ],
-    referencia: 'ESC Heart Failure Guidelines 2021',
+    referencia: 'ESC Heart Failure Guidelines 2021 + 2023 Focused Update',
   },
 
   {
@@ -558,7 +560,7 @@ export const protocolos = [
         ],
       },
     ],
-    referencia: 'ESC/ESH Hypertension Guidelines 2023 / SBC Diretrizes de Hipertensão 2020',
+    referencia: 'ESC Hypertension Guidelines 2024 / AHA-ACC 2025 / Diretriz Brasileira de Hipertensão Arterial 2025 (SBC/SBN/SBH)',
   },
 ];
 
