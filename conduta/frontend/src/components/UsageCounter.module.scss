@@ -7,9 +7,20 @@
 }
 
 .containerCompact {
-  padding: 6px 20px;
-  border-bottom: 1px solid $color-border;
-  background: transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+
+  .label {
+    margin-bottom: 0;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .track {
+    width: 72px;
+  }
 }
 
 .label {

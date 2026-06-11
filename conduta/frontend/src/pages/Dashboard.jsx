@@ -485,8 +485,8 @@ export default function Dashboard() {
         )}
 
         <footer className={styles.footer}>
-          {usage && <UsageCounter used={usage.used} limit={usage.limit} compact />}
           <div className={styles.footerRow}>
+            {usage && <UsageCounter used={usage.used} limit={usage.limit} compact />}
             <span className={styles.footerDisclaimer}>
               <span aria-hidden="true">⚕</span>
               {' '}As análises do Conduta são sugestões de apoio clínico. A decisão final é sempre responsabilidade do profissional.

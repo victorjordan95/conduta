@@ -3,13 +3,14 @@
 .container {
   border-top: 1px solid $color-border;
   background: $color-surface;
-  padding: 16px 24px 20px;
+  padding: 10px 24px 12px;
 }
 
-.labelRow {
+.topRow {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 8px;
 }
 
@@ -23,8 +24,10 @@
 }
 
 .hint {
+  margin-left: auto;
   font-size: $font-size-sm;
-  color: $color-text-secondary;
+  color: $color-text-muted;
+  white-space: nowrap;
 }
 
 .kbd {
@@ -44,12 +47,11 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-bottom: 8px;
 }
 
 .modeBtn {
-  padding: 5px 12px;
-  min-height: 32px;
+  padding: 3px 10px;
+  min-height: 28px;
   font-size: $font-size-sm;
   border: 1px solid $color-border;
   background: transparent;
@@ -76,9 +78,8 @@
 }
 
 .modeHint {
-  font-size: $font-size-sm;
+  font-size: 12px;
   color: $color-text-muted;
-  margin-left: 8px;
 }
 
 .errorText {
@@ -108,8 +109,8 @@
 
 .textarea {
   flex: 1;
-  min-height: 100px;
-  max-height: 220px;
+  min-height: 64px;
+  max-height: 200px;
   padding: 12px 14px;
   border: 1px solid $color-border;
   border-radius: $border-radius;
@@ -197,8 +198,14 @@
 }
 
 .fotoArea {
-  margin-top: 10px;
-  margin-bottom: 4px;
+  margin-top: 8px;
+}
+
+.fotoRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .fotoInput {
@@ -206,12 +213,12 @@
 }
 
 .fotoBtn {
-  font-size: $font-size-sm;
+  font-size: 12px;
   color: $color-accent;
   background: none;
   border: 1px dashed $color-accent;
   border-radius: $border-radius;
-  padding: 6px 12px;
+  padding: 4px 10px;
   cursor: pointer;
   transition: background 0.15s;
 
@@ -226,7 +233,6 @@
 }
 
 .fotoAviso {
-  margin-top: 4px;
   font-size: 11px;
   color: $color-text-secondary;
   font-style: italic;
@@ -277,18 +283,16 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 10px 14px 12px;
+    padding: 8px 14px 10px;
   }
 
-  .labelRow {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
+  .topRow {
+    gap: 6px;
     margin-bottom: 6px;
   }
 
   .hint {
-    font-size: 11px;
+    display: none;
   }
 
   .inputRow {
@@ -298,7 +302,7 @@
   }
 
   .textarea {
-    min-height: 72px;
+    min-height: 56px;
     max-height: 140px;
   }
 

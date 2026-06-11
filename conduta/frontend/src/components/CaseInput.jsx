@@ -94,38 +94,37 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
           </a>
         </div>
       )}
-      <div className={styles.labelRow}>
+      <div className={styles.topRow}>
         <span className={styles.label}>Caso clínico</span>
-        <span className={styles.hint}>
-          Texto livre — descreva com os dados que você tem{' '}
-          <kbd className={styles.kbd}>Ctrl+Enter</kbd> para enviar
-        </span>
-      </div>
-      <div className={styles.modeToggle} role="radiogroup" aria-label="Modo de análise">
-        <button
-          type="button"
-          role="radio"
-          aria-checked={mode === 'rapida'}
-          className={`${styles.modeBtn}${mode === 'rapida' ? ` ${styles.modeBtnActive}` : ''}`}
-          onClick={() => handleModeChange('rapida')}
-          disabled={analyzing}
-        >
-          Conduta rápida
-        </button>
-        <button
-          type="button"
-          role="radio"
-          aria-checked={mode === 'completa'}
-          className={`${styles.modeBtn}${mode === 'completa' ? ` ${styles.modeBtnActive}` : ''}`}
-          onClick={() => handleModeChange('completa')}
-          disabled={analyzing}
-        >
-          Análise completa
-        </button>
+        <div className={styles.modeToggle} role="radiogroup" aria-label="Modo de análise">
+          <button
+            type="button"
+            role="radio"
+            aria-checked={mode === 'rapida'}
+            className={`${styles.modeBtn}${mode === 'rapida' ? ` ${styles.modeBtnActive}` : ''}`}
+            onClick={() => handleModeChange('rapida')}
+            disabled={analyzing}
+          >
+            Conduta rápida
+          </button>
+          <button
+            type="button"
+            role="radio"
+            aria-checked={mode === 'completa'}
+            className={`${styles.modeBtn}${mode === 'completa' ? ` ${styles.modeBtnActive}` : ''}`}
+            onClick={() => handleModeChange('completa')}
+            disabled={analyzing}
+          >
+            Análise completa
+          </button>
+        </div>
         <span className={styles.modeHint}>
           {mode === 'rapida'
             ? 'Resposta objetiva para casos simples'
             : 'Hipóteses, raciocínio, conduta e alertas'}
+        </span>
+        <span className={styles.hint}>
+          <kbd className={styles.kbd}>Ctrl+Enter</kbd> envia
         </span>
       </div>
       <form onSubmit={handleSubmit}>
@@ -177,7 +176,7 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
                 </button>
               </div>
             ) : (
-              <>
+              <div className={styles.fotoRow}>
                 <button
                   type="button"
                   className={styles.fotoBtn}
@@ -186,10 +185,10 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
                 >
                   Anexar foto de lesão de pele
                 </button>
-                <p className={styles.fotoAviso}>
-                  Apenas fotos de lesões cutâneas. Não adequado para radiografias, fraturas ou outras imagens médicas.
-                </p>
-              </>
+                <span className={styles.fotoAviso}>
+                  Apenas lesões cutâneas. Não adequado para radiografias ou outras imagens médicas.
+                </span>
+              </div>
             )}
           </div>
         )}
