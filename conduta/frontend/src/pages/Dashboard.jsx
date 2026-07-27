@@ -5,6 +5,7 @@ import AnalysisResult from '../components/AnalysisResult';
 import UsageCounter from '../components/UsageCounter';
 import Coachmark from '../components/Coachmark';
 import ProntuarioModal from '../components/ProntuarioModal';
+import ClinicalToolsPanel from '../components/ClinicalToolsPanel';
 import { getSession, createSession, submitFeedback, getUsage, downloadSessionPdf, getSessionEntities, gerarProntuario } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import styles from './Dashboard.module.scss';
@@ -383,6 +384,10 @@ export default function Dashboard() {
                 </>
               )}
             </div>
+            <ClinicalToolsPanel
+              sessionId={activeSessionId}
+              hasAnalysis={messages.some((m) => m.role === 'assistant' && m.content)}
+            />
             <AnalysisResult
               messages={messages}
               streaming={streaming}
