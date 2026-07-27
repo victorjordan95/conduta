@@ -66,4 +66,15 @@ describe('protocolos data', () => {
   it('getProtocolo retorna null para slug inexistente', () => {
     expect(getProtocolo('slug-invalido')).toBeNull();
   });
+
+  it('mantém salvaguardas clínicas da revisão bibliográfica', () => {
+    const texto = (slug) => JSON.stringify(getProtocolo(slug));
+
+    expect(texto('sepse')).toContain('qSOFA como ferramenta ISOLADA de triagem');
+    expect(texto('sepse')).toContain('Surviving Sepsis Campaign');
+    expect(texto('cad')).toContain('β-hidroxibutirato < 0,6 mmol/L');
+    expect(texto('eme')).toContain('20 mg PE/kg');
+    expect(texto('pcr')).toContain('SpO₂ 90–98%');
+    expect(texto('crise-hipertensiva')).toContain('não há meta universal');
+  });
 });

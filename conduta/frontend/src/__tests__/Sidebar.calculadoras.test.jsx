@@ -35,5 +35,6 @@ describe('Sidebar autenticada', () => {
     );
 
     expect(screen.getByRole('link', { name: 'Calculadoras' })).toHaveAttribute('href', '/calculadoras');
+    expect(screen.getByRole('link', { name: 'Protocolos' })).toHaveAttribute('href', '/protocolos');
   });
 });

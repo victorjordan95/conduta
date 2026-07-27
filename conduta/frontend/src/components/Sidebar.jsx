@@ -132,15 +132,13 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
         Calculadoras
       </Link>
 
-      {user?.role === 'admin' && (
-        <Link
-          to="/protocolos"
-          className={`${styles.protocolosLink} ${location.pathname.startsWith('/protocolos') ? styles.protocolosLinkActive : ''}`}
-          onClick={onClose}
-        >
-          Protocolos
-        </Link>
-      )}
+      <Link
+        to="/protocolos"
+        className={`${styles.protocolosLink} ${location.pathname.startsWith('/protocolos') ? styles.protocolosLinkActive : ''}`}
+        onClick={onClose}
+      >
+        Protocolos
+      </Link>
 
       <label htmlFor="sidebar-search" className={styles.srOnly}>Buscar caso</label>
       <input

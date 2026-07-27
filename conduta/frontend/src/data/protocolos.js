@@ -17,21 +17,21 @@ export const protocolos = [
           { tipo: 'acao', texto: 'Garantir acesso venoso pérvio' },
           { tipo: 'acao', texto: 'Pré-oxigenar com O₂ 100% por 3–5 min — alvo SpO₂ > 94%' },
           { tipo: 'acao', texto: 'Posicionar em sniffing position: coxim suboccipital de 7–10 cm, orelha alinhada com o esterno' },
-          { tipo: 'droga', nome: 'Atropina', dose: '0,5 mg IV', obs: 'se FC < 60 bpm ou paciente pediátrico' },
+          { tipo: 'droga', nome: 'Atropina', dose: 'conforme protocolo institucional', obs: 'não usar de rotina na SRI; considerar apenas em bradicardia clinicamente significativa ou indicação pediátrica específica' },
         ],
       },
       {
         nome: 'Pré-medicação (3–5 min antes)',
         passos: [
-          { tipo: 'droga', nome: 'Fentanil', dose: '1–3 mcg/kg IV lento (2 min)', obs: 'omitir se choque ou hipotensão' },
-          { tipo: 'droga', nome: 'Lidocaína', dose: '1,5 mg/kg IV', obs: 'opcional — indicado em TCE ou broncoespasmo' },
+          { tipo: 'droga', nome: 'Fentanil', dose: '1–3 mcg/kg IV lento (2 min)', obs: 'adjuvante seletivo; omitir em choque/hipotensão e não atrasar a SRI por pré-medicação' },
+          { tipo: 'droga', nome: 'Lidocaína', dose: '1,5 mg/kg IV', obs: 'não usar de rotina; considerar somente por indicação específica e protocolo local' },
         ],
       },
       {
         nome: 'Indução e Paralisia (tempo zero)',
         passos: [
           { tipo: 'acao', texto: 'Escolher agente indutor conforme hemodinâmica:' },
-          { tipo: 'droga', nome: 'Etomidato', dose: '0,3 mg/kg IV', obs: 'hemodinamicamente estável — 1ª escolha' },
+          { tipo: 'droga', nome: 'Etomidato', dose: '0,3 mg/kg IV', obs: 'considerar conforme hemodinâmica e contexto; não há agente indutor universal de 1ª escolha' },
           { tipo: 'droga', nome: 'Cetamina', dose: '1–2 mg/kg IV', obs: 'choque, broncoespasmo ou sem acesso a etomidato' },
           { tipo: 'droga', nome: 'Propofol', dose: '1,5–2 mg/kg IV', obs: 'apenas se estável e sem risco de hipotensão' },
           { tipo: 'acao', texto: 'Imediatamente após o indutor, aplicar bloqueador neuromuscular:' },
@@ -63,7 +63,7 @@ export const protocolos = [
         ],
       },
     ],
-    referencia: 'Miller\'s Anesthesia 9ª ed. / UpToDate: Rapid sequence intubation in adults (2024) / DAS RSI Guidelines (BJA Education 2022)',
+    referencia: 'SCCM Guidelines for Rapid Sequence Intubation in the Critically Ill Adult Patient (2023) / DAS Guidelines for Unanticipated Difficult Tracheal Intubation in Adults (2025)',
   },
 
   {
@@ -116,7 +116,7 @@ export const protocolos = [
       {
         nome: 'Retorno da Circulação Espontânea (RCE)',
         passos: [
-          { tipo: 'acao', texto: 'O₂ alvo: SpO₂ 94–98% — evitar hiperóxia (↑ lesão cerebral)' },
+          { tipo: 'acao', texto: 'Após RCE: manter FiO₂ 100% até SpO₂/PaO₂ confiável; depois titular para SpO₂ 90–98% e evitar hipoxemia/hiperóxia' },
           { tipo: 'acao', texto: 'PA sistólica alvo: ≥ 90 mmHg; PAM ≥ 65 mmHg' },
           { tipo: 'droga', nome: 'Norepinefrina', dose: '0,1–0,5 mcg/kg/min IV', obs: 'se hipotensão pós-RCE' },
           { tipo: 'acao', texto: 'Controle de temperatura: manter 32–37,5°C — alvo mínimo é prevenir febre (temperatura > 37,5°C) por ≥ 36h. Hipotermia ativa (32–36°C) não é mandatória — individualizar; normotermia estrita é aceitável (TTM2, NEJM 2021; AHA 2025 Part 11)' },
@@ -150,7 +150,7 @@ export const protocolos = [
           { tipo: 'droga', nome: 'Epinefrina', dose: '0,3–0,5 mg IM (face anterolateral da coxa)', obs: 'pode repetir a cada 5–15 min; usar 0,01 mg/kg em crianças (máx 0,5 mg)' },
           { tipo: 'alerta', texto: 'Epinefrina é o ÚNICO tratamento de 1ª linha — nunca atrasar por anti-histamínico ou corticoide' },
           { tipo: 'acao', texto: 'Posição: decúbito dorsal com MMII elevados (exceto se dispneia ou vômito → sentar)' },
-          { tipo: 'acao', texto: 'O₂ suplementar: 8–10 L/min máscara não-reinalante' },
+          { tipo: 'acao', texto: 'Administrar O₂ se hipoxemia ou desconforto respiratório e titular conforme resposta clínica e SpO₂' },
           { tipo: 'acao', texto: 'Acesso venoso; SF 0,9%: 1–2 L em bolus se hipotensão (20 mL/kg em crianças)' },
           { tipo: 'droga', nome: 'Epinefrina IV', dose: '0,1–0,5 mcg/kg/min', obs: 'apenas se choque refratário a epinefrina IM repetida + volume' },
         ],
@@ -159,22 +159,22 @@ export const protocolos = [
         nome: 'Tratamento de Suporte (2ª linha)',
         passos: [
           { tipo: 'droga', nome: 'Difenidramina', dose: '25–50 mg IV/IM', obs: 'anti-histamínico H1 — alivia urticária e prurido' },
-          { tipo: 'droga', nome: 'Famotidina', dose: '20 mg IV em 15–30 min', obs: 'anti-histamínico H2 — substitui a ranitidina (retirada do mercado mundial em 2020 por contaminação com NDMA). Benefício limitado e não recomendado de rotina (WAO 2023); pode aliviar urticária quando associada a anti-H1' },
-          { tipo: 'droga', nome: 'Metilprednisolona', dose: '125 mg IV', obs: 'adjuvante de 2ª linha; NÃO previne reação bifásica de forma confiável (evidência fraca, WAO 2023) — não substitui epinefrina nem observação prolongada' },
+          { tipo: 'droga', nome: 'Famotidina', dose: 'conforme protocolo institucional', obs: 'benefício limitado; não usar de rotina e nunca atrasar epinefrina (WAO 2020 / EAACI 2021)' },
+          { tipo: 'droga', nome: 'Corticoide sistêmico', dose: 'conforme protocolo institucional', obs: 'não previne de forma confiável reação bifásica; considerar apenas como adjuvante em cenários selecionados, nunca em substituição à epinefrina' },
           { tipo: 'droga', nome: 'Salbutamol inalatório', dose: '2,5–5 mg nebulizado', obs: 'se broncoespasmo persistente após epinefrina' },
         ],
       },
       {
         nome: 'Alta e Prevenção',
         passos: [
-          { tipo: 'acao', texto: 'Observação mínima de 4–6h (risco de reação bifásica em até 72h; internar casos graves)' },
-          { tipo: 'acao', texto: 'Prescrever epinefrina autoinjetável (EpiPen) ao alta com orientação de uso' },
+          { tipo: 'acao', texto: 'Definir observação de forma individualizada; prolongar/internar se reação grave, hipotensão, necessidade de doses repetidas ou fatores de risco para recorrência' },
+          { tipo: 'acao', texto: 'Na alta, fornecer plano de ação, orientação para nova exposição e epinefrina autoinjetável somente se disponível/registrada e indicada conforme protocolo local' },
           { tipo: 'acao', texto: 'Encaminhar para alergologista para investigação e imunoterapia' },
           { tipo: 'acao', texto: 'Registrar o agente desencadeante no prontuário e orientar a evitar' },
         ],
       },
     ],
-    referencia: 'WAO Guidelines on Anaphylaxis 2023 / SBAI Consenso 2021',
+    referencia: 'WAO Anaphylaxis Guidance 2020 / EAACI Anaphylaxis Guideline 2021 / confirmar disponibilidade e registro no Brasil antes de citar apresentação comercial',
   },
 
   {
@@ -198,6 +198,7 @@ export const protocolos = [
         nome: 'Avaliação Inicial (0–25 min)',
         passos: [
           { tipo: 'acao', texto: 'TC de crânio SEM contraste imediatamente — excluir hemorragia antes de qualquer anticoagulante' },
+          { tipo: 'acao', texto: 'Se suspeita de oclusão de grande vaso, realizar angioTC (± perfusão conforme disponibilidade) sem atrasar trombólise quando indicada e acionar fluxo de trombectomia' },
           { tipo: 'acao', texto: 'Glicemia capilar: hipoglicemia (< 60 mg/dL) mimetiza AVC — corrigir antes de qualquer conduta' },
           { tipo: 'acao', texto: 'PA, FC, SpO₂, temperatura' },
           { tipo: 'acao', texto: 'Exames: coagulograma (INR, TTPA), função renal, hemograma, plaquetas, tipo sanguíneo' },
@@ -211,9 +212,9 @@ export const protocolos = [
         passos: [
           { tipo: 'acao', texto: 'Janela: ≤ 4,5 horas do início dos sintomas' },
           { tipo: 'acao', texto: 'Verificar contraindicações ANTES de administrar:' },
-          { tipo: 'acao', texto: 'Contraindicações absolutas: cirurgia maior ou trauma grave < 3 meses, AVC hemorrágico prévio, sangramento ativo, PA > 185/110 não controlada, INR > 1,7, plaquetas < 100.000' },
+          { tipo: 'alerta', texto: 'A lista abaixo não é exaustiva: usar checklist completo de elegibilidade/contraindicações da diretriz AHA/ASA 2026 e do protocolo local, incluindo horário, anticoagulantes, sangramento e risco de hemorragia' },
           { tipo: 'droga', nome: 'Alteplase (rt-PA)', dose: '0,9 mg/kg IV (máx 90 mg): 10% em bolus 1 min + 90% em infusão 60 min', obs: 'iniciar dentro de 60 min da chegada (meta "porta-agulha" < 60 min)' },
-          { tipo: 'droga', nome: 'Tenecteplase (TNK)', dose: '0,25 mg/kg IV bolus único (máx 25 mg)', obs: 'alternativa equivalente à Alteplase — administração mais simples (bolus único vs infusão 60 min). Classe I, NE-A (AHA/ASA 2026). No Brasil: uso off-label em AVC; disponível para IAM' },
+          { tipo: 'droga', nome: 'Tenecteplase (TNK)', dose: '0,25 mg/kg IV bolus único (máx 25 mg)', obs: 'alternativa em pacientes elegíveis conforme diretriz e protocolo do centro; não tratar como automaticamente equivalente nem atrasar transferência/avaliação para trombectomia. Confirmar disponibilidade, registro e protocolo brasileiro' },
           { tipo: 'acao', texto: 'Controle de PA antes e durante o tPA: manter < 185/110 mmHg' },
           { tipo: 'droga', nome: 'Labetalol', dose: '10–20 mg IV', obs: 'se PA > 185/110 antes do tPA. ATENÇÃO: formulação IV não disponível no Brasil — usar Nicardipina IV ou Esmolol IV; Nitroprussiato como alternativa' },
         ],
@@ -239,7 +240,7 @@ export const protocolos = [
         ],
       },
     ],
-    referencia: '2026 Guideline for the Early Management of Patients With Acute Ischemic Stroke — AHA/ASA (Stroke. 2026. DOI: 10.1161/STR.0000000000000513)',
+    referencia: 'AHA/ASA Guideline for Early Management of Acute Ischemic Stroke (2026, DOI: 10.1161/STR.0000000000000513) / PCDT AVC Isquêmico Agudo — Ministério da Saúde (versão vigente) / protocolo regional de trombectomia',
   },
 
   {
@@ -259,16 +260,13 @@ export const protocolos = [
         ],
       },
       {
-        nome: 'Bundle 1 hora (iniciar imediatamente)',
+        nome: 'Reconhecimento e tratamento inicial',
         passos: [
-          { tipo: 'acao', texto: 'Colher 2 pares de hemoculturas (aeróbia + anaeróbia) de sítios diferentes ANTES dos antibióticos — não atrasar antibiótico > 45 min pela coleta' },
-          { tipo: 'acao', texto: 'Dosar lactato arterial (se > 2 mmol/L → hipoperfusão; > 4 mmol/L → choque séptico)' },
-          { tipo: 'droga', nome: 'Antibióticos empíricos IV', dose: 'iniciar em até 1h do reconhecimento', obs: 'guiar pelo foco suspeito:' },
-          { tipo: 'acao', texto: 'Foco comunitário/respiratório: Ceftriaxona 2 g IV + Azitromicina 500 mg IV' },
-          { tipo: 'acao', texto: 'Foco abdominal: Piperacilina-Tazobactam 4,5 g IV a cada 6h' },
-          { tipo: 'acao', texto: 'Foco urinário sem fator de risco: Ceftriaxona 1–2 g IV' },
-          { tipo: 'acao', texto: 'Suspeita de bacteremia/neutropênico: Meropenem 1 g IV a cada 8h + Vancomicina 25–30 mg/kg (dose de ataque)' },
-          { tipo: 'acao', texto: 'Reposição volêmica: Ringer Lactato (preferencial) ou SF 0,9% — 30 mL/kg IV em até 3h se PA baixa ou lactato ≥ 4 mmol/L. Após a carga inicial: reavaliar responsividade a fluidos (elevação passiva dos membros, variação de pressão de pulso) antes de continuar infusão' },
+          { tipo: 'acao', texto: 'Colher hemoculturas de sítios diferentes o mais rápido possível e idealmente antes do antimicrobiano — não atrasar o tratamento por coleta' },
+          { tipo: 'acao', texto: 'Dosar lactato e acompanhar tendência; lactato isolado não define sepse nem choque séptico' },
+          { tipo: 'droga', nome: 'Antibiótico empírico IV', dose: 'imediato se choque séptico ou sepse provável/definida; se possível sepse sem choque, após avaliação rápida e em até 3h', obs: 'selecionar pelo foco, gravidade, epidemiologia local, risco de resistência, alergias, função renal/hepática, interações e antibiograma; não usar esquema universal neste protocolo' },
+          { tipo: 'acao', texto: 'Coletar culturas o mais rápido possível e idealmente antes do antimicrobiano, sem atrasar tratamento' },
+          { tipo: 'acao', texto: 'Reposição volêmica com cristaloide balanceado preferencialmente; considerar 30 mL/kg em choque/hipoperfusão, mas individualizar e reavaliar responsividade, congestão, função cardíaca e renal após cada bolus' },
         ],
       },
       {
@@ -284,14 +282,14 @@ export const protocolos = [
       {
         nome: 'Controle do Foco e Deescalonamento',
         passos: [
-          { tipo: 'acao', texto: 'Identificar e controlar foco: drenagem de abscesso, remoção de cateter infectado, cirurgia se indicada — fazer em até 6–12h' },
+          { tipo: 'acao', texto: 'Identificar e controlar foco: drenagem de abscesso, remoção de cateter infectado ou cirurgia quando indicada — idealmente em até 6h quando houver necessidade de controle de foco' },
           { tipo: 'acao', texto: 'Reavaliar antibiótico em 48–72h: resultados de cultura → deescalonamento para antibiótico de menor espectro' },
-          { tipo: 'acao', texto: 'Duração do antibiótico: mínimo 5–7 dias; guiar por marcadores clínicos e PCR/procalcitonina' },
+          { tipo: 'acao', texto: 'Duração do antibiótico: individualizar pelo foco, controle da fonte, evolução clínica e microbiologia; evitar duração fixa e descalonar quando possível' },
           { tipo: 'acao', texto: 'Controle glicêmico: manter glicemia < 180 mg/dL com insulina IV se necessário' },
         ],
       },
     ],
-    referencia: 'Surviving Sepsis Campaign International Guidelines 2021 (atualização 2024–2025)',
+    referencia: 'Surviving Sepsis Campaign: International Guidelines for Management of Sepsis and Septic Shock in Adults (2026) / protocolos antimicrobianos locais e PCDT vigentes',
   },
 
   {
@@ -317,10 +315,10 @@ export const protocolos = [
         nome: 'Fase 2 — Persistência após 5 min (5–20 min)',
         passos: [
           { tipo: 'acao', texto: 'Iniciar antiepiléptico de segunda linha imediatamente se crise continua após benzodiazepínico' },
-          { tipo: 'droga', nome: 'Valproato de Sódio', dose: '40 mg/kg IV em 10 min (máx 3.000 mg)', obs: '1ª escolha na fase 2 — menos hipotensão' },
-          { tipo: 'droga', nome: 'Levetiracetam', dose: '60 mg/kg IV em 15 min (máx 4.500 mg)', obs: 'alternativa ao valproato — boa tolerabilidade' },
-          { tipo: 'droga', nome: 'Fenitoína', dose: '20 mg/kg IV (máx 50 mg/min)', obs: 'perfil de segurança INFERIOR ao Valproato e Levetiracetam (hipotensão, arritmias, síndrome de hipersensibilidade, necrose por extravasamento) — usar apenas se ambos indisponíveis (ESETT trial, NEJM 2019; ILAE 2022). Monitorar ECG e PA. Evitar em crianças.' },
-          { tipo: 'droga', nome: 'Fosfenitoína', dose: '20 mg EFT/kg IV ou IM', obs: 'pró-fármaco da fenitoína — infusão mais rápida, menos cardiotóxico' },
+          { tipo: 'droga', nome: 'Valproato de Sódio', dose: '40 mg/kg IV em 10 min (máx 3.000 mg)', obs: 'uma das opções de segunda linha; escolher conforme contraindicações, interações, função hepática, gestação e disponibilidade' },
+          { tipo: 'droga', nome: 'Levetiracetam', dose: '60 mg/kg IV em 15 min (máx 4.500 mg)', obs: 'uma das opções de segunda linha; o ESETT não demonstrou superioridade clínica entre levetiracetam, valproato e fosfenitoína' },
+          { tipo: 'droga', nome: 'Fenitoína', dose: '20 mg/kg IV (máx 50 mg/min)', obs: 'opção de segunda linha quando apropriada; risco de hipotensão/arritmia e necessidade de monitorização ECG/PA. Em pediatria, seguir dose e protocolo específicos — não é contraindicação absoluta' },
+          { tipo: 'droga', nome: 'Fosfenitoína', dose: '20 mg PE/kg IV ou IM', obs: 'pró-fármaco da fenitoína; usar unidade PE (equivalentes de fenitoína) e monitorar ECG/PA' },
           { tipo: 'alerta', texto: 'Valproato CONTRAINDICADO em doenças mitocondriais, gestação (1º trimestre) e hepatopatia grave' },
         ],
       },
@@ -345,7 +343,7 @@ export const protocolos = [
         ],
       },
     ],
-    referencia: 'Epilepsy Foundation EME Guidelines 2016 / ILAE 2022 / ESETT Trial NEJM 2019 / Protocolo HCFMUSP',
+    referencia: 'WHO mhGAP recommendation for established status epilepticus / ESETT Trial (NEJM 2019) / ILAE status epilepticus guidance / protocolo institucional com doses pediátricas e adultas separadas',
   },
 
   {
@@ -358,7 +356,7 @@ export const protocolos = [
       {
         nome: 'Diagnóstico',
         passos: [
-          { tipo: 'acao', texto: 'Critérios diagnósticos (ADA/EASD 2024): Glicemia ≥ 200 mg/dL OU diabetes conhecido + β-hidroxibutirato ≥ 3,0 mmol/L (ou cetonúria ≥ 2+) + pH arterial < 7,3 e/ou Bicarbonato < 18 mEq/L' },
+          { tipo: 'acao', texto: 'Critérios diagnósticos (ADA/EASD 2024): hiperglicemia (glicemia ≥ 200 mg/dL ou diabetes conhecido) + β-hidroxibutirato ≥ 3,0 mmol/L (ou cetonúria ≥ 2+) + pH arterial < 7,3 e/ou bicarbonato < 18 mEq/L' },
           { tipo: 'alerta', texto: 'Cetoacidose euglicêmica: pacientes em uso de inibidor de SGLT2 (dapagliflozina, empagliflozina, canagliflozina) podem cursar com glicemia < 250 mg/dL — NÃO afastar CAD pela glicemia normal/baixa' },
           { tipo: 'acao', texto: 'Anion gap = Na - (Cl + HCO₃) auxilia na monitorização (normal 8–12; na CAD tipicamente > 16), mas deixou de ser critério diagnóstico ou de resolução (ADA/EASD 2024)' },
           { tipo: 'acao', texto: 'Calcular déficit hídrico (média 3–5 L em adultos, até 10 L em casos graves)' },
@@ -391,7 +389,7 @@ export const protocolos = [
           { tipo: 'droga', nome: 'Insulina Regular', dose: '0,1 UI/kg/h IV em bomba de infusão contínua', obs: 'diluir 100 UI em 100 mL SF 0,9% = 1 UI/mL' },
           { tipo: 'acao', texto: 'Meta: queda de glicemia 50–75 mg/dL/h; se > 100 mg/dL/h → reduzir dose de insulina' },
           { tipo: 'acao', texto: 'Alternativa sem bomba de infusão: Insulina Regular 0,2 UI/kg SC a cada 2h (NPH até resolução da CAD)' },
-          { tipo: 'acao', texto: 'Não suspender insulina IV até resolução da acidose (pH > 7,3 e HCO₃ > 18) — trocar para insulina SC 2h antes de suspender a bomba' },
+          { tipo: 'acao', texto: 'Não suspender insulina IV até resolução da cetose/acidose e estabilidade clínica — trocar para insulina SC com sobreposição de 1–2h antes de suspender a bomba' },
         ],
       },
       {
@@ -400,7 +398,7 @@ export const protocolos = [
           { tipo: 'acao', texto: 'Glicemia capilar: a cada 1h' },
           { tipo: 'acao', texto: 'Eletrólitos (K⁺, Na⁺): a cada 2h nas primeiras 6h, depois a cada 4h' },
           { tipo: 'acao', texto: 'Gasometria arterial: a cada 4h' },
-          { tipo: 'acao', texto: 'Critérios de resolução (ADA/EASD 2024): β-hidroxibutirato < 3,0 mmol/L + pH ≥ 7,3 + Bicarbonato ≥ 15 mEq/L + paciente tolerando via oral (anion gap não é mais critério)' },
+          { tipo: 'acao', texto: 'Critérios de resolução (consenso 2024): β-hidroxibutirato < 0,6 mmol/L e pH venoso ≥ 7,3 OU bicarbonato ≥ 18 mEq/L; anion gap não é critério de resolução. Confirmar estabilidade clínica e planejar transição para insulina SC' },
           { tipo: 'alerta', texto: 'NÃO usar bicarbonato de sódio na CAD (exceto pH < 7,0 com instabilidade hemodinâmica) — aumenta risco de hipocalemia e acidose paradoxal no SNC' },
         ],
       },
@@ -429,9 +427,9 @@ export const protocolos = [
         nome: 'Tratamento Inicial (todos os SCA)',
         passos: [
           { tipo: 'droga', nome: 'AAS', dose: '300 mg VO — mastigar (dose de ataque)', obs: 'manter 100 mg/dia após' },
-          { tipo: 'droga', nome: 'Ticagrelor', dose: '180 mg VO (dose de ataque) + 90 mg 2x/dia', obs: '1ª escolha para dupla antiagregação' },
-          { tipo: 'droga', nome: 'Clopidogrel', dose: '300–600 mg VO (dose de ataque)', obs: 'se Ticagrelor indisponível ou contraindicado' },
-          { tipo: 'droga', nome: 'Heparina não fracionada', dose: '60 UI/kg IV bolus (máx 4.000 UI) + 12 UI/kg/h (máx 1.000 UI/h)', obs: 'iniciar em todos os SCA confirmados' },
+          { tipo: 'droga', nome: 'Ticagrelor', dose: '180 mg VO (dose de ataque) + 90 mg 2x/dia', obs: 'P2Y12 preferido em muitos cenários de SCA, mas não iniciar automaticamente: considerar STEMI/NSTE-ACS, estratégia invasiva/ICP, risco hemorrágico, anticoagulação e contraindicações' },
+          { tipo: 'droga', nome: 'Clopidogrel', dose: '300–600 mg VO (dose de ataque)', obs: 'opção quando ticagrelor/prasugrel não forem apropriados ou quando houver indicação específica; seguir estratégia de reperfusão/ICP' },
+          { tipo: 'droga', nome: 'Heparina não fracionada', dose: 'conforme estratégia de reperfusão e protocolo de anticoagulação', obs: 'não iniciar em todos os SCA de forma automática; ajustar ao cenário (ICP, trombólise ou NSTE-ACS), função renal, peso, sangramento e anticoagulante escolhido' },
           { tipo: 'acao', texto: 'O₂ suplementar apenas se SpO₂ < 90% — hiperóxia é prejudicial na SCA' },
           { tipo: 'droga', nome: 'Morfina', dose: '2–4 mg IV + 2 mg a cada 5–15 min', obs: 'uso DESENCORAJADO (ESC 2023 Classe IIb) — retarda absorção de Ticagrelor e Clopidogrel em até 2h, reduzindo inibição plaquetária no momento do cateterismo. Usar apenas se dor intratável após nitratos' },
           { tipo: 'droga', nome: 'Nitrato', dose: 'Isossorbida 5 mg SL a cada 5 min (3 doses)', obs: 'se PA > 90/60 — CONTRAINDICADO se uso de inibidor de PDE5 < 24–48h' },
@@ -451,7 +449,7 @@ export const protocolos = [
         nome: 'Monitorização',
         passos: [
           { tipo: 'acao', texto: 'Monitor cardíaco contínuo nas primeiras 24h (risco máximo de FV nas primeiras horas)' },
-          { tipo: 'acao', texto: 'Troponina seriada: 0h, 3h e 6h (protocolo 0/3h preferencial)' },
+          { tipo: 'acao', texto: 'Troponina de alta sensibilidade em algoritmo validado pelo ensaio local (frequentemente 0/1h ou 0/2h; usar 0/3h se esse for o protocolo validado)' },
           { tipo: 'droga', nome: 'Betabloqueador', dose: 'Metoprolol 25–50 mg VO 2x/dia', obs: 'iniciar nas primeiras 24h se sem contraindicação (BAV, broncoespasmo, FC < 60, choque)' },
           { tipo: 'droga', nome: 'IECA', dose: 'Ramipril 2,5–5 mg VO/dia', obs: 'iniciar nas primeiras 24h se FEVE reduzida ou parede anterior comprometida' },
           { tipo: 'droga', nome: 'Estatina de alta intensidade', dose: 'Atorvastatina 80 mg VO/dia', obs: 'iniciar antes da alta — reduz eventos isquêmicos recorrentes' },
@@ -482,8 +480,8 @@ export const protocolos = [
         nome: 'Medidas Imediatas',
         passos: [
           { tipo: 'acao', texto: 'Posição sentada com membros inferiores pendentes (↓ retorno venoso)' },
-          { tipo: 'acao', texto: 'O₂ com máscara de Venturi FiO₂ 40–60% — alvo SpO₂ > 94%' },
-          { tipo: 'acao', texto: 'VNI (CPAP 5–10 cmH₂O ou BiPAP 10/5 cmH₂O): indicada se SpO₂ < 90% ou FR > 25 com O₂ convencional' },
+          { tipo: 'acao', texto: 'O₂ se SpO₂ < 90% ou PaO₂ < 60 mmHg; titular para 94–98% (ou 88–92% se risco de retenção de CO₂)' },
+          { tipo: 'acao', texto: 'VNI (CPAP/BiPAP) se desconforto respiratório persistente, hipoxemia apesar de O₂, FR elevada ou acidose hipercápnica; monitorar resposta e contraindicações' },
           { tipo: 'acao', texto: 'Acesso venoso, monitorização contínua (PA, FC, SpO₂, ECG)' },
           { tipo: 'acao', texto: 'Gasometria arterial para avaliar grau de hipoxemia e ventilação' },
         ],
@@ -495,7 +493,7 @@ export const protocolos = [
           { tipo: 'droga', nome: 'Isossorbida SL', dose: '5 mg SL a cada 5 min (3 doses)', obs: 'se PA sistólica ≥ 90 mmHg' },
           { tipo: 'droga', nome: 'Nitroglicerina IV', dose: '10–20 mcg/min (titular até 200 mcg/min)', obs: 'se sem melhora com SL; suspender se PA < 90 mmHg' },
           { tipo: 'alerta', texto: 'NÃO usar nitrato se uso de inibidor de PDE5 (sildenafila, tadalafila) nas últimas 24–48h — risco de hipotensão grave irreversível' },
-          { tipo: 'droga', nome: 'Morfina', dose: '2–4 mg IV', obs: 'evidência de benefício limitada — estudos observacionais associam morfina no EAP a maior uso de VM, maior tempo de UTI e maior mortalidade (Eur J Heart Fail 2020). Usar com extrema cautela, apenas se agitação intratável após VNI + diurético + nitrato' },
+          { tipo: 'droga', nome: 'Morfina', dose: 'não usar de rotina', obs: 'evitar no EAP por ausência de benefício comprovado e associação observacional com piores desfechos; considerar apenas indicação excepcional e monitorizada' },
         ],
       },
       {
@@ -522,9 +520,9 @@ export const protocolos = [
       {
         nome: 'Classificação (passo mais importante)',
         passos: [
-          { tipo: 'acao', texto: 'Urgência hipertensiva: PA muito elevada (PAS > 180 ou PAD > 120) SEM evidência de lesão aguda de órgão-alvo' },
+          { tipo: 'acao', texto: 'PA muito elevada sem lesão aguda de órgão-alvo: confirmar medida, investigar causas reversíveis e ajustar tratamento crônico sem queda abrupta; evitar usar “urgência hipertensiva” como sinônimo de emergência' },
           { tipo: 'acao', texto: 'Emergência hipertensiva: PA muito elevada COM lesão aguda de órgão-alvo (AVC, IAM, EAP, dissecção de aorta, encefalopatia)' },
-          { tipo: 'alerta', texto: 'Na URGÊNCIA: não reduzir PA abruptamente — queda rápida pode precipitar AVC isquêmico, IAM ou lesão renal. Meta: reduzir 20–25% em 24–48h com medicação VO' },
+          { tipo: 'alerta', texto: 'Sem lesão aguda de órgão-alvo: não reduzir PA abruptamente; não há meta universal de queda em 24–48h. Corrigir causas precipitantes, ajustar tratamento crônico e garantir seguimento' },
           { tipo: 'acao', texto: 'Investigar lesão de órgão-alvo: ECG, troponina, ureia/creatinina, fundo de olho, exame neurológico' },
         ],
       },
@@ -532,16 +530,15 @@ export const protocolos = [
         nome: 'Urgência Hipertensiva — Tratamento VO',
         passos: [
           { tipo: 'acao', texto: 'Repouso em ambiente calmo; reavaliar PA em 30–60 min antes de medicar (ansiedade eleva PA transitoriamente)' },
-          { tipo: 'droga', nome: 'Captopril', dose: '25–50 mg VO', obs: '1ª escolha; reavaliar PA em 30 min; pode repetir se sem resposta adequada' },
-          { tipo: 'droga', nome: 'Anlodipino', dose: '5–10 mg VO', obs: 'se IECA contraindicado (alergia, hipercalemia, estenose de artéria renal bilateral)' },
-          { tipo: 'droga', nome: 'Clonidina', dose: '0,1–0,2 mg VO', obs: 'alternativa; atenção à síndrome de rebote na retirada abrupta' },
+          { tipo: 'droga', nome: 'Ajuste de anti-hipertensivo VO', dose: 'conforme tratamento habitual e avaliação clínica', obs: 'não há uma droga universal de resgate; individualizar por comorbidades, causas precipitantes, adesão e seguimento' },
+          { tipo: 'droga', nome: 'Clonidina', dose: 'não usar de rotina', obs: 'evitar por sedação, hipotensão imprevisível e risco de rebote; reservar a situações selecionadas conforme protocolo local' },
           { tipo: 'alerta', texto: 'NÃO usar Nifedipina sublingual — queda abrupta e imprevisível de PA com risco de IAM e AVC' },
         ],
       },
       {
         nome: 'Emergência Hipertensiva — Drogas IV',
         passos: [
-          { tipo: 'acao', texto: 'Meta: reduzir PAM em 20–25% na 1ª hora (não normalizar imediatamente)' },
+          { tipo: 'acao', texto: 'Meta de redução depende do órgão-alvo; em geral, reduzir PAM em até 20–25% na primeira hora sem normalizar imediatamente, exceto metas específicas (p.ex., dissecção de aorta, AVC ou gestação)' },
           { tipo: 'acao', texto: 'UTI/semi-intensiva com monitorização invasiva da PA quando disponível' },
           { tipo: 'droga', nome: 'Nitroprussiato de Sódio', dose: '0,3–0,5 mcg/kg/min IV (titular até 2 mcg/kg/min)', obs: 'uso ≤ 72h — risco de toxicidade por tiocianato (especialmente DRC); evitar em gestante e hipertensão intracraniana' },
           { tipo: 'droga', nome: 'Labetalol', dose: '20 mg IV bolus lento (2 min); repetir 40–80 mg a cada 10 min (máx 300 mg)', obs: 'preferencial em dissecção de aorta (atenolol/esmolol como alternativa). ATENÇÃO: formulação IV não disponível no Brasil — em gestante com eclâmpsia usar Hidralazina IV (ver abaixo)' },
@@ -560,7 +557,7 @@ export const protocolos = [
         ],
       },
     ],
-    referencia: 'ESC Hypertension Guidelines 2024 / AHA-ACC 2025 / Diretriz Brasileira de Hipertensão Arterial 2025 (SBC/SBN/SBH)',
+    referencia: 'Diretriz Brasileira de Hipertensão Arterial 2025 (SBC/SBN/SBH) / ESC Hypertension Guidelines 2024 / AHA Scientific Statement 2024',
   },
 ];
 
