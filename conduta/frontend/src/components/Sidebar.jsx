@@ -124,6 +124,14 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
         + Novo caso
       </button>
 
+      <Link
+        to="/calculadoras"
+        className={`${styles.calculadorasLink} ${location.pathname.startsWith('/calculadoras') ? styles.calculadorasLinkActive : ''}`}
+        onClick={onClose}
+      >
+        Calculadoras
+      </Link>
+
       {user?.role === 'admin' && (
         <Link
           to="/protocolos"

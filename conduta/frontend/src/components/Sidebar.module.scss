@@ -492,7 +492,8 @@
   line-height: 1.5;
 }
 
-// ── Link de protocolos ───────────────────────────────
+// ── Links públicos e administrativos ─────────────────
+.calculadorasLink,
 .protocolosLink {
   display: flex;
   align-items: center;
@@ -506,7 +507,7 @@
   transition: background 0.1s, color 0.1s;
   font-weight: 500;
 
-  &:hover, &.protocolosLinkActive {
+  &:hover, &.calculadorasLinkActive, &.protocolosLinkActive {
     background: $color-sidebar-hover;
     color: white;
   }
