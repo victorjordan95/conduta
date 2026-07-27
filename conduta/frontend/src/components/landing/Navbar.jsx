@@ -11,6 +11,7 @@ export default function Navbar() {
         </Link>
         <div className={navStyles.links}>
           <a href="#precos" className={navStyles.navLink}>Planos</a>
+          <Link to="/calculadoras" className={navStyles.navLink}>Calculadoras</Link>
           <a href="#faq" className={navStyles.navLink}>Dúvidas</a>
         </div>
         <div className={navStyles.actions}>

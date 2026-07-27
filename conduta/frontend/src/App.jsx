@@ -13,6 +13,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Protocolos from './pages/Protocolos';
 import ProtocoloDetalhe from './pages/ProtocoloDetalhe';
+import Calculadoras from './pages/Calculadoras';
+import CalculadoraDetalhe from './pages/CalculadoraDetalhe';
 
 function PrivateRoute({ children }) {
   const { token } = useAuth();
@@ -45,6 +47,8 @@ export default function App() {
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/esqueci-senha" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/calculadoras" element={<Calculadoras />} />
+          <Route path="/calculadoras/:slug" element={<CalculadoraDetalhe />} />
           <Route
             path="/admin/knowledge"
             element={
