@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import useSWR from 'swr';
 import { useAuth } from '../context/AuthContext';
 import { getSessions, createSession, renameSession, deleteSession } from '../services/api';
 import { createCheckoutSession, getBillingPortalUrl } from '../services/api';
 import styles from './Sidebar.module.scss';
+
+const fetchSessions = () => getSessions();
 
 function formatDataRelativa(dateStr) {
   if (!dateStr) return '';
@@ -17,7 +20,6 @@ function formatDataRelativa(dateStr) {
 
 export default function Sidebar({ activeSessionId, onSelectSession, onNewSession, onSessionDeleted, isOpen, onClose }) {
   const { user, clearAuth } = useAuth();
-  const [sessions, setSessions] = useState([]);
   const [search, setSearch] = useState('');
   const [menuOpenId, setMenuOpenId] = useState(null);
   const [editingId, setEditingId] = useState(null);
@@ -26,6 +28,14 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [sidebarError, setSidebarError] = useState(null);
   const location = useLocation();
+  const sessionsKey = user ? ['sessions', user.id ?? user.email ?? 'current'] : null;
+  const { data: sessionsData, mutate: mutateSessions } = useSWR(sessionsKey, fetchSessions, {
+    dedupingInterval: 60_000,
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
+  const sessions = sessionsData ?? [];
 
   useEffect(() => {
     if (!sidebarError) return;
@@ -58,10 +68,6 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
   }
 
   useEffect(() => {
-    getSessions().then(setSessions).catch(console.error);
-  }, []);
-
-  useEffect(() => {
     if (!menuOpenId) return;
     function handleClick() { setMenuOpenId(null); }
     document.addEventListener('click', handleClick);
@@ -71,7 +77,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
   async function handleNewCase() {
     try {
       const session = await createSession('Novo caso');
-      setSessions((prev) => [session, ...prev]);
+      mutateSessions((current = []) => [session, ...current], { revalidate: false });
       onNewSession(session.id);
     } catch (err) {
       console.error(err);
@@ -84,7 +90,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
     if (!t) return;
     try {
       const updated = await renameSession(id, t);
-      setSessions((prev) => prev.map((s) => (s.id === id ? { ...s, titulo: updated.titulo } : s)));
+      mutateSessions((current = []) => current.map((s) => (s.id === id ? { ...s, titulo: updated.titulo } : s)), { revalidate: false });
     } catch (err) {
       setSidebarError('Não foi possível renomear o caso. Tente novamente.');
       console.error(err);
@@ -94,7 +100,7 @@ export default function Sidebar({ activeSessionId, onSelectSession, onNewSession
   async function handleDelete(id) {
     try {
       await deleteSession(id);
-      setSessions((prev) => prev.filter((s) => s.id !== id));
+      mutateSessions((current = []) => current.filter((s) => s.id !== id), { revalidate: false });
       onSessionDeleted?.(id);
     } catch (err) {
       setSidebarError('Não foi possível excluir o caso. Tente novamente.');
