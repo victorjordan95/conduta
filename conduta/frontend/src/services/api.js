@@ -414,6 +414,20 @@ export async function gerarProntuario(sessionId) {
   return res.json();
 }
 
+export async function generateClinicalTool(sessionId, tool, details = {}) {
+  const res = await fetch(`${BASE_URL}/sessions/${sessionId}/clinical-tools`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ tool, details }),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao gerar ferramenta clínica.');
+  }
+  return res.json();
+}
+
 export async function downloadSessionPdf(id) {
   const res = await fetch(`${BASE_URL}/sessions/${id}/pdf`, {
     headers: authHeaders(),

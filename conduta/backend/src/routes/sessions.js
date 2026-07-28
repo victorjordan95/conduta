@@ -4,6 +4,7 @@ const authMiddleware = require('../middleware/auth');
 const driver = require('../db/neo4j');
 const PDFDocument = require('pdfkit');
 const { gerarResumoProntuario } = require('../services/prontuario');
+const { TOOL_NAMES, generateClinicalTool } = require('../services/clinical-tools');
 
 const router = express.Router();
 
@@ -232,6 +233,47 @@ router.post('/:id/prontuario', async (req, res) => {
   } catch (err) {
     console.error('[sessions] prontuario:', err.message);
     res.status(500).json({ error: 'Erro ao gerar resumo para prontuário.' });
+  }
+});
+
+router.post('/:id/clinical-tools', async (req, res) => {
+  const { tool, details = {} } = req.body || {};
+
+  if (!TOOL_NAMES[tool]) {
+    return res.status(400).json({ error: 'Ferramenta clínica inválida.' });
+  }
+
+  if (details && typeof details !== 'object') {
+    return res.status(400).json({ error: 'Os dados auxiliares devem ser um objeto.' });
+  }
+
+  try {
+    const sessionResult = await pool.query(
+      'SELECT id FROM sessions WHERE id = $1 AND user_id = $2',
+      [req.params.id, req.userId]
+    );
+    if (sessionResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Sessão não encontrada.' });
+    }
+
+    const messagesResult = await pool.query(
+      `SELECT role, content FROM messages WHERE session_id = $1 ORDER BY created_at ASC`,
+      [req.params.id]
+    );
+    const messages = messagesResult.rows;
+
+    if (!messages.some((message) => message.role === 'assistant')) {
+      return res.status(400).json({ error: 'A sessão ainda não possui uma análise para revisar.' });
+    }
+
+    const result = await generateClinicalTool(tool, messages, details);
+    res.json({ tool, result });
+  } catch (err) {
+    if (err.code === 'INVALID_CLINICAL_TOOL') {
+      return res.status(400).json({ error: 'Ferramenta clínica inválida.' });
+    }
+    console.error('[sessions] clinical-tools:', err.message);
+    res.status(500).json({ error: 'Erro ao gerar ferramenta clínica.' });
   }
 });
 
