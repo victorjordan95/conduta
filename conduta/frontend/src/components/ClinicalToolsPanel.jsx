@@ -20,6 +20,7 @@ const EMPTY_DETAILS = {
 };
 
 export default function ClinicalToolsPanel({ sessionId, hasAnalysis }) {
+  const [open, setOpen] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null);
   const [details, setDetails] = useState(EMPTY_DETAILS);
   const [result, setResult] = useState('');
@@ -60,19 +61,29 @@ export default function ClinicalToolsPanel({ sessionId, hasAnalysis }) {
 
   return (
     <section className={styles.panel} aria-label="Ferramentas de revisão clínica">
-      <div className={styles.heading}>
-        <div>
-          <span className={styles.eyebrow}>Apoio à revisão</span>
-          <h2>Ferramentas clínicas</h2>
+      <button
+        type="button"
+        className={styles.toggle}
+        onClick={() => setOpen((prev) => !prev)}
+        aria-expanded={open}
+        aria-controls="clinical-tools-body"
+      >
+        <span aria-hidden="true" className={`${styles.chevron}${open ? ` ${styles.chevronOpen}` : ''}`}>▾</span>
+        Ferramentas clínicas
+      </button>
+      <div
+        id="clinical-tools-body"
+        className={`${styles.bodyWrapper}${open ? ` ${styles.bodyWrapperOpen}` : ''}`}
+      >
+        <div className={styles.bodyInner}>
+          <div className={styles.actions}>
+            {TOOLS.map((tool) => (
+              <button key={tool.id} type="button" className={styles.toolButton} onClick={() => openTool(tool.id)}>
+                {tool.label}
+              </button>
+            ))}
+          </div>
         </div>
-        <span className={styles.headingHint}>Resultado temporário e revisável</span>
-      </div>
-      <div className={styles.actions}>
-        {TOOLS.map((tool) => (
-          <button key={tool.id} type="button" className={styles.toolButton} onClick={() => openTool(tool.id)}>
-            {tool.label}
-          </button>
-        ))}
       </div>
 
       {selectedTool && (
