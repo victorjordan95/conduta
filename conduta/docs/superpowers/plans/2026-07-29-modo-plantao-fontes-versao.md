@@ -177,9 +177,9 @@ Expected: FAIL because the component has not been created.
 Implement a `<section aria-label="Modo plantão">` with:
 
 - button `+ Novo caso` calling `onNewCase`;
-- `Link` buttons for `/protocolos` and `/calculadoras`;
+- links HTML para `/protocolos` e `/calculadoras`;
 - `<div role="search">` containing a labeled `input type="search"` and `kbd` with `/`;
-- results rendered as `Link` elements with type/category labels;
+- resultados renderizados como links HTML com rótulos de tipo/categoria;
 - `role="status"` for the no-results state;
 - `useEffect` listener for `/` and `Ctrl/Cmd+K`, ignoring `INPUT`, `TEXTAREA`, `SELECT` and content-editable elements;
 - CSS Modules with existing design tokens, responsive one-column layout below 620px and visible `:focus-visible` outlines.
