@@ -1,6 +1,6 @@
 // frontend/src/data/protocolos.js
 
-export const protocolos = [
+const protocolosBase = [
   {
     slug: 'sri',
     titulo: 'Sequência Rápida de Intubação',
@@ -560,6 +560,12 @@ export const protocolos = [
     referencia: 'Diretriz Brasileira de Hipertensão Arterial 2025 (SBC/SBN/SBH) / ESC Hypertension Guidelines 2024 / AHA Scientific Statement 2024',
   },
 ];
+
+export const protocolos = protocolosBase.map((protocolo) => ({
+  ...protocolo,
+  atualizadoEm: 'Julho de 2026',
+  notaSeguranca: 'Confira doses e o protocolo institucional antes de usar.',
+}));
 
 export function getProtocolo(slug) {
   return protocolos.find((p) => p.slug === slug) ?? null;

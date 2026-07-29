@@ -34,4 +34,11 @@ describe('CalculadoraDetalhe', () => {
     fireEvent.click(screen.getByRole('button', { name: /calcular/i }));
     expect(screen.getByRole('alert')).toHaveTextContent(/preencha/i);
   });
+
+  it('exibe fonte e última revisão na calculadora', () => {
+    renderSlug('imc');
+
+    expect(screen.getByRole('region', { name: /fonte e versão/i })).toBeInTheDocument();
+    expect(screen.getByText(/última revisão editorial/i)).toBeInTheDocument();
+  });
 });
