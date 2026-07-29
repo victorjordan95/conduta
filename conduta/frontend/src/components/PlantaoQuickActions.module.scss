@@ -1,0 +1,200 @@
+@use '../styles/variables' as *;
+
+.panel {
+  flex-shrink: 0;
+  margin: 1rem 1.25rem 0;
+  padding: 1rem;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  background: $color-surface;
+  box-shadow: $shadow-sm;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.eyebrow,
+.resultType,
+.searchLabel {
+  color: $color-accent;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0.15rem 0 0;
+  color: $color-text-primary;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.hint {
+  color: $color-text-muted;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  background: $color-bg-subtle;
+  color: $color-text-primary;
+  cursor: pointer;
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: 700;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+
+  &:hover {
+    border-color: $color-accent;
+    color: $color-accent;
+    background: $color-accent-subtle;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+.primaryAction {
+  border-color: $color-accent;
+  background: $color-accent;
+  color: white;
+
+  &:hover {
+    background: $color-accent-hover;
+    color: white;
+  }
+}
+
+.search {
+  margin-top: 0.85rem;
+}
+
+.searchLabel {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: $color-text-muted;
+  font-size: 0.62rem;
+}
+
+.searchControl {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.55rem;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  background: white;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus-within {
+    border-color: $color-accent;
+    box-shadow: 0 0 0 3px rgba(26, 107, 115, 0.12);
+  }
+
+  kbd {
+    padding: 1px 5px;
+    border: 1px solid $color-border;
+    border-radius: 3px;
+    color: $color-text-muted;
+    font-family: 'Courier New', monospace;
+    font-size: 0.68rem;
+  }
+}
+
+.searchIcon {
+  color: $color-text-muted;
+  font-size: 1rem;
+}
+
+.searchInput {
+  width: 100%;
+  min-width: 0;
+  padding: 0.55rem 0;
+  border: 0;
+  outline: 0;
+  color: $color-text-primary;
+  font-family: $font-family;
+  font-size: $font-size-sm;
+
+  &::placeholder { color: $color-text-muted; }
+}
+
+.results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+}
+
+.result {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    border-color: $color-border;
+    background: $color-bg-subtle;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+.resultType { color: $color-text-muted; font-size: 0.58rem; }
+
+.resultTitle {
+  overflow: hidden;
+  color: $color-text-primary;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty {
+  margin-top: 0.75rem;
+  padding: 0.65rem;
+  border-radius: $border-radius;
+  background: $color-bg-subtle;
+  color: $color-text-secondary;
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+@media (max-width: 620px) {
+  .panel { margin: 0.75rem 0.85rem 0; }
+  .actions,
+  .results { grid-template-columns: 1fr; }
+}
