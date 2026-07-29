@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { buildClinicalSearchIndex, searchClinicalTools } from '../utils/clinicalSearch';
 import styles from './PlantaoQuickActions.module.scss';
 
@@ -46,14 +45,14 @@ export default function PlantaoQuickActions({ onNewCase }) {
           <span aria-hidden="true">+</span>
           Novo caso
         </button>
-        <Link className={styles.action} to="/protocolos" aria-label="Protocolos">
+        <a className={styles.action} href="/protocolos" aria-label="Protocolos">
           <span aria-hidden="true">↗</span>
           Protocolos
-        </Link>
-        <Link className={styles.action} to="/calculadoras" aria-label="Calculadoras">
+        </a>
+        <a className={styles.action} href="/calculadoras" aria-label="Calculadoras">
           <span aria-hidden="true">∑</span>
           Calculadoras
-        </Link>
+        </a>
       </div>
 
       <div className={styles.search} role="search">
@@ -77,10 +76,10 @@ export default function PlantaoQuickActions({ onNewCase }) {
       {results.length > 0 ? (
         <div className={styles.results} aria-label={query ? 'Resultados da busca' : 'Ferramentas mais usadas'}>
           {results.map((item) => (
-            <Link key={item.id} to={item.href} className={styles.result}>
+            <a key={item.id} href={item.href} className={styles.result}>
               <span className={styles.resultType}>{item.categoriaLabel}</span>
               <span className={styles.resultTitle}>{item.titulo}</span>
-            </Link>
+            </a>
           ))}
         </div>
       ) : (

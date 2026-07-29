@@ -21,6 +21,12 @@ describe('PlantaoQuickActions', () => {
     expect(screen.getByRole('link', { name: /^calculadoras$/i })).toHaveAttribute('href', '/calculadoras');
   });
 
+  it('funciona em um layout sem contexto do React Router', () => {
+    render(<PlantaoQuickActions onNewCase={vi.fn()} />);
+
+    expect(screen.getByRole('link', { name: /^protocolos$/i })).toHaveAttribute('href', '/protocolos');
+  });
+
   it('aciona a criação de caso pelo atalho principal', async () => {
     const user = userEvent.setup();
     const onNewCase = vi.fn();
