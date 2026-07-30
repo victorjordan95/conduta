@@ -1,6 +1,0 @@
-nomes, datas, imagens e dados sensíveis. O conteúdo deve ajudar a revisar o raciocínio, sem apresentar diagnóstico definitivo ou conduta individual. O caso, se houver, deve ser fictício e não identificável.
-
-O Conduta funciona como apoio ao raciocínio clínico. A decisão continua com o profissional, que deve conferir o contexto e os protocolos locais.
-
-CTA: “Salve antes de criar um exemplo”.
-#medicinageral #raciocinioclinico #medicosbrasileiros
