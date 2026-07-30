@@ -1,0 +1,28 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "screenshot-needed",
+      "field": "screenshots",
+      "message": "O post solicita screenshot ou mockup.",
+      "suggestion": "Use somente captura autorizada com dados fictícios ou o mockup local."
+    }
+  ],
+  "dimensions": {
+    "width": 1080,
+    "height": 1350
+  },
+  "browser": "chrome.exe",
+  "generatedFiles": [
+    "post.json",
+    "caption.txt",
+    "slide-01.png",
+    "preview.html",
+    "validation-report.json"
+  ],
+  "post": {
+    "id": "P009",
+    "sourceFile": "C:\\freela\\projects\\conduta\\marketing\\drafts\\007-do-relato-solto-ao-resumo-organizado.md"
+  }
+}

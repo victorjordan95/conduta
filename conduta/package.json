@@ -1,5 +1,18 @@
 {
+  "scripts": {
+    "marketing:generate": "node marketing/scripts/generate-post.js",
+    "marketing:test": "node --test marketing/scripts/generate-post.test.js marketing/pipeline/pipeline.test.js marketing/scripts/render-post.test.js",
+    "marketing:validate": "node marketing/scripts/validate-posts.js",
+    "marketing:render": "node marketing/scripts/render-post.js",
+    "marketing:render:all": "node marketing/scripts/render-all.js",
+    "marketing:preview": "node marketing/scripts/preview.js",
+    "marketing:illustrate": "node marketing/scripts/illustrate.js",
+    "marketing:screenshot": "node marketing/scripts/screenshot.js"
+  },
   "dependencies": {
     "pdfkit": "^0.18.0"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.61.1"
   }
 }

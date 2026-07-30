@@ -1,0 +1,34 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "screenshot-needed",
+      "field": "screenshots",
+      "message": "O post solicita screenshot ou mockup.",
+      "suggestion": "Use somente captura autorizada com dados fictícios ou o mockup local."
+    }
+  ],
+  "dimensions": {
+    "width": 1080,
+    "height": 1350
+  },
+  "browser": "chrome.exe",
+  "generatedFiles": [
+    "post.json",
+    "caption.txt",
+    "slide-01.png",
+    "slide-02.png",
+    "slide-03.png",
+    "slide-04.png",
+    "slide-05.png",
+    "slide-06.png",
+    "slide-07.png",
+    "preview.html",
+    "validation-report.json"
+  ],
+  "post": {
+    "id": "P040",
+    "sourceFile": "C:\\freela\\projects\\conduta\\marketing\\drafts\\016-nem-toda-resposta-e-oitenta-ou-zero.md"
+  }
+}

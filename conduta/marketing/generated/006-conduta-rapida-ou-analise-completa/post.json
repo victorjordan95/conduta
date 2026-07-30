@@ -1,0 +1,41 @@
+{
+  "id": "P006",
+  "slug": "conduta-rapida-ou-analise-completa",
+  "status": "draft",
+  "format": "reel-cover",
+  "template": "capa-reel",
+  "pillar": "Demonstração do produto",
+  "objective": "explicar os dois modos sem associar rapidez a segurança",
+  "audience": "generalistas de pronto atendimento",
+  "funnelStage": "consideração",
+  "relatedFeature": "modos de análise",
+  "pain": "",
+  "title": "Conduta rápida ou análise completa?",
+  "hook": "O caso pede objetividade ou uma revisão mais ampla?",
+  "caption": "O fluxo de atendimento muda. Às vezes você precisa de uma resposta mais objetiva; em outras, vale abrir espaço para comparar hipóteses e revisar alertas.\n\nOs modos ajudam a escolher a forma de análise. Eles não substituem avaliação clínica, exame físico ou protocolo local.",
+  "cta": "Em qual situação você escolheria cada modo?",
+  "hashtags": [
+    "#prontoatendimento",
+    "#medicinageral",
+    "#raciocinioclinico",
+    "#tecnologiamedica",
+    "#condutaclinica"
+  ],
+  "slides": [
+    {
+      "number": 1,
+      "role": "cover",
+      "title": "Conduta rápida ou análise completa?",
+      "body": "",
+      "bullets": [],
+      "emphasis": []
+    }
+  ],
+  "visualGuidance": "tela dividida, cortes rápidos e fundo navy; selo “mockup” em todos os frames de interface.",
+  "visualElement": "",
+  "screenshots": "sim, mockup do seletor e da saída.",
+  "altText": "Reel que compara visualmente os modos de análise rápida e completa do Conduta.",
+  "safetyNotes": "validar nomes atuais dos modos; não dizer que modo rápido é indicado para qualquer caso.",
+  "checklist": "[ ] duração legível sem áudio; [ ] mockup autorizado; [ ] sem promessa de velocidade clínica; [ ] CTA não agressivo.",
+  "sourceFile": "C:\\freela\\projects\\conduta\\marketing\\drafts\\006-conduta-rapida-ou-analise-completa.md"
+}

@@ -1,0 +1,21 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [],
+  "dimensions": {
+    "width": 1080,
+    "height": 1920
+  },
+  "browser": "chrome.exe",
+  "generatedFiles": [
+    "post.json",
+    "caption.txt",
+    "slide-01.png",
+    "preview.html",
+    "validation-report.json"
+  ],
+  "post": {
+    "id": "P006",
+    "sourceFile": "C:\\freela\\projects\\conduta\\marketing\\drafts\\006-conduta-rapida-ou-analise-completa.md"
+  }
+}

@@ -1,0 +1,26 @@
+# Instruções permanentes de marketing
+
+- Sempre ler `brand.md`, `audience.md`, `features.md`, `content-rules.md`, `content-pillars.md`, `published-posts.md` e `ideas-backlog.md` antes de gerar conteúdo.
+- Nunca inventar funcionalidades, fontes, depoimentos ou métricas.
+- Verificar o código quando houver dúvida sobre uma funcionalidade.
+- Consultar `published-posts.md` antes de criar novas pautas.
+- Não repetir temas usados recentemente sem declarar o novo ângulo.
+- Não publicar automaticamente e não criar integração com a Meta nesta fase.
+- Não usar dados reais de pacientes, imagens clínicas reais ou informação identificável.
+- Não usar o termo GPT em comunicação pública.
+- Não afirmar que o sistema substitui decisão clínica, protocolos locais ou avaliação profissional.
+- Manter linguagem profissional, natural e em português do Brasil.
+- Marcar claramente qualquer informação que precise de validação humana.
+- Todo caso clínico deve ser fictício, educativo e não identificável.
+- Não transformar uma resposta do produto em diagnóstico ou conduta universal.
+- Não alterar funcionalidades clínicas durante tarefas de marketing.
+- Depois de uma sessão com mudança durável, registrar a sessão no Wiki-Brain conforme as instruções do repositório.
+- Para transformar um draft em arte, rodar `npm run marketing:validate` antes de `npm run marketing:render`.
+- O texto visível das artes deve ser renderizado por HTML/CSS; nunca delegar títulos, legendas ou tabelas clínicas a geração de imagem.
+- Usar apenas os templates e tokens documentados em `templates/` e `pipeline/`; não criar identidade visual paralela.
+- Manter `MARKETING_ENABLE_AI_IMAGES=false` por padrão e nunca colocar chaves em arquivos versionados.
+- Screenshots do produto só podem usar dados fictícios, cenário local autorizado e máscaras descritas em `screenshots/scenarios/`.
+- Revisar visualmente PNGs e registrar qualquer alerta humano antes de mudar um draft para `approved`.
+- Arquivos em `generated/` são artefatos de revisão; não equivalem a publicação e não devem disparar integração com Instagram.
+- No último slide de carrosséis, nunca exibir o rótulo técnico `CTA`; escrever o próximo passo em linguagem natural.
+- Slides finais de carrosséis devem permanecer centralizados, sem duplicar a chamada no rodapé ou empurrá-la para a margem inferior.

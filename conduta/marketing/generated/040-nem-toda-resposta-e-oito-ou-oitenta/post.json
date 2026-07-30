@@ -1,0 +1,89 @@
+{
+  "id": "P040",
+  "slug": "nem-toda-resposta-e-oito-ou-oitenta",
+  "status": "draft",
+  "format": "product-demo",
+  "template": "screenshot-comentado",
+  "pillar": "Demonstração do produto",
+  "objective": "mostrar o feedback como parte do uso responsável",
+  "audience": "médicos que já testaram ou avaliam ferramentas de apoio",
+  "funnelStage": "consideração",
+  "relatedFeature": "feedback da análise",
+  "pain": "perceber que uma resposta precisa de ajuste e não ter como registrar isso",
+  "title": "Nem toda resposta é oito ou oitenta",
+  "hook": "Às vezes a resposta ajuda — e ainda precisa de ajuste.",
+  "caption": "Uma resposta que precisa de ajuste não precisa ser descartada em silêncio.\n\nO Conduta permite indicar quando uma análise foi útil, parcialmente útil ou incorreta e acrescentar uma observação. Esse retorno faz parte de um uso mais atento da ferramenta: ler, conferir, questionar e registrar o que precisa ser revisto.\n\nO feedback não substitui validação clínica nem garante que uma resposta esteja correta. Ele é um canal de revisão dentro do produto.",
+  "cta": "Você usaria esse tipo de retorno durante a análise?",
+  "hashtags": [
+    "#raciocinioclinico",
+    "#tecnologianasaude",
+    "#medicinageral",
+    "#melhoriacontinua",
+    "#medicosbrasileiros"
+  ],
+  "slides": [
+    {
+      "number": 1,
+      "role": "cover",
+      "title": "Nem toda resposta é oito ou oitenta.",
+      "body": "",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 2,
+      "role": "context",
+      "title": "Contexto",
+      "body": "No raciocínio clínico, uma resposta pode ter um ponto útil e outro que precisa ser revisto.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 3,
+      "role": "feature",
+      "title": "Demonstração",
+      "body": "Mockup autorizado da área “Esta resposta foi útil?” com três caminhos: útil, “Bom, mas...” e incorreta.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 4,
+      "role": "content",
+      "title": "Ajuste",
+      "body": "Ao escolher “Bom, mas...” ou “incorreta”, o profissional pode registrar uma nota sobre o que faltou ou precisa de correção.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 5,
+      "role": "content",
+      "title": "Uso responsável",
+      "body": "O feedback cria um registro de revisão. Não transforma a resposta em verdade e não elimina a conferência profissional.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 6,
+      "role": "problem",
+      "title": "Bastidor do produto",
+      "body": "O retorno ajuda a sinalizar respostas parciais ou incorretas para os fluxos internos de melhoria e revisão.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 7,
+      "role": "cta",
+      "title": "CTA",
+      "body": "Você usaria esse tipo de retorno durante a análise? Conte o que gostaria de sinalizar — sem dados de pacientes.",
+      "bullets": [],
+      "emphasis": []
+    }
+  ],
+  "visualGuidance": "usar o template de screenshot comentado, 1080 × 1350. Capturar somente a área de feedback com dados fictícios ou criar mockup rotulado. Anotar as três opções com setas teal, sem criar elementos que pareçam parte da interface.",
+  "visualElement": "",
+  "screenshots": "sim, mockup ou captura autorizada da área de feedback; nunca usar nome, caso ou nota real de paciente.",
+  "altText": "Demonstração da área de feedback do Conduta com opções para indicar resposta útil, parcial ou incorreta.",
+  "safetyNotes": "funcionalidade confirmada em AnalysisResult.jsx e feedback.js. Não prometer melhoria garantida, aprendizado automático imediato ou correção de todas as respostas.",
+  "checklist": "[ ] screenshot atual e autorizado; [ ] opções correspondem à interface; [ ] sem dados reais; [ ] sem promessa de acurácia; [ ] CTA não coleta conteúdo clínico; [ ] legibilidade e contraste conferidos.",
+  "sourceFile": "C:\\freela\\projects\\conduta\\marketing\\drafts\\016-nem-toda-resposta-e-oitenta-ou-zero.md"
+}

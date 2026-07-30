@@ -1,0 +1,24 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [],
+  "dimensions": {
+    "width": 1080,
+    "height": 1350
+  },
+  "browser": "chrome.exe",
+  "generatedFiles": [
+    "post.json",
+    "caption.txt",
+    "slide-01.png",
+    "slide-02.png",
+    "slide-03.png",
+    "slide-04.png",
+    "preview.html",
+    "validation-report.json"
+  ],
+  "post": {
+    "id": "P048",
+    "sourceFile": "C:\\freela\\projects\\conduta\\marketing\\drafts\\033-o-que-uma-boa-legenda-clinica-nao-faz.md"
+  }
+}

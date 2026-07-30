@@ -1,0 +1,81 @@
+{
+  "id": "P099",
+  "slug": "conheca-o-conduta-em-seis-telas",
+  "status": "published",
+  "format": "product-demo",
+  "template": "screenshot-comentado",
+  "pillar": "10 — Conversão leve",
+  "objective": "apresentar o fluxo do produto e convidar o médico a experimentar com um caso fictício",
+  "audience": "médicos generalistas, recém-formados e profissionais da atenção primária",
+  "funnelStage": "conversão",
+  "relatedFeature": "visão geral do produto, entrada de caso em linguagem natural e análise completa",
+  "pain": "não entender como o Conduta entra na rotina de revisão clínica",
+  "title": "Conheça o Conduta em seis telas",
+  "hook": "Decisão difícil? Comece pelo caso.",
+  "caption": "Decisão difícil não precisa começar com uma busca fragmentada.\n\nNo Conduta, você pode descrever o caso em linguagem natural e receber uma análise organizada para revisar: resumo, hipóteses, alertas e dados faltantes.\n\nNeste carrossel, usamos um mockup fictício para mostrar o fluxo do produto. Não há dados reais de pacientes e nenhuma tela representa uma conduta pronta.\n\nO Conduta ajuda a organizar o raciocínio clínico. A decisão continua com o médico, que deve conferir contexto, exame, fontes e protocolos locais.",
+  "cta": "Acesse o link da bio e experimente o Conduta com um caso fictício.",
+  "hashtags": [
+    "#condutaclinica",
+    "#medicinageral",
+    "#tecnologianasaude",
+    "#raciocinioclinico",
+    "#medicosbrasileiros"
+  ],
+  "slides": [
+    {
+      "number": 1,
+      "role": "cover",
+      "title": "Decisão difícil? Comece pelo caso.",
+      "body": "",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 2,
+      "role": "context",
+      "title": "Contexto",
+      "body": "Descreva o caso como você falaria com um colega: queixa, tempo de evolução, contexto e o que ainda precisa ser conferido.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 3,
+      "role": "feature",
+      "title": "Demonstração",
+      "body": "A análise organiza o que está espalhado: resumo do caso, hipóteses, alertas e dados faltantes em uma mesma revisão.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 4,
+      "role": "feature",
+      "title": "Apoio",
+      "body": "Veja o que merece atenção primeiro e compare possibilidades antes de escolher o próximo passo.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 5,
+      "role": "content",
+      "title": "Limite",
+      "body": "A resposta é um ponto de partida. Confira contexto, exame, fontes e protocolos locais. A decisão continua com o médico.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 6,
+      "role": "cta",
+      "title": "Próximo passo",
+      "body": "O Conduta ajuda a organizar essa revisão. Acesse o link da bio e experimente com um caso fictício.",
+      "bullets": [],
+      "emphasis": []
+    }
+  ],
+  "visualGuidance": "carrossel vertical 1080×1350, inspirado em uma peça de demonstração de produto com fundo claro, azul-marinho, teal e verde do logo. Usar o logo oficial do Conduta em todos os slides dentro da margem segura. Alternar mockups abstratos do fluxo entre os slides, sem screenshots reais ou dados identificáveis. Manter uma ideia por slide, bastante respiro e CTA centralizado no encerramento.",
+  "visualElement": "série de mockups locais e fictícios do Conduta: entrada em linguagem natural, camadas de contexto, análise estruturada, comparação de possibilidades, revisão e CTA. Usar o logo oficial como elemento de marca recorrente.",
+  "screenshots": "não. Usar apenas mockups CSS locais e o logo oficial fornecido pela marca.",
+  "altText": "Carrossel de seis slides apresentando o Conduta como apoio à organização do raciocínio clínico, com mockups fictícios de entrada do caso, análise, revisão e convite para experimentar.",
+  "safetyNotes": "mockups fictícios, sem dados de pacientes. Não apresentar diagnóstico definitivo, conduta universal ou substituição da decisão médica. Validar o conteúdo clínico com profissional humano antes da publicação.",
+  "checklist": "[ ] logo presente em todos os slides; [ ] mockups identificados como fictícios; [ ] dados fictícios; [ ] funcionalidade confirmada; [ ] sem promessa absoluta; [ ] limite clínico presente; [ ] CTA para o app; [ ] acessibilidade conferida; [ ] validação humana registrada.",
+  "sourceFile": "C:\\freela\\projects\\conduta\\marketing\\drafts\\034-conheca-o-conduta-em-seis-telas.md"
+}

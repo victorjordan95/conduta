@@ -1,0 +1,26 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [],
+  "dimensions": {
+    "width": 1080,
+    "height": 1350
+  },
+  "browser": "chrome.exe",
+  "generatedFiles": [
+    "post.json",
+    "caption.txt",
+    "slide-01.png",
+    "slide-02.png",
+    "slide-03.png",
+    "slide-04.png",
+    "slide-05.png",
+    "slide-06.png",
+    "preview.html",
+    "validation-report.json"
+  ],
+  "post": {
+    "id": "P099",
+    "sourceFile": "C:\\freela\\projects\\conduta\\marketing\\drafts\\034-conheca-o-conduta-em-seis-telas.md"
+  }
+}

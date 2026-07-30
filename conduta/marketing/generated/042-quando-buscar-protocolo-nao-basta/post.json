@@ -1,0 +1,87 @@
+{
+  "id": "P042",
+  "slug": "quando-buscar-protocolo-nao-basta",
+  "status": "published",
+  "format": "carousel",
+  "template": "carrossel-educacional",
+  "pillar": "2 — Educação sobre raciocínio clínico",
+  "objective": "mostrar que uma referência precisa ser lida dentro do contexto do caso",
+  "audience": "médicos generalistas e profissionais da atenção primária",
+  "funnelStage": "descoberta",
+  "relatedFeature": "base clínica e busca contextualizada",
+  "pain": "",
+  "title": "Quando buscar protocolo não basta",
+  "hook": "Buscar um protocolo é importante. Mas não é a decisão inteira.",
+  "caption": "Buscar uma referência durante o atendimento faz parte do trabalho. A questão é o que acontece depois da busca.\n\nO mesmo protocolo pode precisar ser interpretado à luz do cenário clínico, dos dados disponíveis, dos recursos do serviço e das regras locais. Por isso, encontrar uma fonte não encerra a revisão.\n\nO Conduta pode apoiar essa organização ao reunir contexto para o profissional conferir. A fonte original, os protocolos da instituição e o julgamento médico continuam essenciais.\n\nSalve para lembrar na próxima revisão de protocolo.",
+  "cta": "Salve para lembrar na próxima revisão de protocolo.",
+  "hashtags": [
+    "#raciocinioclinico",
+    "#medicinageral",
+    "#atencaoprimaria"
+  ],
+  "slides": [
+    {
+      "number": 1,
+      "role": "cover",
+      "title": "Buscar um protocolo é importante. Mas não é a decisão inteira.",
+      "body": "",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 2,
+      "role": "context",
+      "title": "Contexto",
+      "body": "A referência costuma ser o começo da revisão. O caso tem contexto, tempo de evolução, dados disponíveis e recursos locais.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 3,
+      "role": "problem",
+      "title": "Problema",
+      "body": "Uma sequência pronta não responde sozinha: este é o cenário considerado? O que falta? O que muda a prioridade? Qual fluxo local se aplica?",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 4,
+      "role": "content",
+      "title": "Desenvolvimento",
+      "body": "Uma busca mais útil conecta três pontos: caso → contexto → revisão. Assim, fica mais claro o que ainda precisa ser conferido.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 5,
+      "role": "content",
+      "title": "Aplicação prática",
+      "body": "Antes de seguir uma referência, confirme o contexto; revise dados relevantes; confira atualização e abrangência; compare com o protocolo do serviço.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 6,
+      "role": "content",
+      "title": "Como o Conduta pode apoiar",
+      "body": "O Conduta consulta conhecimento estruturado, documentos e busca semântica para enriquecer a análise e organizar o contexto para revisão.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 7,
+      "role": "cta",
+      "title": "Salve para lembrar na próxima revisão de protocolo.",
+      "body": "Fonte sem contexto não fecha decisão.",
+      "bullets": [],
+      "emphasis": []
+    }
+  ],
+  "visualGuidance": "carrossel vertical 1080 × 1350, com todos os blocos de texto centralizados dentro da margem segura. Usar fundo navy, teal, fundo claro e ilustrações editoriais diferentes por slide: documento, lupa, perguntas, fluxo caso → contexto → revisão e checklist. Manter respiro amplo, logo pequeno no topo e número do slide no rodapé.",
+  "visualElement": "diagrama editorial de referência, contexto e revisão, sem representar tela real do produto.",
+  "screenshots": "não. Usar ilustrações vetoriais e diagramas editoriais; não inserir dados de pacientes.",
+  "altText": "Carrossel educativo para médicos sobre por que buscar um protocolo é apenas parte da revisão clínica e como contexto, dados, fontes e protocolos locais participam da análise.",
+  "safetyNotes": "conteúdo educativo para médicos, não orientação individual; não apresentar protocolo, dose ou conduta específica; não inventar fonte nem sugerir que a busca valida uma decisão; conferir atualização, abrangência e protocolo local; validar com profissional humano; não usar dados reais de pacientes.",
+  "checklist": "[ ] regras editoriais lidas; [ ] funcionalidade confirmada em marketing/features.md; [ ] tema, gancho, dor, funcionalidade e CTA comparados com conteúdos recentes; [ ] nenhuma promessa absoluta ou afirmação de substituição; [ ] nenhuma orientação individual; [ ] português do Brasil revisado; [ ] texto centralizado e legível em 1080 × 1350; [ ] contraste e texto alternativo conferidos; [ ] validação humana registrada.",
+  "sourceFile": "C:\\freela\\projects\\conduta\\marketing\\drafts\\032-quando-buscar-protocolo-nao-basta.md"
+}

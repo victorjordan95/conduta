@@ -1,0 +1,39 @@
+{
+  "id": "P011",
+  "slug": "o-que-nao-publicar-em-um-caso-clinico",
+  "status": "draft",
+  "format": "checklist",
+  "template": "post-posicionamento",
+  "pillar": "8",
+  "objective": "segurança",
+  "audience": "todos",
+  "funnelStage": "descoberta",
+  "relatedFeature": "regras de uso",
+  "pain": "risco de identificação",
+  "title": "O que não publicar em um caso clínico",
+  "hook": "O que não publicar em um caso clínico",
+  "caption": "nomes, datas, imagens e dados sensíveis. O conteúdo deve ajudar a revisar o raciocínio, sem apresentar diagnóstico definitivo ou conduta individual. O caso, se houver, deve ser fictício e não identificável.\n\nO Conduta funciona como apoio ao raciocínio clínico. A decisão continua com o profissional, que deve conferir o contexto e os protocolos locais.",
+  "cta": "“Salve antes de criar um exemplo”.",
+  "hashtags": [
+    "#medicinageral",
+    "#raciocinioclinico",
+    "#medicosbrasileiros"
+  ],
+  "slides": [
+    {
+      "number": 1,
+      "role": "cover",
+      "title": "O que não publicar em um caso clínico",
+      "body": "Cena 1: O que não publicar em um caso clínico.\nCena 2: nomes, datas, imagens e dados sensíveis.\nCena 3: Mostre como uma revisão organizada pode apoiar o profissional.\nCena 4: Reforce: confira contexto, fontes e protocolos locais.\nCena 5 — CTA: “Salve antes de criar um exemplo”.",
+      "bullets": [],
+      "emphasis": []
+    }
+  ],
+  "visualGuidance": "usar o template de checklist, com Barlow/Barlow Condensed, teal #1a6b73, navy #1e2a35 e contraste AA.",
+  "visualElement": "",
+  "screenshots": "não. Se houver imagem, usar mockup ou captura autorizada sem dados reais.",
+  "altText": "Arte sobre O que não publicar em um caso clínico, com orientação educativa para médicos.",
+  "safetyNotes": "validar conteúdo clínico com profissional humano; não publicar automaticamente; não inserir dados de pacientes.",
+  "checklist": "[ ] regras editoriais lidas; [ ] funcionalidade confirmada; [ ] sem promessa absoluta; [ ] português revisado; [ ] CTA coerente; [ ] acessibilidade conferida; [ ] validação humana registrada.",
+  "sourceFile": "C:\\freela\\projects\\conduta\\marketing\\drafts\\018-o-que-nao-publicar-em-um-caso-clinico.md"
+}

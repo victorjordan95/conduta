@@ -1,0 +1,13 @@
+{
+  "name": "feedback-demo",
+  "route": "/analise",
+  "viewport": { "width": 1080, "height": 1350 },
+  "stateRequired": "sessao local autenticada e mockada",
+  "fictitiousData": {
+    "caseText": "Pessoa adulta com queixa fictícia, sem dados identificáveis, usada apenas para demonstração.",
+    "email": "demo.local@example.invalid"
+  },
+  "hide": ["tokens", "emails", "ids", "dados clínicos sensíveis"],
+  "output": "feedback-demo.png",
+  "enabled": false
+}

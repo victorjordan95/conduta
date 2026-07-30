@@ -1,0 +1,89 @@
+{
+  "id": "P002",
+  "slug": "tres-perguntas-antes-de-abrir-mais-uma-aba",
+  "status": "draft",
+  "format": "carousel",
+  "template": "checklist",
+  "pillar": "Educação sobre raciocínio clínico",
+  "objective": "ensinar uma microestrutura de revisão",
+  "audience": "generalistas e recém-formados",
+  "funnelStage": "descoberta",
+  "relatedFeature": "dados faltantes e diferenciais",
+  "pain": "",
+  "title": "Três perguntas antes de abrir mais uma aba",
+  "hook": "Antes de buscar mais, confira o que o caso ainda não disse.",
+  "caption": "Abrir mais uma fonte pode ajudar. Mas, antes, vale perguntar se estamos buscando informação ou tentando compensar um caso ainda mal organizado.\n\nUma boa revisão começa pelo contexto: evolução, dados ausentes e sinais que mudariam o próximo passo.",
+  "cta": "Qual dessas três perguntas aparece mais no seu atendimento?",
+  "hashtags": [
+    "#raciocinioclinico",
+    "#medicinadefamilia",
+    "#atencaoprimaria",
+    "#educacaomedica",
+    "#medicina"
+  ],
+  "slides": [
+    {
+      "number": 1,
+      "role": "cover",
+      "title": "Três perguntas antes de abrir mais uma aba.",
+      "body": "",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 2,
+      "role": "context",
+      "title": "Contexto",
+      "body": "Informação demais não substitui contexto suficiente. A pergunta certa pode organizar melhor a busca.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 3,
+      "role": "content",
+      "title": "Pergunta 1",
+      "body": "O que mudou e em quanto tempo? Tempo de evolução costuma mudar a leitura do caso.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 4,
+      "role": "content",
+      "title": "Pergunta 2",
+      "body": "Qual dado ausente poderia mudar minhas hipóteses? Pense em sinais, antecedentes e medicamentos relevantes.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 5,
+      "role": "content",
+      "title": "Pergunta 3",
+      "body": "O que exigiria reavaliar ou encaminhar? Separe o que é acompanhamento do que pede escalada de cuidado.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 6,
+      "role": "content",
+      "title": "Aplicação",
+      "body": "O Conduta pode ajudar a organizar hipóteses, dados faltantes e alertas a partir de um caso descrito em linguagem natural.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 7,
+      "role": "cta",
+      "title": "CTA",
+      "body": "Salve para a próxima dúvida. Caso fictício e educativo; revise contexto e protocolos locais.",
+      "bullets": [],
+      "emphasis": []
+    }
+  ],
+  "visualGuidance": "cartões brancos sobre cinza, números grandes em teal e selo “educação geral”.",
+  "visualElement": "sequência editorial sem texto incorporado: contexto em camadas, linha do tempo, dado ausente, caminhos de revisão, painel de análise e marca de salvar.",
+  "screenshots": "não.",
+  "altText": "Carrossel com três perguntas para organizar a revisão de um caso clínico.",
+  "safetyNotes": "conteúdo geral, sem diagnóstico ou conduta individual. Validar linguagem clínica.",
+  "checklist": "[ ] cada slide tem uma ideia; [ ] caso não identificável; [ ] sem afirmação absoluta; [ ] rodapé de limite; [ ] CTA claro.",
+  "sourceFile": "C:\\freela\\projects\\conduta\\marketing\\drafts\\002-tres-perguntas-antes-de-abrir-mais-uma-aba.md"
+}

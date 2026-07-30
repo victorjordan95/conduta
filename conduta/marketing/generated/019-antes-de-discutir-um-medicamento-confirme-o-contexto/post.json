@@ -1,0 +1,97 @@
+{
+  "id": "P019",
+  "slug": "antes-de-discutir-um-medicamento-confirme-o-contexto",
+  "status": "draft",
+  "format": "carousel",
+  "template": "checklist",
+  "pillar": "Segurança e revisão de riscos",
+  "objective": "lembrar que uma discussão farmacológica depende de contexto",
+  "audience": "médicos de atenção primária e generalistas",
+  "funnelStage": "consideração",
+  "relatedFeature": "revisão de dados faltantes e riscos",
+  "pain": "discutir medicamento com informação incompleta",
+  "title": "Antes de discutir um medicamento, confirme o contexto",
+  "hook": "Antes do medicamento, vem o contexto.",
+  "caption": "Uma discussão sobre medicamento começa antes de escolher o medicamento.\n\nO contexto clínico, o que a pessoa já usa e as condições que alteram risco precisam fazer parte da revisão. Quando esses dados não aparecem, o próximo passo pode ser perguntar — não preencher a lacuna por suposição.\n\nO Conduta pode auxiliar a organizar pontos faltantes e riscos relacionados ao caso descrito. A conferência profissional, a fonte adequada e o protocolo local continuam indispensáveis.",
+  "cta": "Qual informação costuma mudar mais a sua revisão?",
+  "hashtags": [
+    "#segurancamedicamentosa",
+    "#atencaoprimaria",
+    "#medicinageral",
+    "#raciocinioclinico",
+    "#educacaomedica"
+  ],
+  "slides": [
+    {
+      "number": 1,
+      "role": "cover",
+      "title": "Antes de discutir um medicamento, confirme o contexto.",
+      "body": "",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 2,
+      "role": "context",
+      "title": "Contexto",
+      "body": "Uma sugestão farmacológica não existe isolada do paciente, do quadro e do que já está em uso.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 3,
+      "role": "content",
+      "title": "O que já está em uso",
+      "body": "Quais medicamentos, suplementos e alergias precisam entrar na revisão?",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 4,
+      "role": "content",
+      "title": "Condições que mudam a conversa",
+      "body": "Gestação ou lactação, função renal e hepática, idade e peso podem ser relevantes conforme o caso.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 5,
+      "role": "content",
+      "title": "O quadro atual",
+      "body": "Qual é a hipótese de trabalho, qual é a gravidade e que dado ainda está faltando?",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 6,
+      "role": "content",
+      "title": "O cenário da decisão",
+      "body": "Confira apresentação disponível, protocolo local, monitoramento e necessidade de reavaliação. O contexto do serviço também importa.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 7,
+      "role": "content",
+      "title": "Como o Conduta pode apoiar",
+      "body": "A análise pode ajudar a destacar dados faltantes, contraindicações e riscos para você revisar. Não é prescrição automática.",
+      "bullets": [],
+      "emphasis": []
+    },
+    {
+      "number": 8,
+      "role": "cta",
+      "title": "CTA",
+      "body": "Qual informação costuma mudar mais a sua revisão? Responda nos comentários. Conteúdo educativo; valide o caso real com fontes e protocolos locais.",
+      "bullets": [],
+      "emphasis": []
+    }
+  ],
+  "visualGuidance": "usar o template de carrossel educacional, 1080 × 1350, fundo branco/cinza, títulos navy e destaques teal. Usar âmbar apenas no slide de atenção, sempre com texto. Rodapé: “Conteúdo educativo. Revise o contexto do caso real.”",
+  "visualElement": "",
+  "screenshots": "não.",
+  "altText": "Carrossel educativo com dados clínicos e contextuais para revisar antes de discutir um medicamento.",
+  "safetyNotes": "validação médica obrigatória. Não inserir nomes de medicamentos, doses ou condutas específicas; não tratar a lista como checklist universal para todos os casos.",
+  "checklist": "[ ] caso não identificável; [ ] sem prescrição ou dose; [ ] sem afirmação absoluta; [ ] fontes e contexto revisados por profissional; [ ] português revisado; [ ] texto legível em tela pequena; [ ] CTA não coleta dados sensíveis.",
+  "sourceFile": "C:\\freela\\projects\\conduta\\marketing\\drafts\\014-antes-de-discutir-um-medicamento-confirme-o-contexto.md"
+}

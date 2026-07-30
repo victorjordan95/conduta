@@ -1,0 +1,40 @@
+{
+  "id": "P028",
+  "slug": "um-checklist-para-sair-da-ancoragem",
+  "status": "draft",
+  "format": "static",
+  "template": "post-posicionamento",
+  "pillar": "2 — Educação sobre raciocínio clínico",
+  "objective": "ensinar uma pausa de revisão antes de estreitar o diferencial",
+  "audience": "médicos",
+  "funnelStage": "descoberta",
+  "relatedFeature": "hipóteses e diagnóstico diferencial",
+  "pain": "fechamento precoce em uma hipótese plausível",
+  "title": "Um checklist para sair da ancoragem",
+  "hook": "Uma hipótese plausível pode fechar cedo demais o raciocínio.",
+  "caption": "A primeira hipótese pode ser um ponto de partida. O cuidado é não tratá-la como ponto final antes de revisar o que sustenta essa leitura, o que ficou de fora e quais dados ainda faltam.\n\nUma pausa curta ajuda a tornar o diferencial mais explícito:\n\n— o que favorece a hipótese;\n\n— o que não encaixa;\n\n— o que ainda precisa ser conferido;\n\n— o que mudaria a prioridade.\n\nO Conduta pode apoiar essa organização ao estruturar hipóteses compatíveis com a descrição do caso. A lista depende das informações fornecidas e precisa ser conferida pelo médico, com exame, contexto, fontes e protocolos locais.",
+  "cta": "Compartilhe este lembrete com um colega.",
+  "hashtags": [
+    "#raciocinioclinico",
+    "#medicinageral",
+    "#educacaomedica",
+    "#medicosbrasileiros"
+  ],
+  "slides": [
+    {
+      "number": 1,
+      "role": "content",
+      "title": "Um checklist para sair da ancoragem",
+      "body": "Arte única — Gancho: Uma hipótese plausível pode fechar cedo demais.\nChecklist:\n1. O que sustenta essa hipótese?\n2. O que não combina com ela?\n3. O que ainda falta conferir?\n4. O que mudaria a prioridade?\nFechamento: Compare possibilidades antes de concluir.\nPróximo passo: Compartilhe este lembrete com um colega.",
+      "bullets": [],
+      "emphasis": []
+    }
+  ],
+  "visualGuidance": "post estático vertical 1080 × 1350, usando o template documentado, Barlow/Barlow Condensed, navy #1e2a35, teal #1a6b73 e fundo claro #f4f5f7. Destacar o gancho no topo e distribuir as quatro perguntas em cartões numerados, com bastante respiro e contraste AA. Manter o CTA em linguagem natural, sem exibir o rótulo técnico “CTA” na arte.",
+  "visualElement": "quatro cartões de revisão conectados por uma linha discreta, sem representar tela real do produto e sem conteúdo clínico específico.",
+  "screenshots": "não. Usar apenas composição editorial com ícones e cartões; não inserir dados de pacientes.",
+  "altText": "Post educativo para médicos com quatro perguntas para revisar uma hipótese plausível antes de estreitar o diagnóstico diferencial: o que sustenta, o que não combina, o que falta conferir e qual dado mudaria a prioridade.",
+  "safetyNotes": "conteúdo educativo para médicos, não orientação individual; não apresentar hipótese como diagnóstico; não publicar dose, prescrição ou conduta específica; reforçar que a saída depende dos dados fornecidos e deve ser conferida com exame, fontes e protocolos locais; validar clinicamente antes da aprovação; não usar dados reais de pacientes; não publicar automaticamente.",
+  "checklist": "[ ] regras editoriais lidas; [ ] funcionalidade confirmada em marketing/features.md; [ ] tema, gancho, dor, funcionalidade e CTA comparados com conteúdos recentes; [ ] nenhuma promessa absoluta ou afirmação de substituição; [ ] nenhuma orientação individual; [ ] português do Brasil revisado; [ ] texto legível e centralizado em 1080 × 1350; [ ] contraste e texto alternativo conferidos; [ ] validação humana registrada.",
+  "sourceFile": "C:\\freela\\projects\\conduta\\marketing\\drafts\\034-um-checklist-para-sair-da-ancoragem.md"
+}
