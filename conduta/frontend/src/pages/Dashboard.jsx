@@ -7,22 +7,96 @@ import Coachmark from '../components/Coachmark';
 import ProntuarioModal from '../components/ProntuarioModal';
 import ClinicalToolsPanel from '../components/ClinicalToolsPanel';
 import PlantaoQuickActions from '../components/PlantaoQuickActions';
+import Sheet from '../components/Sheet';
+import useMediaQuery from '../utils/useMediaQuery';
 import { getSession, createSession, submitFeedback, getUsage, downloadSessionPdf, getSessionEntities, gerarProntuario } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import styles from './Dashboard.module.scss';
 
-function EntitiesPanel({ sessionId, prefetchedEntities }) {
-  const [open, setOpen] = useState(false);
+// Um só traçado para os três ícones da barra: nada de vocabulário misturado
+function Icon({ path, circles }) {
+  return (
+    <svg
+      width="21"
+      height="21"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {path && <path d={path} />}
+      {circles?.map(([cx, cy]) => <circle key={cx} cx={cx} cy={cy} r="1.4" fill="currentColor" stroke="none" />)}
+    </svg>
+  );
+}
+
+const ICON_MENU = 'M3 6h18M3 12h18M3 18h18';
+const ICON_SEARCH = 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4.1-4.1';
+
+function EntitiesContent({ entities, loading, error }) {
+  const total = entities ? entities.diagnosticos.length + entities.medicamentos.length : 0;
+
+  return (
+    <div className={styles.entitiesBody}>
+      {loading && <span className={styles.entitiesLoading}>Buscando achados...</span>}
+      {error && <span className={styles.entitiesError}>Não foi possível carregar os achados. Tente novamente.</span>}
+      {entities !== null && total === 0 && !loading && (
+        <span className={styles.entitiesInfo}>Nenhum diagnóstico ou medicamento identificado neste caso.</span>
+      )}
+      {entities && entities.diagnosticos.length > 0 && (
+        <div className={styles.entitiesGroup}>
+          <span className={styles.entitiesLabel}>Diagnósticos</span>
+          <div className={styles.entitiesTags}>
+            {entities.diagnosticos.map((d, i) => (
+              <span
+                key={i}
+                className={styles.tagDiag}
+                style={{ animationDelay: `${i * 40}ms` }}
+                title={d.status === 'pending' ? 'Aguardando revisão' : 'Verificado'}
+              >
+                {d.nome}{d.cid ? ` (${d.cid})` : ''}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      {entities && entities.medicamentos.length > 0 && (
+        <div className={styles.entitiesGroup}>
+          <span className={styles.entitiesLabel}>Medicamentos</span>
+          <div className={styles.entitiesTags}>
+            {entities.medicamentos.map((m, i) => (
+              <span
+                key={i}
+                className={styles.tagMed}
+                style={{ animationDelay: `${(entities.diagnosticos.length + i) * 40}ms` }}
+                title={m.status === 'pending' ? 'Aguardando revisão' : 'Verificado'}
+              >
+                {m.nome}{m.classe ? ` · ${m.classe}` : ''}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function EntitiesPanel({ sessionId, prefetchedEntities, variant = 'panel' }) {
+  const inSheet = variant === 'sheet';
+  const [open, setOpen] = useState(inSheet);
   const [entities, setEntities] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setOpen(false);
+    setOpen(inSheet);
     setEntities(null);
     setLoading(false);
     setError(null);
-  }, [sessionId]);
+  }, [sessionId, inSheet]);
 
   useEffect(() => {
     if (prefetchedEntities !== null) {
@@ -30,20 +104,32 @@ function EntitiesPanel({ sessionId, prefetchedEntities }) {
     }
   }, [prefetchedEntities]);
 
-  async function handleToggle() {
+  async function load() {
     if (!sessionId) return;
-    if (!open && entities === null) {
-      setLoading(true);
-      try {
-        const data = await getSessionEntities(sessionId);
-        setEntities(data);
-      } catch (err) {
-        setError('Erro ao carregar entidades.');
-      } finally {
-        setLoading(false);
-      }
+    setLoading(true);
+    try {
+      const data = await getSessionEntities(sessionId);
+      setEntities(data);
+    } catch (err) {
+      setError('Erro ao carregar entidades.');
+    } finally {
+      setLoading(false);
     }
+  }
+
+  // no sheet os achados já aparecem abertos: quem abriu veio buscar exatamente isso
+  useEffect(() => {
+    if (inSheet && entities === null && !loading) load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inSheet, sessionId]);
+
+  async function handleToggle() {
+    if (!open && entities === null) await load();
     setOpen((prev) => !prev);
+  }
+
+  if (inSheet) {
+    return <EntitiesContent entities={entities} loading={loading} error={error} />;
   }
 
   const total = entities ? entities.diagnosticos.length + entities.medicamentos.length : 0;
@@ -67,47 +153,7 @@ function EntitiesPanel({ sessionId, prefetchedEntities }) {
         className={`${styles.entitiesBodyWrapper}${open ? ` ${styles.entitiesBodyWrapperOpen}` : ''}`}
       >
         <div className={styles.entitiesBodyInner}>
-          <div className={styles.entitiesBody}>
-            {loading && <span className={styles.entitiesLoading}>Buscando achados...</span>}
-            {error && <span className={styles.entitiesError}>Não foi possível carregar os achados. Tente novamente.</span>}
-            {entities !== null && total === 0 && !loading && (
-              <span className={styles.entitiesInfo}>Nenhum diagnóstico ou medicamento identificado neste caso.</span>
-            )}
-            {entities && entities.diagnosticos.length > 0 && (
-              <div className={styles.entitiesGroup}>
-                <span className={styles.entitiesLabel}>Diagnósticos</span>
-                <div className={styles.entitiesTags}>
-                  {entities.diagnosticos.map((d, i) => (
-                    <span
-                      key={i}
-                      className={styles.tagDiag}
-                      style={{ animationDelay: `${i * 40}ms` }}
-                      title={d.status === 'pending' ? 'Aguardando revisão' : 'Verificado'}
-                    >
-                      {d.nome}{d.cid ? ` (${d.cid})` : ''}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            {entities && entities.medicamentos.length > 0 && (
-              <div className={styles.entitiesGroup}>
-                <span className={styles.entitiesLabel}>Medicamentos</span>
-                <div className={styles.entitiesTags}>
-                  {entities.medicamentos.map((m, i) => (
-                    <span
-                      key={i}
-                      className={styles.tagMed}
-                      style={{ animationDelay: `${(entities.diagnosticos.length + i) * 40}ms` }}
-                      title={m.status === 'pending' ? 'Aguardando revisão' : 'Verificado'}
-                    >
-                      {m.nome}{m.classe ? ` · ${m.classe}` : ''}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          <EntitiesContent entities={entities} loading={loading} error={error} />
         </div>
       </div>
     </div>
@@ -133,6 +179,15 @@ export default function Dashboard() {
   const [prontuarioLoading, setProntuarioLoading] = useState(false);
   const [prontuarioTexto, setProntuarioTexto] = useState(null);
   const [prontuarioError, setProntuarioError] = useState(null);
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [sheet, setSheet] = useState(null); // null | 'quick' | 'actions'
+
+  const hasAnalysis = messages.some((m) => m.role === 'assistant' && m.content);
+
+  // ao voltar para o desktop nada fica preso num sheet que não existe mais
+  useEffect(() => {
+    if (!isMobile) setSheet(null);
+  }, [isMobile]);
 
   useEffect(() => {
     if (user?.plan === 'free') {
@@ -184,6 +239,7 @@ export default function Dashboard() {
   }
 
   async function handleSelectSession(id) {
+    setSheet(null);
     setActiveSessionId(id);
     setActiveSession(null);
     setMessages([]);
@@ -208,6 +264,7 @@ export default function Dashboard() {
   }
 
   function handleNewSession(id) {
+    setSheet(null);
     setActiveSessionId(id);
     setActiveSession({ titulo: 'Novo caso', summary: null });
     setMessages([]);
@@ -234,6 +291,7 @@ export default function Dashboard() {
   }
 
   async function handleProntuario() {
+    setSheet(null);
     setProntuarioOpen(true);
     setProntuarioLoading(true);
     setProntuarioError(null);
@@ -248,6 +306,7 @@ export default function Dashboard() {
   }
 
   async function handleDownloadPdf() {
+    setSheet(null);
     setPdfLoading(true);
     setPdfError(null);
     try {
@@ -317,11 +376,17 @@ export default function Dashboard() {
               title: 'Resultado da análise',
               text: 'Avalie cada resposta como útil ou incorreta. Feedbacks negativos revisados pela equipe podem render análises extras.',
             },
-            {
-              target: 'entities',
-              title: 'Achados identificados',
-              text: 'Clique para ver diagnósticos e medicamentos detectados automaticamente no caso.',
-            },
+            isMobile
+              ? {
+                  target: 'case-actions',
+                  title: 'Ações do caso',
+                  text: 'Achados identificados, ferramentas clínicas, resumo para prontuário e exportação ficam todos aqui.',
+                }
+              : {
+                  target: 'entities',
+                  title: 'Achados identificados',
+                  text: 'Clique para ver diagnósticos e medicamentos detectados automaticamente no caso.',
+                },
           ]}
           onDone={() => {
             setShowSessionTour(false);
@@ -332,20 +397,44 @@ export default function Dashboard() {
       )}
 
       <main className={styles.main}>
+        {/* Barra única do mobile: menu, identidade do caso e uma porta para tudo
+            que é secundário. Nada mais compete com a leitura da resposta. */}
         <header className={styles.mobileHeader}>
           <button
-            className={styles.hamburger}
+            className={styles.iconBtn}
             onClick={() => setSidebarOpen(true)}
             aria-label="Abrir menu"
           >
-            <span />
-            <span />
-            <span />
+            <Icon path={ICON_MENU} />
           </button>
-          <span className={styles.mobileBrand}>Conduta</span>
+
+          {activeSessionId && messages.length > 0 && activeSession?.titulo && activeSession.titulo !== 'Novo caso' ? (
+            <span className={styles.mobileTitle}>{activeSession.titulo}</span>
+          ) : (
+            <span className={styles.mobileBrand}>Conduta</span>
+          )}
+
+          <button
+            className={styles.iconBtn}
+            onClick={() => setSheet('quick')}
+            aria-label="Buscar protocolos e calculadoras"
+          >
+            <Icon path={ICON_SEARCH} />
+          </button>
+
+          {activeSessionId && (
+            <button
+              className={styles.iconBtn}
+              onClick={() => setSheet('actions')}
+              aria-label="Ações do caso"
+              data-coachmark="case-actions"
+            >
+              <Icon circles={[[5, 12], [12, 12], [19, 12]]} />
+            </button>
+          )}
         </header>
 
-        <PlantaoQuickActions onNewCase={handleCreateNewCase} />
+        {!isMobile && <PlantaoQuickActions onNewCase={handleCreateNewCase} />}
 
         {!activeSessionId ? (
           <div className={styles.empty}>
@@ -359,38 +448,39 @@ export default function Dashboard() {
           </div>
         ) : (
           <>
-            <div className={styles.sessionHeader}>
-              <span className={styles.sessionTitle}>{activeSession?.titulo || ''}</span>
-              {messages.some((m) => m.role === 'assistant' && m.content) && !streaming && (
-                <button
-                  className={styles.pdfBtn}
-                  onClick={handleProntuario}
-                  aria-label="Gerar resumo para prontuário"
-                  disabled={prontuarioLoading}
-                >
-                  {prontuarioLoading ? 'Gerando...' : '⎘ Resumo p/ prontuário'}
-                </button>
-              )}
-              {activeSession?.summary && (
-                <>
-                  <button
-                    className={styles.pdfBtn}
-                    onClick={handleDownloadPdf}
-                    aria-label="Exportar caso como PDF"
-                    disabled={pdfLoading}
-                  >
-                    {pdfLoading ? 'Exportando...' : '↓ Exportar PDF'}
-                  </button>
-                  {pdfError && (
-                    <span className={styles.pdfError} role="alert">{pdfError}</span>
+            {!isMobile && (
+              <>
+                <div className={styles.sessionHeader}>
+                  <span className={styles.sessionTitle}>{activeSession?.titulo || ''}</span>
+                  {hasAnalysis && !streaming && (
+                    <button
+                      className={styles.pdfBtn}
+                      onClick={handleProntuario}
+                      aria-label="Gerar resumo para prontuário"
+                      disabled={prontuarioLoading}
+                    >
+                      {prontuarioLoading ? 'Gerando...' : '⎘ Resumo p/ prontuário'}
+                    </button>
                   )}
-                </>
-              )}
-            </div>
-            <ClinicalToolsPanel
-              sessionId={activeSessionId}
-              hasAnalysis={messages.some((m) => m.role === 'assistant' && m.content)}
-            />
+                  {activeSession?.summary && (
+                    <>
+                      <button
+                        className={styles.pdfBtn}
+                        onClick={handleDownloadPdf}
+                        aria-label="Exportar caso como PDF"
+                        disabled={pdfLoading}
+                      >
+                        {pdfLoading ? 'Exportando...' : '↓ Exportar PDF'}
+                      </button>
+                      {pdfError && (
+                        <span className={styles.pdfError} role="alert">{pdfError}</span>
+                      )}
+                    </>
+                  )}
+                </div>
+                <ClinicalToolsPanel sessionId={activeSessionId} hasAnalysis={hasAnalysis} />
+              </>
+            )}
             <AnalysisResult
               messages={messages}
               streaming={streaming}
@@ -402,7 +492,12 @@ export default function Dashboard() {
                 );
               }}
             />
-            <EntitiesPanel sessionId={activeSessionId} prefetchedEntities={prefetchedEntities} />
+            {!isMobile && (
+              <EntitiesPanel sessionId={activeSessionId} prefetchedEntities={prefetchedEntities} />
+            )}
+            {isMobile && pdfError && (
+              <div className={styles.mobileError} role="alert">{pdfError}</div>
+            )}
             {userMsgCount >= 16 && (
               <div className={styles.bannerCritico} role="alert">
                 <span>Sessão longa — considere iniciar uma nova sessão para manter a precisão das respostas.</span>
@@ -492,20 +587,88 @@ export default function Dashboard() {
           />
         )}
 
-        <footer className={styles.footer}>
-          <div className={styles.footerRow}>
-            {usage && <UsageCounter used={usage.used} limit={usage.limit} compact />}
-            <span className={styles.footerDisclaimer}>
-              <span aria-hidden="true">⚕</span>
-              {' '}As análises do Conduta são sugestões de apoio clínico. A decisão final é sempre responsabilidade do profissional.
-            </span>
-            <span className={styles.footerLinks}>
-              <a href="/termos" target="_blank" rel="noreferrer">Termos de Uso</a>
-              {' · '}
-              <a href="/privacidade" target="_blank" rel="noreferrer">Política de Privacidade</a>
-            </span>
-          </div>
-        </footer>
+        {isMobile && sheet === 'quick' && (
+          <Sheet title="Acesso rápido" onClose={() => setSheet(null)}>
+            <PlantaoQuickActions
+              variant="sheet"
+              onNewCase={() => {
+                setSheet(null);
+                handleCreateNewCase();
+              }}
+            />
+          </Sheet>
+        )}
+
+        {isMobile && sheet === 'actions' && activeSessionId && (
+          <Sheet title="Ações do caso" onClose={() => setSheet(null)}>
+            <Sheet.Section label="Exportar">
+              <Sheet.Item
+                label={prontuarioLoading ? 'Gerando resumo...' : 'Resumo p/ prontuário'}
+                hint="Texto pronto para colar no sistema do hospital"
+                onClick={handleProntuario}
+                disabled={!hasAnalysis || streaming || prontuarioLoading}
+              />
+              <Sheet.Item
+                label={pdfLoading ? 'Exportando...' : 'Exportar PDF'}
+                hint={activeSession?.summary ? 'Caso completo com fontes' : 'Disponível após a primeira análise'}
+                onClick={handleDownloadPdf}
+                disabled={!activeSession?.summary || pdfLoading}
+              />
+            </Sheet.Section>
+
+            {hasAnalysis && (
+              <Sheet.Section label="Ferramentas clínicas">
+                {/* o sheet segue montado: a ferramenta abre por cima dele e,
+                    ao fechar, o médico volta para a lista de onde saiu */}
+                <ClinicalToolsPanel
+                  sessionId={activeSessionId}
+                  hasAnalysis={hasAnalysis}
+                  variant="sheet"
+                />
+              </Sheet.Section>
+            )}
+
+            <Sheet.Section label="Achados identificados">
+              <EntitiesPanel
+                sessionId={activeSessionId}
+                prefetchedEntities={prefetchedEntities}
+                variant="sheet"
+              />
+            </Sheet.Section>
+
+            <Sheet.Section label="Sobre">
+              <p className={styles.sheetDisclaimer}>
+                As análises do Conduta são sugestões de apoio clínico. A decisão final é sempre
+                responsabilidade do profissional.
+              </p>
+              <p className={styles.sheetLinks}>
+                <a href="/termos" target="_blank" rel="noreferrer">Termos de Uso</a>
+                {' · '}
+                <a href="/privacidade" target="_blank" rel="noreferrer">Política de Privacidade</a>
+              </p>
+            </Sheet.Section>
+          </Sheet>
+        )}
+
+        {/* No mobile o rodapé guarda só o contador de uso: o aviso legal continua
+            sob cada resposta e por extenso no sheet de ações, e truncá-lo numa
+            faixa de 10px seria pior do que não repeti-lo. */}
+        {(!isMobile || usage) && (
+          <footer className={styles.footer}>
+            <div className={styles.footerRow}>
+              {usage && <UsageCounter used={usage.used} limit={usage.limit} compact />}
+              <span className={styles.footerDisclaimer}>
+                <span aria-hidden="true">⚕</span>
+                {' '}As análises do Conduta são sugestões de apoio clínico. A decisão final é sempre responsabilidade do profissional.
+              </span>
+              <span className={styles.footerLinks}>
+                <a href="/termos" target="_blank" rel="noreferrer">Termos de Uso</a>
+                {' · '}
+                <a href="/privacidade" target="_blank" rel="noreferrer">Política de Privacidade</a>
+              </span>
+            </div>
+          </footer>
+        )}
       </main>
     </div>
   );

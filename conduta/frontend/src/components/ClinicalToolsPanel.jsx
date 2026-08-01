@@ -19,8 +19,9 @@ const EMPTY_DETAILS = {
   otherFactors: '',
 };
 
-export default function ClinicalToolsPanel({ sessionId, hasAnalysis }) {
+export default function ClinicalToolsPanel({ sessionId, hasAnalysis, variant = 'panel' }) {
   const [open, setOpen] = useState(false);
+  const inSheet = variant === 'sheet';
   const [selectedTool, setSelectedTool] = useState(null);
   const [details, setDetails] = useState(EMPTY_DETAILS);
   const [result, setResult] = useState('');
@@ -60,31 +61,43 @@ export default function ClinicalToolsPanel({ sessionId, hasAnalysis }) {
   const selectedLabel = TOOLS.find((tool) => tool.id === selectedTool)?.label || '';
 
   return (
-    <section className={styles.panel} aria-label="Ferramentas de revisão clínica">
-      <button
-        type="button"
-        className={styles.toggle}
-        onClick={() => setOpen((prev) => !prev)}
-        aria-expanded={open}
-        aria-controls="clinical-tools-body"
-      >
-        <span aria-hidden="true" className={`${styles.chevron}${open ? ` ${styles.chevronOpen}` : ''}`}>▾</span>
-        Ferramentas clínicas
-      </button>
-      <div
-        id="clinical-tools-body"
-        className={`${styles.bodyWrapper}${open ? ` ${styles.bodyWrapperOpen}` : ''}`}
-      >
-        <div className={styles.bodyInner}>
-          <div className={styles.actions}>
-            {TOOLS.map((tool) => (
-              <button key={tool.id} type="button" className={styles.toolButton} onClick={() => openTool(tool.id)}>
-                {tool.label}
-              </button>
-            ))}
-          </div>
+    <section className={inSheet ? styles.sheetPanel : styles.panel} aria-label="Ferramentas de revisão clínica">
+      {inSheet ? (
+        <div className={styles.sheetActions}>
+          {TOOLS.map((tool) => (
+            <button key={tool.id} type="button" className={styles.sheetToolButton} onClick={() => openTool(tool.id)}>
+              {tool.label}
+            </button>
+          ))}
         </div>
-      </div>
+      ) : (
+        <>
+          <button
+            type="button"
+            className={styles.toggle}
+            onClick={() => setOpen((prev) => !prev)}
+            aria-expanded={open}
+            aria-controls="clinical-tools-body"
+          >
+            <span aria-hidden="true" className={`${styles.chevron}${open ? ` ${styles.chevronOpen}` : ''}`}>▾</span>
+            Ferramentas clínicas
+          </button>
+          <div
+            id="clinical-tools-body"
+            className={`${styles.bodyWrapper}${open ? ` ${styles.bodyWrapperOpen}` : ''}`}
+          >
+            <div className={styles.bodyInner}>
+              <div className={styles.actions}>
+                {TOOLS.map((tool) => (
+                  <button key={tool.id} type="button" className={styles.toolButton} onClick={() => openTool(tool.id)}>
+                    {tool.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {selectedTool && (
         <div className={styles.backdrop} role="presentation" onMouseDown={closeTool}>

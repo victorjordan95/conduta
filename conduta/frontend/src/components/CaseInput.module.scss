@@ -1,31 +1,116 @@
 @use '../styles/variables' as *;
 
 .container {
-  border-top: 1px solid $color-border;
+  flex-shrink: 0;
+  padding: 12px 24px 14px;
   background: $color-surface;
-  padding: 10px 24px 12px;
+  border-top: 1px solid $color-border;
 }
 
-.topRow {
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// ── Composer ────────────────────────────────────────────────────
+// Uma caixa só: campo, anexo e barra de ação moram dentro da mesma borda,
+// para o médico ver "escrever o caso" como um gesto único.
+.composer {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid $color-border;
+  border-radius: 12px;
+  background: $color-surface;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus-within {
+    border-color: $color-accent;
+    box-shadow: 0 0 0 3px rgba(26, 107, 115, 0.12);
+  }
+}
+
+.composerDisabled {
+  background: $color-bg-subtle;
+}
+
+.textarea {
+  // duas linhas de placeholder cabem sem scrollbar mesmo em janela estreita
+  min-height: 72px;
+  max-height: 190px;
+  padding: 12px 14px 4px;
+  border: none;
+  background: transparent;
+  font-family: $font-family;
+  font-size: $font-size-base;
+  line-height: 1.6;
+  color: $color-text-primary;
+  resize: none;
+  overflow-y: auto;
+
+  &:focus { outline: none; }
+
+  &::placeholder { color: $color-text-muted; }
+
+  &:disabled { background: transparent; }
+}
+
+.bar {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 8px;
+  gap: 8px;
+  padding: 6px 8px 8px 10px;
 }
 
-.label {
-  font-size: $font-size-sm;
-  font-weight: 600;
+// ── Toggle de modo (discreto: trilho neutro, ativo em pílula) ────
+.modeToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 999px;
+  background: $color-bg;
+}
+
+.modeBtn {
+  padding: 5px 12px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
   color: $color-text-secondary;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  flex-shrink: 0;
+  font-family: $font-family;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover:not(:disabled):not(.modeBtnActive) { color: $color-text-primary; }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 1px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.modeBtnActive {
+  background: $color-surface;
+  color: $color-accent;
+  box-shadow: $shadow-sm;
 }
 
 .hint {
   margin-left: auto;
-  font-size: $font-size-sm;
+  font-size: 12px;
   color: $color-text-muted;
   white-space: nowrap;
 }
@@ -43,132 +128,58 @@
   vertical-align: middle;
 }
 
-.modeToggle {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.modeBtn {
-  padding: 3px 10px;
-  min-height: 28px;
-  font-size: $font-size-sm;
-  border: 1px solid $color-border;
-  background: transparent;
-  color: $color-text-secondary;
-  cursor: pointer;
-  border-radius: $border-radius;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-
-  &:hover:not(:disabled) {
-    border-color: $color-accent;
-    color: $color-text-primary;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
-}
-
-.modeBtnActive {
-  background: $color-accent;
-  border-color: $color-accent;
-  color: #fff;
-}
-
-.modeHint {
-  font-size: 12px;
-  color: $color-text-muted;
-}
-
-.errorText {
-  color: $color-danger;
-}
-
-@media (max-width: 520px) {
-  .modeHint {
-    display: none;
-  }
-
-  .modeBtn {
-    min-height: 40px;
-    flex: 1;
-  }
-
-  .modeToggle {
-    width: 100%;
-  }
-}
-
-.inputRow {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.textarea {
-  flex: 1;
-  min-height: 64px;
-  max-height: 200px;
-  padding: 12px 14px;
-  border: 1px solid $color-border;
-  border-radius: $border-radius;
-  font-size: $font-size-base;
-  color: $color-text-primary;
-  resize: vertical;
-  line-height: 1.6;
-  transition: border-color 0.15s;
-
-  &:focus {
-    outline: none;
-    border-color: $color-accent;
-  }
-
-  &::placeholder {
-    color: $color-text-muted;
-  }
-}
-
-@keyframes statusIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.statusLine {
-  margin-top: 6px;
-  font-size: $font-size-sm;
-  animation: statusIn 200ms cubic-bezier(0.25, 1, 0.5, 1) both;
-}
-
 .button {
-  padding: 9px 24px;
+  min-height: 38px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 8px;
   background: $color-accent;
   color: white;
-  border-radius: $border-radius;
+  font-family: $font-family;
   font-size: $font-size-sm;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  transition: background 0.15s, transform 0.1s cubic-bezier(0.25, 1, 0.5, 1);
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s $ease-out-quart;
 
-  &:hover:not(:disabled) {
-    background: $color-accent-hover;
-  }
+  &:hover:not(:disabled) { background: $color-accent-hover; }
 
-  &:active:not(:disabled) {
-    transform: scale(0.96);
+  &:active:not(:disabled) { transform: scale(0.96); }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
   }
 
   &:disabled {
-    opacity: 0.5;
+    background: $color-border;
+    color: $color-text-muted;
     cursor: not-allowed;
   }
 }
 
+// ── Linha de apoio: explica o modo ativo, vira status/erro quando precisa ──
+.subLine {
+  min-height: 18px;
+  margin-top: 6px;
+  padding: 0 2px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.modeHint { color: $color-text-muted; }
+
 .progress {
-  font-size: $font-size-sm;
   color: $color-accent;
   font-style: italic;
+}
+
+.errorText { color: $color-danger; }
+
+// ── Limite de uso ───────────────────────────────────────────────
+@keyframes statusIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .limitBanner {
@@ -177,13 +188,13 @@
   justify-content: space-between;
   gap: 12px;
   padding: 10px 14px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   background: #fff5f5;
   border: 1px solid #f5c6c6;
   border-radius: $border-radius;
   font-size: $font-size-sm;
   color: $color-danger;
-  animation: statusIn 250ms cubic-bezier(0.25, 1, 0.5, 1) both;
+  animation: statusIn 250ms $ease-out-quart both;
 }
 
 .upgradeLink {
@@ -192,38 +203,31 @@
   color: $color-accent;
   text-decoration: none;
 
-  &:hover {
-    text-decoration: underline;
-  }
+  &:hover { text-decoration: underline; }
 }
+
+// ── Foto de lesão (admin) ───────────────────────────────────────
+.fotoInput { display: none; }
 
 .fotoArea {
-  margin-top: 8px;
-}
-
-.fotoRow {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.fotoInput {
-  display: none;
+  padding: 0 10px;
 }
 
 .fotoBtn {
-  font-size: 12px;
-  color: $color-accent;
+  padding: 6px 10px;
+  border: 1px dashed $color-border;
+  border-radius: 8px;
   background: none;
-  border: 1px dashed $color-accent;
-  border-radius: $border-radius;
-  padding: 4px 10px;
+  color: $color-text-secondary;
+  font-family: $font-family;
+  font-size: 12px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
 
   &:hover:not(:disabled) {
-    background: rgba(26, 107, 115, 0.06);
+    border-color: $color-accent;
+    color: $color-accent;
+    background: $color-accent-subtle;
   }
 
   &:disabled {
@@ -232,91 +236,93 @@
   }
 }
 
-.fotoAviso {
-  font-size: 11px;
-  color: $color-text-secondary;
-  font-style: italic;
-}
-
 .fotoPreview {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 6px 10px;
+  margin-top: 4px;
   background: $color-accent-subtle;
-  border: 1px solid $color-border;
-  border-radius: $border-radius;
+  border-radius: 8px;
 }
 
 .fotoThumb {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   object-fit: cover;
   border-radius: 4px;
   flex-shrink: 0;
 }
 
 .fotoNome {
-  font-size: $font-size-sm;
-  color: $color-text-primary;
   flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: $font-size-sm;
+  color: $color-text-primary;
 }
 
 .fotoRemover {
   flex-shrink: 0;
-  font-size: 11px;
-  color: $color-text-secondary;
-  background: none;
+  width: 26px;
+  height: 26px;
   border: none;
+  border-radius: 50%;
+  background: none;
+  color: $color-text-secondary;
+  font-size: 11px;
   cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 3px;
 
   &:hover {
-    background: $color-border;
+    background: rgba(192, 57, 43, 0.1);
     color: $color-danger;
   }
 }
 
+// ── Mobile ──────────────────────────────────────────────────────
 @media (max-width: 768px) {
   .container {
-    padding: 8px 14px 10px;
-  }
-
-  .topRow {
-    gap: 6px;
-    margin-bottom: 6px;
-  }
-
-  .hint {
-    display: none;
-  }
-
-  .inputRow {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
   }
 
   .textarea {
-    min-height: 56px;
-    max-height: 140px;
+    min-height: 46px;
+    max-height: 34dvh;
+    padding: 10px 12px 2px;
+    font-size: 16px; // evita o zoom automático do iOS ao focar
   }
+
+  .bar {
+    gap: 6px;
+    padding: 4px 6px 6px 8px;
+  }
+
+  // sem teclado físico o atalho não faz sentido; o botão passa a ocupar a direita
+  .hint { display: none; }
 
   .button {
-    align-self: flex-end;
-    padding: 10px 28px;
+    min-height: 40px;
+    margin-left: auto;
+    padding: 0 20px;
   }
 
-  .fotoArea {
-    margin-top: 6px;
-    margin-bottom: 2px;
+  .modeBtn {
+    min-height: 32px;
+    padding: 0 12px;
   }
 
-  .fotoAviso {
-    font-size: 10px;
+  // admin: o anexo ganha a linha inteira em vez de disputar espaço com o toggle
+  .fotoBtn {
+    order: 3;
+    width: 100%;
+    text-align: center;
+  }
+
+  .subLine {
+    min-height: 16px;
+    margin-top: 4px;
+    font-size: 11px;
   }
 }

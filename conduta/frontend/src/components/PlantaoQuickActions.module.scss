@@ -133,6 +133,15 @@
   margin-top: 0.85rem;
 }
 
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .searchLabel {
   display: block;
   margin-bottom: 0.35rem;
@@ -234,61 +243,33 @@
   text-align: center;
 }
 
+// No mobile este painel não fica mais no topo do caso: o Dashboard o renderiza
+// dentro do bottom sheet de acesso rápido, onde ele é só o corpo (sem summary).
 @media (max-width: 768px) {
-  // no mobile o painel deixa de ser card: a faixa fechada pertence ao bloco de
-  // navegação escuro do topo, e o conteúdo cai como uma folha clara abaixo dela
-  .panel {
-    margin: 0;
-    padding: 0 0.9rem;
-    border: 0;
-    border-radius: 0;
-    background: $color-sidebar-elevated;
-    box-shadow: none;
-  }
-
-  .header {
-    min-height: 44px;
-    padding: 0.5rem 0;
-
-    &::after { color: $color-text-sidebar; }
-
-    &:focus-visible { outline-color: $color-text-sidebar; }
-  }
-
-  .title {
-    color: white;
-    font-size: 0.85rem;
-  }
-
-  // faixa fechada é uma linha só: rótulo + chevron
-  .eyebrow {
-    position: absolute;
-    overflow: hidden;
-    width: 1px;
-    height: 1px;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  .actions { margin-top: 0; }
-
-  // sem teclado físico: dicas de atalho não fazem sentido
+  // sem teclado físico as dicas de atalho não fazem sentido
   .hint,
   .searchControl kbd { display: none; }
 
-  // aberta, a folha rola por dentro em vez de empurrar o caso para fora da tela
-  .body {
-    max-height: 46vh;
-    margin: 0 -0.9rem;
-    padding: 0.85rem 0.9rem;
-    border-bottom: 1px solid $color-border;
-    background: $color-surface;
-    overflow-y: auto;
-    overscroll-behavior: contain;
+  .actions {
+    margin-top: 0;
+    grid-template-columns: 1fr;
   }
+
+  .action {
+    justify-content: flex-start;
+    min-height: 48px;
+    padding: 0 0.9rem;
+    font-size: $font-size-base;
+  }
+
+  .results { grid-template-columns: 1fr; }
+
+  .result { min-height: 48px; }
+
+  .searchInput { font-size: 16px; } // evita o zoom automático do iOS ao focar
 }
 
-@media (max-width: 620px) {
+@media (min-width: 769px) and (max-width: 900px) {
   .actions,
   .results { grid-template-columns: 1fr; }
 }

@@ -1,0 +1,155 @@
+@use '../styles/variables' as *;
+
+@keyframes sheetFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes sheetRise {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(16, 24, 32, 0.5);
+  animation: sheetFade 180ms $ease-out-quart both;
+}
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 82dvh;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  border-radius: 18px 18px 0 0;
+  background: $color-surface;
+  box-shadow: 0 -8px 32px rgba(16, 24, 32, 0.24);
+  // `backwards` e não `both`: um transform que persiste faz deste elemento o
+  // bloco de contenção de qualquer position:fixed dentro dele — era o que
+  // prendia o modal de ferramenta clínica dentro do sheet em vez da viewport
+  animation: sheetRise 260ms $ease-out-expo backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .sheet { animation: none; }
+}
+
+.grabber {
+  width: 36px;
+  height: 4px;
+  margin: 8px auto 0;
+  border-radius: 2px;
+  background: $color-border;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 18px 6px;
+}
+
+.title {
+  margin: 0;
+  font-size: $font-size-lg;
+  font-weight: 700;
+  color: $color-text-primary;
+}
+
+.close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  margin-right: -6px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: $color-text-secondary;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: $color-bg;
+    color: $color-text-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+.body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 18px 18px;
+}
+
+.section + .section {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid $color-border;
+}
+
+.sectionLabel {
+  margin: 0 0 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $color-text-muted;
+}
+
+// Linhas de texto puro: mesmo formato das ferramentas clínicas, sem quadradinho
+// de ícone competindo com o rótulo — o rótulo já diz o que o botão faz.
+.item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: $border-radius;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover:not(:disabled) { background: $color-bg; }
+  &:active:not(:disabled) { background: $color-accent-subtle; }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+}
+
+.itemLabel {
+  font-size: $font-size-base;
+  font-weight: 500;
+  color: $color-text-primary;
+}
+
+.itemHint {
+  font-size: 12px;
+  line-height: 1.35;
+  color: $color-text-muted;
+}

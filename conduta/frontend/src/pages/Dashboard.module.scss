@@ -90,109 +90,136 @@
   }
 }
 
-// Mobile header — hidden on desktop
-.mobileHeader {
-  display: none;
-}
-
-// Overlay — hidden on desktop
-.overlay {
-  display: none;
-}
-
-// Hamburger spans (estrutura base, sem estilo visível no desktop)
-.hamburger {
+// Mobile header, overlay e botões de ícone — inexistentes no desktop
+.mobileHeader,
+.overlay,
+.iconBtn,
+.mobileError {
   display: none;
 }
 
 @media (max-width: 768px) {
-  .sessionHeader {
-    padding: 8px 14px;
-    gap: 8px;
-  }
-
-  .sessionTitle {
-    font-size: 0.82rem;
-  }
-
-  .pdfBtn {
-    font-size: 0.72rem;
-    padding: 0.25rem 0.65rem;
-  }
-
-  .footerRow {
-    padding: 6px 14px;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .footerLinks {
-    display: none;
-  }
-
-  .footerDisclaimer {
-    font-size: 10px;
-  }
-
-  .entitiesToggle {
-    padding: 0.4rem 14px;
-  }
-
+  // ── Barra única do topo ───────────────────────────────────────
   .mobileHeader {
     display: flex;
     align-items: center;
-    gap: 14px;
-    height: 52px;
-    padding: 0 16px;
+    gap: 2px;
+    height: 56px;
+    padding: 0 6px 0 4px;
+    padding-top: env(safe-area-inset-top, 0);
     background: $color-sidebar;
     flex-shrink: 0;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 6px rgba(16, 24, 32, 0.25);
     z-index: 10;
+  }
+
+  .mobileBrand,
+  .mobileTitle {
+    flex: 1;
+    min-width: 0;
+    margin: 0 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: white;
   }
 
   .mobileBrand {
     font-size: 15px;
     font-weight: 700;
     letter-spacing: 3px;
-    color: white;
     text-transform: uppercase;
   }
 
-  .hamburger {
+  .mobileTitle {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .iconBtn {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    gap: 5px;
+    flex-shrink: 0;
     width: 44px;
     height: 44px;
-    padding: 10px;
-    border-radius: 6px;
+    border: none;
+    border-radius: 10px;
     background: transparent;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 20px;
+    line-height: 1;
     cursor: pointer;
-    flex-shrink: 0;
     transition: background 0.15s;
 
-    &:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
+    &:active { background: rgba(255, 255, 255, 0.12); }
 
-    span {
-      display: block;
-      height: 2px;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 2px;
-      transition: opacity 0.15s;
+    &:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.7);
+      outline-offset: -3px;
     }
+  }
+
+  // sem teclado físico o atalho não faz sentido
+  .emptyHint { display: none; }
+
+  // ── Rodapé ─────────────────────────────────────────────────────
+  // Só o contador de uso sobra aqui. O aviso legal continua sob cada
+  // resposta (AnalysisResult) e por extenso no sheet de ações, então
+  // truncá-lo numa faixa de 10px seria pior do que não repeti-lo.
+  .footerRow {
+    justify-content: center;
+    padding: 5px 14px calc(5px + env(safe-area-inset-bottom, 0px));
+    flex-wrap: nowrap;
+  }
+
+  .footerLinks,
+  .footerDisclaimer { display: none; }
+
+  .mobileError {
+    display: block;
+    flex-shrink: 0;
+    padding: 8px 14px;
+    background: $color-danger-bg;
+    border-top: 1px solid $color-danger-border;
+    color: $color-danger-text;
+    font-size: 0.8rem;
+  }
+
+  .bannerAviso,
+  .bannerCritico {
+    padding: 8px 14px;
+    font-size: 0.76rem;
   }
 
   .overlay {
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(16, 24, 32, 0.45);
     z-index: 99;
-    backdrop-filter: blur(1px);
+  }
+}
+
+// ── Conteúdo que só existe dentro do bottom sheet ────────────────
+.sheetDisclaimer {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: $color-text-secondary;
+}
+
+.sheetLinks {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: $color-text-muted;
+
+  a {
+    color: $color-accent;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
   }
 }
 
@@ -301,10 +328,14 @@
 .entitiesBodyInner {
   overflow: hidden;
   min-height: 0;
+  padding: 0 1.25rem 0.75rem;
 }
 
+// sem padding próprio: quem posiciona é o painel ou o bottom sheet
 .entitiesBody {
-  padding: 0 1.25rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 @keyframes tagIn {
@@ -314,16 +345,18 @@
 
 .entitiesGroup {
   margin-bottom: 0.5rem;
+
+  & + & { margin-top: 0.35rem; }
 }
 
+// Nível abaixo do rótulo da seção: caixa normal, para as duas linhas de
+// microtexto não brigarem por atenção quando o painel vira sheet.
 .entitiesLabel {
   display: block;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   color: $color-text-muted;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.35rem;
 }
 
 .entitiesTags {

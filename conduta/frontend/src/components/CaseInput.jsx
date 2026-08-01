@@ -1,7 +1,14 @@
 import { useState, useRef, useMemo, useEffect } from 'react';
 import { analyzeCase, classificarLesao } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import useMediaQuery from '../utils/useMediaQuery';
 import styles from './CaseInput.module.scss';
+
+// label = o que aparece (discreto); name = o que o leitor de tela e o tooltip dizem
+const MODES = [
+  { id: 'rapida', label: 'Rápida', name: 'Conduta rápida', hint: 'Resposta objetiva para casos simples' },
+  { id: 'completa', label: 'Completa', name: 'Análise completa', hint: 'Hipóteses, raciocínio, conduta e alertas' },
+];
 
 export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, onAnalysisDone, onUsageUpdate, onSessionMsgCount }) {
   const { user } = useAuth();
@@ -15,6 +22,8 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
     return saved === 'rapida' ? 'rapida' : 'completa';
   });
   const fileInputRef = useRef(null);
+  const textareaRef = useRef(null);
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const fotoUrl = useMemo(() => (foto ? URL.createObjectURL(foto) : null), [foto]);
 
@@ -23,6 +32,15 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
       if (fotoUrl) URL.revokeObjectURL(fotoUrl);
     };
   }, [fotoUrl]);
+
+  // cresce com o texto até o teto do CSS; vazio volta ao min-height do CSS,
+  // senão o placeholder longo reservaria três linhas de tela sem nada escrito
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = '';
+    if (content) el.style.height = `${el.scrollHeight}px`;
+  }, [content]);
 
   const isPro = user?.role === 'admin';
   const limitReached = usage && usage.limit !== null && usage.used >= usage.limit;
@@ -84,6 +102,8 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
     ? 'Analisando...'
     : null;
 
+  const activeHint = MODES.find((m) => m.id === mode)?.hint;
+
   return (
     <div className={styles.container} data-coachmark="case-input">
       {limitReached && (
@@ -94,42 +114,12 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
           </a>
         </div>
       )}
-      <div className={styles.topRow}>
-        <span className={styles.label}>Caso clínico</span>
-        <div className={styles.modeToggle} role="radiogroup" aria-label="Modo de análise">
-          <button
-            type="button"
-            role="radio"
-            aria-checked={mode === 'rapida'}
-            className={`${styles.modeBtn}${mode === 'rapida' ? ` ${styles.modeBtnActive}` : ''}`}
-            onClick={() => handleModeChange('rapida')}
-            disabled={analyzing}
-          >
-            Conduta rápida
-          </button>
-          <button
-            type="button"
-            role="radio"
-            aria-checked={mode === 'completa'}
-            className={`${styles.modeBtn}${mode === 'completa' ? ` ${styles.modeBtnActive}` : ''}`}
-            onClick={() => handleModeChange('completa')}
-            disabled={analyzing}
-          >
-            Análise completa
-          </button>
-        </div>
-        <span className={styles.modeHint}>
-          {mode === 'rapida'
-            ? 'Resposta objetiva para casos simples'
-            : 'Hipóteses, raciocínio, conduta e alertas'}
-        </span>
-        <span className={styles.hint}>
-          <kbd className={styles.kbd}>Ctrl+Enter</kbd> envia
-        </span>
-      </div>
       <form onSubmit={handleSubmit}>
-        <div className={styles.inputRow}>
+        <div className={`${styles.composer}${analyzing || limitReached ? ` ${styles.composerDisabled}` : ''}`}>
+          <label className={styles.srOnly} htmlFor="case-textarea">Caso clínico</label>
           <textarea
+            id="case-textarea"
+            ref={textareaRef}
             className={styles.textarea}
             value={content}
             onChange={(e) => setContent(e.target.value)}
@@ -139,67 +129,95 @@ export default function CaseInput({ sessionId, usage, onAnalysisStart, onChunk, 
                 submitCase();
               }
             }}
-            placeholder="Descreva o caso como escreveria num prontuário — idade, queixa principal, sinais vitais, tempo de evolução, comorbidades..."
+            rows={2}
+            // no mobile o placeholder longo ocupava três linhas de tela antes de
+            // qualquer texto; a versão curta ensina o mesmo formato em duas
+            placeholder={isMobile
+              ? 'Idade, queixa, sinais vitais, evolução...'
+              : 'Descreva o caso como escreveria num prontuário — idade, queixa principal, sinais vitais, tempo de evolução, comorbidades...'}
             disabled={analyzing || limitReached}
           />
-          <button
-            type="submit"
-            className={styles.button}
-            disabled={!content.trim() || analyzing || limitReached}
-          >
-            {classificando ? 'Classificando...' : analyzing ? 'Analisando...' : 'Analisar'}
-          </button>
-        </div>
-        {isPro && (
-          <div className={styles.fotoArea}>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png"
-              className={styles.fotoInput}
-              onChange={handleFotoChange}
-            />
-            {foto ? (
-              <div className={styles.fotoPreview}>
-                <img
-                  src={fotoUrl}
-                  alt="Preview da lesão"
-                  className={styles.fotoThumb}
-                />
-                <span className={styles.fotoNome}>{foto.name}</span>
+
+          {isPro && (
+            <div className={styles.fotoArea}>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png"
+                className={styles.fotoInput}
+                onChange={handleFotoChange}
+              />
+              {foto && (
+                <div className={styles.fotoPreview}>
+                  <img src={fotoUrl} alt="Preview da lesão" className={styles.fotoThumb} />
+                  <span className={styles.fotoNome}>{foto.name}</span>
+                  <button
+                    type="button"
+                    className={styles.fotoRemover}
+                    onClick={() => setFoto(null)}
+                    aria-label="Remover foto"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className={styles.bar}>
+            <div className={styles.modeToggle} role="radiogroup" aria-label="Modo de análise">
+              {MODES.map((m) => (
                 <button
+                  key={m.id}
                   type="button"
-                  className={styles.fotoRemover}
-                  onClick={() => setFoto(null)}
-                >
-                  ✕
-                </button>
-              </div>
-            ) : (
-              <div className={styles.fotoRow}>
-                <button
-                  type="button"
-                  className={styles.fotoBtn}
-                  onClick={() => fileInputRef.current?.click()}
+                  role="radio"
+                  aria-checked={mode === m.id}
+                  aria-label={m.name}
+                  title={`${m.name}: ${m.hint}`}
+                  className={`${styles.modeBtn}${mode === m.id ? ` ${styles.modeBtnActive}` : ''}`}
+                  onClick={() => handleModeChange(m.id)}
                   disabled={analyzing}
                 >
-                  Anexar foto de lesão de pele
+                  {m.label}
                 </button>
-                <span className={styles.fotoAviso}>
-                  Apenas lesões cutâneas. Não adequado para radiografias ou outras imagens médicas.
-                </span>
-              </div>
+              ))}
+            </div>
+
+            {isPro && !foto && (
+              <button
+                type="button"
+                className={styles.fotoBtn}
+                onClick={() => fileInputRef.current?.click()}
+                disabled={analyzing}
+                title="Apenas lesões cutâneas. Não adequado para radiografias ou outras imagens médicas."
+              >
+                <span aria-hidden="true">⊕</span> Anexar foto de lesão de pele
+              </button>
             )}
+
+            <span className={styles.hint}>
+              <kbd className={styles.kbd}>Ctrl+Enter</kbd> envia
+            </span>
+
+            <button
+              type="submit"
+              className={styles.button}
+              disabled={!content.trim() || analyzing || limitReached}
+            >
+              {classificando ? 'Classificando...' : analyzing ? 'Analisando...' : 'Analisar'}
+            </button>
           </div>
-        )}
-        {(error || statusText) && (
-          <div className={styles.statusLine}>
-            {error
-              ? <span className={styles.errorText} role="alert">{error}</span>
-              : <span className={styles.progress}>{statusText}</span>
-            }
-          </div>
-        )}
+        </div>
+
+        <div className={styles.subLine}>
+          {error ? (
+            <span className={styles.errorText} role="alert">{error}</span>
+          ) : statusText ? (
+            <span className={styles.progress}>{statusText}</span>
+          ) : (
+            <span className={styles.modeHint}>{activeHint}</span>
+          )}
+        </div>
       </form>
     </div>
   );
