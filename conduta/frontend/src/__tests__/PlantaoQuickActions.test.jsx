@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
@@ -50,12 +50,10 @@ describe('PlantaoQuickActions', () => {
     expect(screen.getByRole('status')).toHaveTextContent(/nenhum protocolo ou calculadora/i);
   });
 
-  it('foca a busca com barra ou Ctrl/Cmd+K fora de campos editáveis', () => {
-    renderQuickActions();
-    const search = screen.getByRole('searchbox', { name: /buscar ferramenta/i });
+  // o atalho "/" e Ctrl+K vive no Dashboard, que é quem abre esta superfície
+  it('foca a busca ao ser aberta como paleta de comando', () => {
+    render(<PlantaoQuickActions onNewCase={vi.fn()} autoFocusSearch />);
 
-    fireEvent.keyDown(document, { key: '/' });
-
-    expect(search).toHaveFocus();
+    expect(screen.getByRole('searchbox', { name: /buscar ferramenta/i })).toHaveFocus();
   });
 });

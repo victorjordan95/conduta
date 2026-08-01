@@ -13,10 +13,9 @@ describe('ClinicalToolsPanel', () => {
     vi.clearAllMocks();
   });
 
-  it('exibe as quatro ferramentas de revisão ao expandir', () => {
+  it('exibe as quatro ferramentas de revisão', () => {
     render(<ClinicalToolsPanel sessionId="sess-1" hasAnalysis />);
 
-    fireEvent.click(screen.getByRole('button', { name: /Ferramentas clínicas/i }));
 
     expect(screen.getByRole('button', { name: /Perguntas que podem mudar/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Comparar evolução/i })).toBeInTheDocument();
@@ -28,7 +27,6 @@ describe('ClinicalToolsPanel', () => {
     generateClinicalTool.mockResolvedValue({ result: '## Revisão\nConfira a função renal.' });
     render(<ClinicalToolsPanel sessionId="sess-1" hasAnalysis />);
 
-    fireEvent.click(screen.getByRole('button', { name: /Ferramentas clínicas/i }));
     fireEvent.click(screen.getByRole('button', { name: /Revisão medicamentosa/i }));
     fireEvent.change(screen.getByLabelText(/Medicamentos em uso/i), {
       target: { value: 'metformina' },

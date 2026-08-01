@@ -90,68 +90,129 @@
   }
 }
 
-// Mobile header, overlay e botões de ícone — inexistentes no desktop
-.mobileHeader,
-.overlay,
-.iconBtn,
-.mobileError {
+// ── Barra única do topo ─────────────────────────────────────────
+// Mesma estrutura nos dois tamanhos: identidade do caso à esquerda, busca e
+// ações à direita. Muda a pele — clara e discreta ao lado da sidebar no
+// desktop, escura e com o menu no mobile, onde a sidebar não está visível.
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  height: 52px;
+  padding: 0 14px;
+  background: $color-surface;
+  border-bottom: 1px solid $color-border;
+  z-index: 10;
+}
+
+.barTitle,
+.barBrand {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: $color-text-primary;
+}
+
+// no desktop a sidebar já carrega a marca: sem caso aberto, a barra fica muda
+.barBrand {
+  visibility: hidden;
+}
+
+.barBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: $color-text-secondary;
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  svg { width: 17px; height: 17px; }
+
+  &:hover {
+    background: $color-bg;
+    border-color: $color-border;
+    color: $color-text-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 1px;
+  }
+}
+
+// hambúrguer e overlay só existem enquanto a sidebar for gaveta
+.menuBtn,
+.overlay {
   display: none;
 }
 
+.barError {
+  flex-shrink: 0;
+  padding: 8px 20px;
+  background: $color-danger-bg;
+  border-top: 1px solid $color-danger-border;
+  color: $color-danger-text;
+  font-size: 0.8rem;
+}
+
 @media (max-width: 768px) {
-  // ── Barra única do topo ───────────────────────────────────────
-  .mobileHeader {
-    display: flex;
-    align-items: center;
+  .topBar {
     gap: 2px;
     height: 56px;
     padding: 0 6px 0 4px;
     padding-top: env(safe-area-inset-top, 0);
     background: $color-sidebar;
-    flex-shrink: 0;
+    border-bottom: none;
     box-shadow: 0 1px 6px rgba(16, 24, 32, 0.25);
-    z-index: 10;
   }
 
-  .mobileBrand,
-  .mobileTitle {
-    flex: 1;
-    min-width: 0;
+  .barTitle,
+  .barBrand {
     margin: 0 6px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 15px;
     color: white;
   }
 
-  .mobileBrand {
-    font-size: 15px;
+  .barBrand {
+    visibility: visible;
     font-weight: 700;
     letter-spacing: 3px;
     text-transform: uppercase;
   }
 
-  .mobileTitle {
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0;
-  }
-
-  .iconBtn {
+  // no toque o alvo vale mais que o rótulo: sobra o ícone em 44px
+  .menuBtn,
+  .barBtn {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    gap: 0;
     width: 44px;
     height: 44px;
+    padding: 0;
     border: none;
     border-radius: 10px;
     background: transparent;
     color: rgba(255, 255, 255, 0.88);
-    font-size: 20px;
-    line-height: 1;
     cursor: pointer;
-    transition: background 0.15s;
+
+    svg { width: 21px; height: 21px; }
+
+    &:hover { background: transparent; }
 
     &:active { background: rgba(255, 255, 255, 0.12); }
 
@@ -161,7 +222,9 @@
     }
   }
 
-  // sem teclado físico o atalho não faz sentido
+  .barBtnLabel { display: none; }
+
+  // sem teclado físico os atalhos não fazem sentido
   .emptyHint { display: none; }
 
   // ── Rodapé ─────────────────────────────────────────────────────
@@ -177,14 +240,8 @@
   .footerLinks,
   .footerDisclaimer { display: none; }
 
-  .mobileError {
-    display: block;
-    flex-shrink: 0;
+  .barError {
     padding: 8px 14px;
-    background: $color-danger-bg;
-    border-top: 1px solid $color-danger-border;
-    color: $color-danger-text;
-    font-size: 0.8rem;
   }
 
   .bannerAviso,
@@ -223,115 +280,7 @@
   }
 }
 
-// ── Session Header ──────────────────────────────────────────────
-.sessionHeader {
-  display: flex;
-  align-items: center;
-  padding: 13px 20px;
-  border-bottom: 1px solid $color-border;
-  gap: 1rem;
-  flex-shrink: 0;
-  background: $color-surface;
-}
-
-.sessionTitle {
-  flex: 1;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: $color-text-primary;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.pdfError {
-  flex-shrink: 0;
-  font-size: 0.72rem;
-  color: $color-danger;
-  white-space: nowrap;
-}
-
-.pdfBtn {
-  flex-shrink: 0;
-  padding: 0.3rem 0.85rem;
-  border: 1px solid $color-border;
-  border-radius: 4px;
-  background: white;
-  font-size: 0.78rem;
-  cursor: pointer;
-  color: $color-text-secondary;
-  white-space: nowrap;
-  transition: background 0.15s, color 0.15s, transform 0.1s $ease-out-quart;
-
-  &:hover {
-    background: $color-bg;
-    color: $color-text-primary;
-  }
-
-  &:active:not(:disabled) {
-    transform: scale(0.95);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: default;
-  }
-}
-
-// ── Entities Panel ──────────────────────────────────────────────
-.entitiesPanel {
-  flex-shrink: 0;
-  border-top: 1px solid $color-border;
-  background: $color-bg-subtle;
-}
-
-.entitiesToggle {
-  width: 100%;
-  text-align: left;
-  padding: 0.45rem 1.25rem;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 0.78rem;
-  color: $color-text-secondary;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  transition: color 0.15s;
-
-  &:hover {
-    color: $color-text-primary;
-  }
-}
-
-.entitiesChevron {
-  display: inline-block;
-  transition: transform 220ms $ease-out-quart;
-  line-height: 1;
-}
-
-.entitiesChevronOpen {
-  transform: rotate(-180deg);
-}
-
-// Grid-based expand/collapse — no JS height measurement needed
-.entitiesBodyWrapper {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 220ms $ease-out-quart;
-}
-
-.entitiesBodyWrapperOpen {
-  grid-template-rows: 1fr;
-}
-
-.entitiesBodyInner {
-  overflow: hidden;
-  min-height: 0;
-  padding: 0 1.25rem 0.75rem;
-}
-
-// sem padding próprio: quem posiciona é o painel ou o bottom sheet
+// ── Achados identificados (dentro do Sheet de ações) ────────────
 .entitiesBody {
   display: flex;
   flex-direction: column;

@@ -1,83 +1,17 @@
 @use '../styles/variables' as *;
 
-.panel {
-  flex-shrink: 0;
-  margin: 1rem 1.25rem 0;
-  padding: 1rem;
-  border: 1px solid $color-border;
-  border-radius: $border-radius;
-  background: $color-surface;
-  box-shadow: $shadow-sm;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
-  list-style: none;
-
-  &::-webkit-details-marker { display: none; }
-
-  &:focus-visible {
-    outline: 2px solid $color-accent;
-    outline-offset: 3px;
-    border-radius: 3px;
-  }
-
-  // chevron: mesma linguagem do painel "Achados identificados"
-  &::after {
-    content: '▾';
-    flex-shrink: 0;
-    color: $color-text-muted;
-    font-size: 0.75rem;
-    transition: transform 0.18s $ease-out-quart;
-  }
-
-  [open] > &::after { transform: rotate(180deg); }
-}
-
-.headerText {
-  display: flex;
-  min-width: 0;
-  flex: 1;
-  flex-direction: column;
-}
-
 .body {
-  animation: revealBody 0.18s $ease-out-quart both;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
 }
 
-@keyframes revealBody {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .body { animation: none; }
-  .header::after { transition: none; }
-}
-
-.eyebrow,
-.resultType,
-.searchLabel {
-  color: $color-accent;
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.title {
-  margin: 0.15rem 0 0;
-  color: $color-text-primary;
-  font-size: 1rem;
-  font-weight: 800;
-}
-
-.hint {
-  color: $color-text-muted;
-  font-size: 0.7rem;
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
   white-space: nowrap;
 }
 
@@ -85,7 +19,6 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.5rem;
-  margin-top: 0.8rem;
 }
 
 .action {
@@ -94,6 +27,7 @@
   justify-content: center;
   gap: 0.4rem;
   min-width: 0;
+  min-height: 40px;
   padding: 0.55rem 0.65rem;
   border: 1px solid $color-border;
   border-radius: $border-radius;
@@ -129,26 +63,6 @@
   }
 }
 
-.search {
-  margin-top: 0.85rem;
-}
-
-.srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-.searchLabel {
-  display: block;
-  margin-bottom: 0.35rem;
-  color: $color-text-muted;
-  font-size: 0.62rem;
-}
-
 .searchControl {
   display: flex;
   align-items: center;
@@ -163,15 +77,6 @@
     border-color: $color-accent;
     box-shadow: 0 0 0 3px rgba(26, 107, 115, 0.12);
   }
-
-  kbd {
-    padding: 1px 5px;
-    border: 1px solid $color-border;
-    border-radius: 3px;
-    color: $color-text-muted;
-    font-family: 'Courier New', monospace;
-    font-size: 0.68rem;
-  }
 }
 
 .searchIcon {
@@ -182,7 +87,7 @@
 .searchInput {
   width: 100%;
   min-width: 0;
-  padding: 0.55rem 0;
+  padding: 0.6rem 0;
   border: 0;
   outline: 0;
   color: $color-text-primary;
@@ -195,33 +100,37 @@
 .results {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
-  margin-top: 0.75rem;
+  gap: 0.25rem;
 }
 
 .result {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: 0.2rem;
-  padding: 0.55rem 0.65rem;
-  border: 1px solid transparent;
+  justify-content: center;
+  gap: 0.15rem;
+  min-height: 44px;
+  padding: 0.45rem 0.6rem;
   border-radius: $border-radius;
   color: inherit;
   text-decoration: none;
+  transition: background 0.15s;
 
-  &:hover {
-    border-color: $color-border;
-    background: $color-bg-subtle;
-  }
+  &:hover { background: $color-bg; }
 
   &:focus-visible {
     outline: 2px solid $color-accent;
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
 }
 
-.resultType { color: $color-text-muted; font-size: 0.58rem; }
+.resultType {
+  color: $color-text-muted;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 
 .resultTitle {
   overflow: hidden;
@@ -234,7 +143,6 @@
 }
 
 .empty {
-  margin-top: 0.75rem;
   padding: 0.65rem;
   border-radius: $border-radius;
   background: $color-bg-subtle;
@@ -243,15 +151,8 @@
   text-align: center;
 }
 
-// No mobile este painel não fica mais no topo do caso: o Dashboard o renderiza
-// dentro do bottom sheet de acesso rápido, onde ele é só o corpo (sem summary).
 @media (max-width: 768px) {
-  // sem teclado físico as dicas de atalho não fazem sentido
-  .hint,
-  .searchControl kbd { display: none; }
-
   .actions {
-    margin-top: 0;
     grid-template-columns: 1fr;
   }
 
@@ -267,9 +168,4 @@
   .result { min-height: 48px; }
 
   .searchInput { font-size: 16px; } // evita o zoom automático do iOS ao focar
-}
-
-@media (min-width: 769px) and (max-width: 900px) {
-  .actions,
-  .results { grid-template-columns: 1fr; }
 }

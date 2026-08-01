@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { generateClinicalTool } from '../services/api';
@@ -19,9 +20,7 @@ const EMPTY_DETAILS = {
   otherFactors: '',
 };
 
-export default function ClinicalToolsPanel({ sessionId, hasAnalysis, variant = 'panel' }) {
-  const [open, setOpen] = useState(false);
-  const inSheet = variant === 'sheet';
+export default function ClinicalToolsPanel({ sessionId, hasAnalysis }) {
   const [selectedTool, setSelectedTool] = useState(null);
   const [details, setDetails] = useState(EMPTY_DETAILS);
   const [result, setResult] = useState('');
@@ -61,45 +60,19 @@ export default function ClinicalToolsPanel({ sessionId, hasAnalysis, variant = '
   const selectedLabel = TOOLS.find((tool) => tool.id === selectedTool)?.label || '';
 
   return (
-    <section className={inSheet ? styles.sheetPanel : styles.panel} aria-label="Ferramentas de revisão clínica">
-      {inSheet ? (
-        <div className={styles.sheetActions}>
-          {TOOLS.map((tool) => (
-            <button key={tool.id} type="button" className={styles.sheetToolButton} onClick={() => openTool(tool.id)}>
-              {tool.label}
-            </button>
-          ))}
-        </div>
-      ) : (
-        <>
-          <button
-            type="button"
-            className={styles.toggle}
-            onClick={() => setOpen((prev) => !prev)}
-            aria-expanded={open}
-            aria-controls="clinical-tools-body"
-          >
-            <span aria-hidden="true" className={`${styles.chevron}${open ? ` ${styles.chevronOpen}` : ''}`}>▾</span>
-            Ferramentas clínicas
+    <section className={styles.panel} aria-label="Ferramentas de revisão clínica">
+      <div className={styles.actions}>
+        {TOOLS.map((tool) => (
+          <button key={tool.id} type="button" className={styles.toolButton} onClick={() => openTool(tool.id)}>
+            {tool.label}
           </button>
-          <div
-            id="clinical-tools-body"
-            className={`${styles.bodyWrapper}${open ? ` ${styles.bodyWrapperOpen}` : ''}`}
-          >
-            <div className={styles.bodyInner}>
-              <div className={styles.actions}>
-                {TOOLS.map((tool) => (
-                  <button key={tool.id} type="button" className={styles.toolButton} onClick={() => openTool(tool.id)}>
-                    {tool.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+        ))}
+      </div>
 
-      {selectedTool && (
+      {/* portal para o body: o Sheet que hospeda estes botões anima com
+          transform, e um ancestral com transform vira bloco de contenção de
+          position:fixed — a ferramenta abriria dentro do sheet, não na tela */}
+      {selectedTool && createPortal(
         <div className={styles.backdrop} role="presentation" onMouseDown={closeTool}>
           <div
             className={styles.modal}
@@ -163,7 +136,8 @@ export default function ClinicalToolsPanel({ sessionId, hasAnalysis, variant = '
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </section>
   );

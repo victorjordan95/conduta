@@ -10,34 +10,88 @@
   to   { transform: translateY(0); }
 }
 
+@keyframes sheetDrop {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .backdrop {
   position: fixed;
   inset: 0;
   z-index: 250;
   display: flex;
+}
+
+.surface {
+  display: flex;
+  flex-direction: column;
+  background: $color-surface;
+}
+
+// ── bottom: bottom sheet do mobile ──────────────────────────────
+.bottom {
   align-items: flex-end;
   background: rgba(16, 24, 32, 0.5);
   animation: sheetFade 180ms $ease-out-quart both;
+
+  .surface {
+    width: 100%;
+    max-height: 82dvh;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -8px 32px rgba(16, 24, 32, 0.24);
+    // `both`: se a animação não chegar a rodar (aba em segundo plano, por
+    // exemplo) o estado final ainda é o correto. O transform que sobra faria
+    // deste elemento o bloco de contenção de position:fixed aninhado — por
+    // isso o modal de ferramenta clínica vai para um portal no body.
+    animation: sheetRise 260ms $ease-out-expo both;
+  }
 }
 
-.sheet {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-height: 82dvh;
-  padding-bottom: env(safe-area-inset-bottom, 0);
-  border-radius: 18px 18px 0 0;
-  background: $color-surface;
-  box-shadow: 0 -8px 32px rgba(16, 24, 32, 0.24);
-  // `backwards` e não `both`: um transform que persiste faz deste elemento o
-  // bloco de contenção de qualquer position:fixed dentro dele — era o que
-  // prendia o modal de ferramenta clínica dentro do sheet em vez da viewport
-  animation: sheetRise 260ms $ease-out-expo backwards;
+// ── center: paleta de comando do desktop ────────────────────────
+.center {
+  align-items: flex-start;
+  justify-content: center;
+  padding: 12vh 1rem 1rem;
+  background: rgba(16, 24, 32, 0.42);
+  animation: sheetFade 160ms $ease-out-quart both;
+
+  .surface {
+    width: min(100%, 560px);
+    max-height: 70vh;
+    border-radius: 14px;
+    box-shadow: 0 24px 60px rgba(16, 24, 32, 0.28);
+    animation: sheetDrop 180ms $ease-out-quart both;
+  }
+
+  .grabber { display: none; }
+}
+
+// ── anchor: menu suspenso preso ao botão que o abriu ────────────
+.anchor {
+  background: transparent;
+
+  .surface {
+    position: absolute;
+    width: min(calc(100vw - 2rem), 340px);
+    max-height: min(70vh, 560px);
+    border: 1px solid $color-border;
+    border-radius: 12px;
+    box-shadow: 0 18px 44px rgba(16, 24, 32, 0.18);
+    animation: sheetDrop 160ms $ease-out-quart both;
+  }
+
+  // o botão que abriu já diz "Ações": repetir o título aqui é ruído em cima
+  // do primeiro rótulo de seção
+  .grabber,
+  .header { display: none; }
+
+  .body { padding: 10px 12px 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .backdrop,
-  .sheet { animation: none; }
+  .surface { animation: none; }
 }
 
 .grabber {
@@ -53,7 +107,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 18px 6px;
+  padding: 12px 18px 6px;
 }
 
 .title {
@@ -97,13 +151,13 @@
 }
 
 .section + .section {
-  margin-top: 22px;
-  padding-top: 18px;
+  margin-top: 18px;
+  padding-top: 14px;
   border-top: 1px solid $color-border;
 }
 
 .sectionLabel {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -152,4 +206,16 @@
   font-size: 12px;
   line-height: 1.35;
   color: $color-text-muted;
+}
+
+// No menu ancorado as linhas ficam mais compactas: mouse não precisa de 48px
+@media (min-width: 769px) {
+  .anchor {
+    .item {
+      min-height: 38px;
+      padding: 6px 10px;
+    }
+
+    .itemLabel { font-size: $font-size-sm; }
+  }
 }

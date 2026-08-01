@@ -1,24 +1,17 @@
 @use '../styles/variables' as *;
 
+// Vive dentro do Sheet de ações: sem moldura própria, só a lista de linhas.
 .panel {
-  flex-shrink: 0;
-  border-bottom: 1px solid $color-border;
-  background: $color-surface;
-}
-
-// Variante do bottom sheet: sem faixa de toggle, as ferramentas viram linhas
-// de toque com o rótulo inteiro visível.
-.sheetPanel {
   display: contents;
 }
 
-.sheetActions {
+.actions {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.sheetToolButton {
+.toolButton {
   display: flex;
   align-items: center;
   min-height: 48px;
@@ -43,62 +36,15 @@
   }
 }
 
-.toggle {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.6rem 20px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: $color-text-secondary;
-  transition: color 0.15s;
-
-  &:hover,
-  &:focus-visible {
-    color: $color-text-primary;
-    outline: none;
+// no menu ancorado do desktop o mouse não precisa de 48px por linha
+@media (min-width: 769px) {
+  .toolButton {
+    min-height: 38px;
+    padding: 6px 10px;
+    font-size: $font-size-sm;
   }
 }
 
-.chevron {
-  display: inline-block;
-  transition: transform 220ms $ease-out-quart;
-  line-height: 1;
-}
-
-.chevronOpen {
-  transform: rotate(-180deg);
-}
-
-// Grid-based expand/collapse — no JS height measurement needed
-.bodyWrapper {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 220ms $ease-out-quart;
-}
-
-.bodyWrapperOpen {
-  grid-template-rows: 1fr;
-}
-
-.bodyInner {
-  overflow: hidden;
-  min-height: 0;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  padding: 0 20px 0.75rem;
-}
-
-.toolButton,
 .generateButton {
   border: 1px solid $color-border;
   border-radius: 999px;
@@ -110,16 +56,6 @@
   padding: 0.4rem 0.85rem;
   white-space: nowrap;
   transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-}
-
-.toolButton:hover,
-.toolButton:focus-visible,
-.generateButton:hover,
-.generateButton:focus-visible {
-  border-color: $color-accent;
-  background: $color-accent-subtle;
-  color: $color-accent;
-  outline: none;
 }
 
 .backdrop {
@@ -272,15 +208,7 @@
   opacity: 0.65;
 }
 
-@media (max-width: 720px) {
-  .toggle {
-    padding: 0.5rem 14px;
-  }
-
-  .actions {
-    padding: 0 14px 0.65rem;
-  }
-
+@media (max-width: 768px) {
   .footer {
     align-items: stretch;
     flex-direction: column;
