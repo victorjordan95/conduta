@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { getCalculadora } from '../data/calculadoras';
+import SourceVersionCard from '../components/SourceVersionCard';
 import styles from './CalculadoraDetalhe.module.scss';
 
 function normalizarNumero(valor) {
@@ -118,14 +119,17 @@ export default function CalculadoraDetalhe() {
             <p>{calculadora.formula}</p>
           </div>
           <div>
-            <h2>Referência</h2>
-            <p><a href={calculadora.referenciaUrl} target="_blank" rel="noreferrer">{calculadora.referencia}</a></p>
-          </div>
-          <div>
             <h2>Limitações</h2>
             <p>{calculadora.limitacao}</p>
           </div>
         </section>
+
+        <SourceVersionCard
+          referencia={calculadora.referencia}
+          atualizadoEm={calculadora.atualizadoEm}
+          referenciaUrl={calculadora.referenciaUrl}
+          notaSeguranca={calculadora.notaSeguranca}
+        />
 
         <p className={styles.disclaimer}>
           Material de apoio à decisão clínica. Confira os dados e o contexto antes de usar o resultado.

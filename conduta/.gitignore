@@ -3,3 +3,17 @@ node_modules/
 *.log
 dist/
 .superpowers/
+
+# Local planning, product decisions and marketing material are kept outside Git.
+/docs/
+/marketing/
+/.impeccable/
+/frontend/.impeccable/
+*.md
+*.mdx
+*.pdf
+/generate-docs.js
+
+# The repository root has no runtime package; frontend and backend own theirs.
+/package.json
+/package-lock.json

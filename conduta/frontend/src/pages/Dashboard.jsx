@@ -6,6 +6,7 @@ import UsageCounter from '../components/UsageCounter';
 import Coachmark from '../components/Coachmark';
 import ProntuarioModal from '../components/ProntuarioModal';
 import ClinicalToolsPanel from '../components/ClinicalToolsPanel';
+import PlantaoQuickActions from '../components/PlantaoQuickActions';
 import { getSession, createSession, submitFeedback, getUsage, downloadSessionPdf, getSessionEntities, gerarProntuario } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import styles from './Dashboard.module.scss';
@@ -343,6 +344,8 @@ export default function Dashboard() {
           </button>
           <span className={styles.mobileBrand}>Conduta</span>
         </header>
+
+        <PlantaoQuickActions onNewCase={handleCreateNewCase} />
 
         {!activeSessionId ? (
           <div className={styles.empty}>

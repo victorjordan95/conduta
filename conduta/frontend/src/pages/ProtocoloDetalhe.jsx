@@ -2,6 +2,7 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { getProtocolo } from '../data/protocolos';
 import { CATEGORIAS, anoDiretriz } from '../components/CategoriaProtocolo';
+import SourceVersionCard from '../components/SourceVersionCard';
 import styles from './ProtocoloDetalhe.module.scss';
 
 function IconeChevron() {
@@ -119,10 +120,12 @@ export default function ProtocoloDetalhe() {
           </section>
         ))}
 
-        <footer className={styles.referencia}>
-          <span className={styles.referenciaLabel}>Referência</span>
-          <span>{protocolo.referencia}</span>
-        </footer>
+        <SourceVersionCard
+          referencia={protocolo.referencia}
+          atualizadoEm={protocolo.atualizadoEm}
+          referenciaUrl={protocolo.referenciaUrl}
+          notaSeguranca={protocolo.notaSeguranca}
+        />
 
         <p className={styles.disclaimer}>
           Material de apoio à decisão clínica. Não substitui o julgamento do profissional

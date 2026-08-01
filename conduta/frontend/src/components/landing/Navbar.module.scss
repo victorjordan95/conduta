@@ -52,10 +52,6 @@
   align-items: center;
   gap: 24px;
   margin-right: 8px;
-
-  @media (max-width: 480px) {
-    gap: 16px;
-  }
 }
 
 .navLink {
@@ -96,18 +92,22 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
+  .inner {
+    padding: 0 16px;
+  }
+
   .brand {
     font-size: 14px;
     letter-spacing: 0.5px;
   }
 
-  .actions {
-    gap: 10px;
+  .links {
+    display: none;
   }
 
-  .navLink {
-    font-size: 11px;
+  .actions {
+    gap: 10px;
   }
 
   .loginLink {

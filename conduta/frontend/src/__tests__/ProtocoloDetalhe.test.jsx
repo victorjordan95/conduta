@@ -70,4 +70,12 @@ describe('ProtocoloDetalhe', () => {
       unmount();
     });
   });
+
+  it('exibe fonte e última revisão no protocolo', () => {
+    renderDetalhe('sri');
+
+    expect(screen.getByRole('region', { name: /fonte e versão/i })).toBeInTheDocument();
+    expect(screen.getByText(/última revisão editorial/i)).toBeInTheDocument();
+    expect(screen.getByText(/julho de 2026/i)).toBeInTheDocument();
+  });
 });

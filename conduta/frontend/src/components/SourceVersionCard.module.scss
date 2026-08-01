@@ -1,0 +1,65 @@
+@use '../styles/variables' as *;
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  background: $color-surface;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.label,
+.referenceLabel {
+  color: $color-text-muted;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.version {
+  color: $color-text-muted;
+  font-size: 0.72rem;
+}
+
+.reference {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.65rem;
+  color: $color-text-secondary;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.referenceText { flex: 1 1 100%; }
+
+.sourceLink {
+  color: $color-accent;
+  font-size: 0.76rem;
+  font-weight: 700;
+
+  &:hover { color: $color-accent-hover; }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+.note {
+  margin: 0;
+  color: $color-text-muted;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}

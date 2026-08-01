@@ -16,7 +16,7 @@ export default function Navbar() {
         </div>
         <div className={navStyles.actions}>
           <Link to="/login" className={navStyles.loginLink}>Entrar</Link>
-          <Link to="/register" className={navStyles.ctaBtn}>Começar grátis</Link>
+          <Link to="/login" className={navStyles.ctaBtn}>Começar grátis</Link>
         </div>
       </div>
     </nav>
