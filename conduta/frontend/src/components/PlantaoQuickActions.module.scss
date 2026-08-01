@@ -12,9 +12,50 @@
 
 .header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker { display: none; }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  // chevron: mesma linguagem do painel "Achados identificados"
+  &::after {
+    content: '▾';
+    flex-shrink: 0;
+    color: $color-text-muted;
+    font-size: 0.75rem;
+    transition: transform 0.18s $ease-out-quart;
+  }
+
+  [open] > &::after { transform: rotate(180deg); }
+}
+
+.headerText {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.body {
+  animation: revealBody 0.18s $ease-out-quart both;
+}
+
+@keyframes revealBody {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .body { animation: none; }
+  .header::after { transition: none; }
 }
 
 .eyebrow,
@@ -193,8 +234,61 @@
   text-align: center;
 }
 
+@media (max-width: 768px) {
+  // no mobile o painel deixa de ser card: a faixa fechada pertence ao bloco de
+  // navegação escuro do topo, e o conteúdo cai como uma folha clara abaixo dela
+  .panel {
+    margin: 0;
+    padding: 0 0.9rem;
+    border: 0;
+    border-radius: 0;
+    background: $color-sidebar-elevated;
+    box-shadow: none;
+  }
+
+  .header {
+    min-height: 44px;
+    padding: 0.5rem 0;
+
+    &::after { color: $color-text-sidebar; }
+
+    &:focus-visible { outline-color: $color-text-sidebar; }
+  }
+
+  .title {
+    color: white;
+    font-size: 0.85rem;
+  }
+
+  // faixa fechada é uma linha só: rótulo + chevron
+  .eyebrow {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .actions { margin-top: 0; }
+
+  // sem teclado físico: dicas de atalho não fazem sentido
+  .hint,
+  .searchControl kbd { display: none; }
+
+  // aberta, a folha rola por dentro em vez de empurrar o caso para fora da tela
+  .body {
+    max-height: 46vh;
+    margin: 0 -0.9rem;
+    padding: 0.85rem 0.9rem;
+    border-bottom: 1px solid $color-border;
+    background: $color-surface;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
 @media (max-width: 620px) {
-  .panel { margin: 0.75rem 0.85rem 0; }
   .actions,
   .results { grid-template-columns: 1fr; }
 }

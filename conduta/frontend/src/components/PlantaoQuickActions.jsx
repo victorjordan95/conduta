@@ -7,6 +7,8 @@ const INITIAL_RESULTS = 4;
 
 export default function PlantaoQuickActions({ onNewCase }) {
   const [query, setQuery] = useState('');
+  // ponytail: colapsado no mobile (<=768px) para sobrar tela para o caso; aberto no desktop
+  const [open, setOpen] = useState(() => !window.matchMedia?.('(max-width: 768px)')?.matches);
   const searchRef = useRef(null);
   const results = useMemo(
     () => searchClinicalTools(SEARCH_INDEX, query).slice(0, query.trim() ? 8 : INITIAL_RESULTS),
@@ -22,6 +24,7 @@ export default function PlantaoQuickActions({ onNewCase }) {
 
       if (event.key === '/' || ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k')) {
         event.preventDefault();
+        setOpen(true);
         searchRef.current?.focus();
       }
     }
@@ -31,62 +34,68 @@ export default function PlantaoQuickActions({ onNewCase }) {
   }, []);
 
   return (
-    <section className={styles.panel} aria-label="Modo plantão">
-      <div className={styles.header}>
-        <div>
+    <details
+      className={styles.panel}
+      open={open}
+      onToggle={(event) => setOpen(event.currentTarget.open)}
+    >
+      <summary className={styles.header}>
+        <div className={styles.headerText}>
           <span className={styles.eyebrow}>Modo plantão</span>
           <h2 className={styles.title}>Acesso rápido</h2>
         </div>
         <span className={styles.hint}>/ ou Ctrl K</span>
-      </div>
+      </summary>
 
-      <div className={styles.actions}>
-        <button type="button" className={`${styles.action} ${styles.primaryAction}`} onClick={onNewCase}>
-          <span aria-hidden="true">+</span>
-          Novo caso
-        </button>
-        <a className={styles.action} href="/protocolos" aria-label="Protocolos">
-          <span aria-hidden="true">↗</span>
-          Protocolos
-        </a>
-        <a className={styles.action} href="/calculadoras" aria-label="Calculadoras">
-          <span aria-hidden="true">∑</span>
-          Calculadoras
-        </a>
-      </div>
+      <div className={styles.body}>
+        <div className={styles.actions}>
+          <button type="button" className={`${styles.action} ${styles.primaryAction}`} onClick={onNewCase}>
+            <span aria-hidden="true">+</span>
+            Novo caso
+          </button>
+          <a className={styles.action} href="/protocolos" aria-label="Protocolos">
+            <span aria-hidden="true">↗</span>
+            Protocolos
+          </a>
+          <a className={styles.action} href="/calculadoras" aria-label="Calculadoras">
+            <span aria-hidden="true">∑</span>
+            Calculadoras
+          </a>
+        </div>
 
-      <div className={styles.search} role="search">
-        <label className={styles.searchLabel} htmlFor="plantao-search">Buscar ferramenta</label>
-        <div className={styles.searchControl}>
-          <span className={styles.searchIcon} aria-hidden="true">⌕</span>
-          <input
-            ref={searchRef}
-            id="plantao-search"
-            className={styles.searchInput}
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Protocolo ou calculadora..."
-            aria-label="Buscar ferramenta"
-          />
-          <kbd>/</kbd>
+        <div className={styles.search} role="search">
+          <label className={styles.searchLabel} htmlFor="plantao-search">Buscar ferramenta</label>
+          <div className={styles.searchControl}>
+            <span className={styles.searchIcon} aria-hidden="true">⌕</span>
+            <input
+              ref={searchRef}
+              id="plantao-search"
+              className={styles.searchInput}
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Protocolo ou calculadora..."
+              aria-label="Buscar ferramenta"
+            />
+            <kbd>/</kbd>
+          </div>
         </div>
-      </div>
 
-      {results.length > 0 ? (
-        <div className={styles.results} aria-label={query ? 'Resultados da busca' : 'Ferramentas mais usadas'}>
-          {results.map((item) => (
-            <a key={item.id} href={item.href} className={styles.result}>
-              <span className={styles.resultType}>{item.categoriaLabel}</span>
-              <span className={styles.resultTitle}>{item.titulo}</span>
-            </a>
-          ))}
-        </div>
-      ) : (
-        <div className={styles.empty} role="status">
-          Nenhum protocolo ou calculadora encontrado.
-        </div>
-      )}
-    </section>
+        {results.length > 0 ? (
+          <div className={styles.results} aria-label={query ? 'Resultados da busca' : 'Ferramentas mais usadas'}>
+            {results.map((item) => (
+              <a key={item.id} href={item.href} className={styles.result}>
+                <span className={styles.resultType}>{item.categoriaLabel}</span>
+                <span className={styles.resultTitle}>{item.titulo}</span>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div className={styles.empty} role="status">
+            Nenhum protocolo ou calculadora encontrado.
+          </div>
+        )}
+      </div>
+    </details>
   );
 }
