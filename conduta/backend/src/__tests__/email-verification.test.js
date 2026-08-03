@@ -15,6 +15,10 @@ let verifiedUserId;
 let unverifiedUserId;
 let unverifiedToken;
 
+function hashToken(token) {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
+
 beforeAll(async () => {
   require('dotenv').config();
   const hash = await bcrypt.hash('Senha123', 10);
@@ -31,7 +35,7 @@ beforeAll(async () => {
   const r2 = await pool.query(
     `INSERT INTO users (email, nome, senha_hash, email_verified, email_verification_token, email_verification_expires_at)
      VALUES ($1, $2, $3, FALSE, $4, $5) RETURNING id`,
-    ['ev_unverified@conduta.dev', 'Dr. Unverified', hash, unverifiedToken, expires]
+    ['ev_unverified@conduta.dev', 'Dr. Unverified', hash, hashToken(unverifiedToken), expires]
   );
   unverifiedUserId = r2.rows[0].id;
 });
@@ -94,7 +98,7 @@ describe('GET /auth/verify-email', () => {
     const freshToken = crypto.randomBytes(32).toString('hex');
     await pool.query(
       'UPDATE users SET email_verified = FALSE, email_verification_token = $1, email_verification_expires_at = $2 WHERE id = $3',
-      [freshToken, new Date(Date.now() + 24 * 60 * 60 * 1000), unverifiedUserId]
+      [hashToken(freshToken), new Date(Date.now() + 24 * 60 * 60 * 1000), unverifiedUserId]
     );
 
     const res = await request(app).get(`/auth/verify-email?token=${freshToken}`);
@@ -109,7 +113,7 @@ describe('GET /auth/verify-email', () => {
     const token2 = crypto.randomBytes(32).toString('hex');
     await pool.query(
       'UPDATE users SET email_verified = FALSE, email_verification_token = $1, email_verification_expires_at = $2 WHERE id = $3',
-      [token2, new Date(Date.now() + 24 * 60 * 60 * 1000), unverifiedUserId]
+      [hashToken(token2), new Date(Date.now() + 24 * 60 * 60 * 1000), unverifiedUserId]
     );
 
     await request(app).get(`/auth/verify-email?token=${token2}`);
@@ -124,7 +128,7 @@ describe('GET /auth/verify-email', () => {
     await pool.query(
       `INSERT INTO users (email, nome, senha_hash, email_verified, email_verification_token, email_verification_expires_at)
        VALUES ($1, $2, $3, FALSE, $4, $5)`,
-      ['ev_expired@conduta.dev', 'Dr. Expired', await bcrypt.hash('Senha123', 10), expiredToken, new Date(Date.now() - 1000)]
+      ['ev_expired@conduta.dev', 'Dr. Expired', await bcrypt.hash('Senha123', 10), hashToken(expiredToken), new Date(Date.now() - 1000)]
     );
 
     const res = await request(app).get(`/auth/verify-email?token=${expiredToken}`);
@@ -176,7 +180,7 @@ describe('POST /auth/resend-verification', () => {
     const oldExpires = new Date(Date.now() + 1 * 60 * 60 * 1000); // 1h no futuro (< 23h)
     await pool.query(
       'UPDATE users SET email_verified = FALSE, email_verification_token = $1, email_verification_expires_at = $2 WHERE id = $3',
-      [oldToken, oldExpires, unverifiedUserId]
+      [hashToken(oldToken), oldExpires, unverifiedUserId]
     );
   });
 
@@ -246,9 +250,12 @@ describe('POST /auth/forgot-password', () => {
   });
 
   it('salva token de reset no banco', async () => {
-    await request(app)
+    const res = await request(app)
       .post('/auth/forgot-password')
+      .set('X-Forwarded-For', '198.51.100.42')
       .send({ email: 'ev_verified@conduta.dev' });
+
+    expect(res.status).toBe(200);
 
     const result = await pool.query('SELECT password_reset_token, password_reset_expires_at FROM users WHERE id = $1', [verifiedUserId]);
     expect(result.rows[0].password_reset_token).toBeTruthy();
@@ -264,7 +271,7 @@ describe('POST /auth/reset-password', () => {
     resetToken = crypto.randomBytes(32).toString('hex');
     await pool.query(
       'UPDATE users SET password_reset_token = $1, password_reset_expires_at = $2 WHERE id = $3',
-      [resetToken, new Date(Date.now() + 60 * 60 * 1000), verifiedUserId]
+      [hashToken(resetToken), new Date(Date.now() + 60 * 60 * 1000), verifiedUserId]
     );
   });
 
