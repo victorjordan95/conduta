@@ -9,7 +9,9 @@
     "migrate": "node src/db/migrate.js",
     "migrate:neo4j": "node src/db/migrate-neo4j-status.js",
     "migrate:neo4j-vector": "node src/db/migrate-neo4j-vector.js",
-    "seed:neo4j": "node src/db/seed-neo4j.js"
+    "seed:neo4j": "node src/db/seed-neo4j.js",
+    "audit:neo4j": "node scripts/neo4j-audit.js",
+    "backup:neo4j": "powershell -ExecutionPolicy Bypass -File scripts/neo4j-backup.ps1"
   },
   "dependencies": {
     "@sentry/node": "^10.53.1",
