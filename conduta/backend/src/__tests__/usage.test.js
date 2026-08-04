@@ -2,6 +2,24 @@ require('dotenv').config();
 const request = require('supertest');
 const bcrypt = require('bcryptjs');
 const pool = require('../db/pg');
+
+jest.mock('../services/openrouter', () => ({
+  collectAnalysis: jest.fn().mockResolvedValue('análise interna'),
+  streamReview: jest.fn(async (_content, _analysis, res) => {
+    res.write('data: {"content":"resposta mock"}\n\n');
+    return 'resposta mock';
+  }),
+  streamQuick: jest.fn(),
+}));
+jest.mock('../services/knowledge-extractor', () => ({ extractAndPersist: jest.fn().mockResolvedValue(null) }));
+jest.mock('../services/session-summarizer', () => ({ generateAndSave: jest.fn().mockResolvedValue(null) }));
+jest.mock('../services/embeddings', () => ({ embed: jest.fn().mockResolvedValue([]) }));
+jest.mock('../services/neo4j-search', () => ({
+  searchClinicalContext: jest.fn().mockResolvedValue(null),
+  searchFollowUpContext: jest.fn().mockResolvedValue(null),
+}));
+jest.mock('../services/case-search', () => ({ searchSimilarCases: jest.fn().mockResolvedValue(null) }));
+
 const app = require('../app');
 
 const TEST_EMAIL = 'usage-test@conduta.dev';

@@ -17,17 +17,17 @@ beforeAll(async () => {
   const hash = await bcrypt.hash('senha123', 10);
 
   await pool.query(
-    `INSERT INTO users (email, nome, senha_hash) VALUES ($1, $2, $3)`,
+    `INSERT INTO users (email, nome, senha_hash, email_verified) VALUES ($1, $2, $3, true)`,
     ['skin-free@conduta.dev', 'Dr. Free', hash]
   );
 
   await pool.query(
-    `INSERT INTO users (email, nome, senha_hash, plan) VALUES ($1, $2, $3, $4)`,
+    `INSERT INTO users (email, nome, senha_hash, plan, email_verified) VALUES ($1, $2, $3, $4, true)`,
     ['skin-pro@conduta.dev', 'Dr. Pro', hash, 'pro']
   );
 
   await pool.query(
-    `INSERT INTO users (email, nome, senha_hash, role) VALUES ($1, $2, $3, $4)`,
+    `INSERT INTO users (email, nome, senha_hash, role, email_verified) VALUES ($1, $2, $3, $4, true)`,
     ['skin-admin@conduta.dev', 'Dr. Admin', hash, 'admin']
   );
 

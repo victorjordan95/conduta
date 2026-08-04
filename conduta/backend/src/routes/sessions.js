@@ -5,6 +5,7 @@ const driver = require('../db/neo4j');
 const PDFDocument = require('pdfkit');
 const { gerarResumoProntuario } = require('../services/prontuario');
 const { TOOL_NAMES, generateClinicalTool } = require('../services/clinical-tools');
+const { enqueueNeo4jEvent, DELETE_SESSION_REFERENCES } = require('../services/neo4j-outbox');
 
 const router = express.Router();
 
@@ -121,25 +122,33 @@ router.put('/:id', async (req, res) => {
 });
 
 router.delete('/:id', async (req, res) => {
+  let client;
   try {
-    const check = await pool.query(
+    client = await pool.connect();
+    const check = await client.query(
       'SELECT id FROM sessions WHERE id = $1 AND user_id = $2',
       [req.params.id, req.userId]
     );
     if (check.rows.length === 0) return res.status(404).json({ error: 'Sessão não encontrada.' });
-    await pool.query('BEGIN');
+    await client.query('BEGIN');
     try {
-      await pool.query('DELETE FROM messages WHERE session_id = $1', [req.params.id]);
-      await pool.query('DELETE FROM sessions WHERE id = $1', [req.params.id]);
-      await pool.query('COMMIT');
+      await client.query('DELETE FROM messages WHERE session_id = $1', [req.params.id]);
+      await client.query('DELETE FROM sessions WHERE id = $1', [req.params.id]);
+      await enqueueNeo4jEvent(client, {
+        type: DELETE_SESSION_REFERENCES,
+        payload: { sessionId: req.params.id },
+      });
+      await client.query('COMMIT');
     } catch (txErr) {
-      await pool.query('ROLLBACK');
+      await client.query('ROLLBACK');
       throw txErr;
     }
     res.status(204).send();
   } catch (err) {
     console.error('[sessions] excluir:', err.message);
     res.status(500).json({ error: 'Erro interno.' });
+  } finally {
+    client?.release();
   }
 });
 

@@ -687,7 +687,7 @@ const diagnosticos = [
     redFlags: [
       'Critérios Sepse-3: disfunção orgânica (SOFA ≥ 2) por infecção suspeita',
       'Choque séptico: PAM < 65 mmHg ou lactato > 2 mmol/L refratário a fluidos',
-      'Bundle 1h: hemocultura + ATB + lactato + acesso venoso + fluidos',
+      'Avaliar foco e probabilidade de sepse rapidamente; antimicrobianos imediatos no choque/provável e até 3h após investigação rápida no possível sem choque',
       'Hipotensão + febre + foco infeccioso aparente (UTI/observação)',
     ],
     excluir: ['SIRS não infeccioso (pancreatite, trauma, queimadura)', 'Choque cardiogênico', 'Insuficiência adrenal aguda (crise addisoniana)', 'Crise tireotóxica'],
@@ -822,7 +822,7 @@ const diagnosticos = [
     sinonimos: ['intoxicação BZD', 'overdose de benzodiazepínico', 'intoxicação por diazepam', 'overdose de clonazepam', 'intoxicação por ansiolítico'],
     redFlags: [
       'Glasgow < 8 ou apneia (intubação orotraqueal)',
-      'SpO2 < 90% sem resposta ao flumazenil',
+      'SpO2 < 90% ou hipoventilação — priorizar suporte ventilatório, independentemente de resposta ao flumazenil',
       'Suspeita de intoxicação mista (BZD + opioides + álcool) — mais grave',
       'Bradicardia + hipotensão intensa',
     ],
@@ -1503,8 +1503,8 @@ const relacoes = [
     diagnostico: 'Anafilaxia',
     medicamentos: [
       { nome: 'Adrenalina',     dose: '0,3-0,5mg IM (adulto) / 0,01mg/kg IM (criança) face ant. da coxa. Repetir a cada 5-15min se necessário', linha: '1ª absoluta' },
-      { nome: 'Hidrocortisona IV', dose: '200-500mg IV lento (adulto) / 4-8mg/kg (criança)', linha: '2ª', obs: 'não substituir adrenalina; previne resposta bifásica' },
-      { nome: 'Dexclorfeniramina', dose: '5mg IV lento', linha: '2ª', obs: 'adjuvante ao antihistamínico' },
+      { nome: 'Hidrocortisona IV', dose: 'Usar somente após estabilização e conforme protocolo institucional', linha: 'não rotineiro', obs: 'não trata problemas de via aérea, respiração ou circulação; não substitui adrenalina e não deve atrasá-la' },
+      { nome: 'Dexclorfeniramina', dose: 'Conforme protocolo institucional, somente após estabilização', linha: 'adjuvante seletivo', obs: 'apenas para sintomas cutâneos; não trata problemas de via aérea, respiração ou circulação' },
       { nome: 'Salbutamol',     dose: '2,5-5mg nebulização (broncoespasmo persistente)', linha: 'adjuvante' },
       { nome: 'Soro Fisiológico 0,9%', dose: '500-1000mL IV rápido (hipotensão)', linha: 'suporte hemodinâmico' },
     ],
@@ -1597,7 +1597,7 @@ const relacoes = [
     diagnostico: 'Dengue',
     medicamentos: [
       { nome: 'Paracetamol', dose: '500-1000mg VO 6/6h (febre e dor)', linha: '1ª', obs: 'NUNCA usar AAS ou AINE — risco hemorrágico' },
-      { nome: 'Soro de Reidratação Oral', dose: '1-2L/dia (hidratação oral vigorosa)', linha: '1ª' },
+      { nome: 'Soro de Reidratação Oral', dose: 'Volume orientado por peso, grupo clínico, tolerância oral e comorbidades', linha: 'suporte' },
       { nome: 'Dipirona',    dose: '500mg VO 6/6h alternado com paracetamol se necessário', linha: 'alternativa' },
     ],
   },
@@ -1605,29 +1605,28 @@ const relacoes = [
   {
     diagnostico: 'Síndrome Coronariana Aguda',
     medicamentos: [
-      { nome: 'Ácido Acetilsalicílico', dose: '300mg VO mastigado (dose de ataque); manutenção 100mg/dia', linha: '1ª', obs: 'antiagregação dupla — associar P2Y12' },
-      { nome: 'Ticagrelor',             dose: '180mg VO ataque, depois 90mg 12/12h', linha: '1ª', obs: 'preferível ao clopidogrel em SCA de alto risco' },
-      { nome: 'Clopidogrel',            dose: '300-600mg VO ataque, depois 75mg/dia', linha: '1ª', obs: 'alternativa ao ticagrelor ou se AVC prévio' },
-      { nome: 'Heparina Não Fracionada', dose: '60-70 UI/kg IV bolus (máx 5000UI) + infusão 12-15 UI/kg/h (STEMI/NSTEMI)', linha: '1ª' },
-      { nome: 'Morfina IV',             dose: '2-4mg IV lento, repetir 5-10 min se dor (usar com cautela — pode mascarar evolução)', linha: 'adjuvante', obs: 'dor intensa refratária a nitrato' },
-      { nome: 'Nitroglicerina',         dose: '0,5mg SL a cada 5 min × 3 doses (se PA > 90 sistólica); IV se angina persistente', linha: 'adjuvante', obs: 'contraindicado se uso de sildenafil 24-48h' },
+      { nome: 'Ácido Acetilsalicílico', dose: 'Conforme diretriz de SCA e protocolo de reperfusão', linha: 'após avaliação', obs: 'confirmar diagnóstico, alergia e risco hemorrágico; não atrasar ECG e estratégia de reperfusão' },
+      { nome: 'Ticagrelor',             dose: 'Conforme estratégia de reperfusão, risco hemorrágico e protocolo institucional', linha: 'condicional', obs: 'não é escolha universal; selecionar P2Y12 conforme STEMI/NSTE-ACS, PCI/fibrinólise e contraindicações' },
+      { nome: 'Clopidogrel',            dose: 'Conforme estratégia de reperfusão, risco hemorrágico e protocolo institucional', linha: 'condicional', obs: 'não é intercambiável automaticamente com outros P2Y12' },
+      { nome: 'Heparina Não Fracionada', dose: 'Conforme estratégia invasiva/fibrinolítica, peso, função renal e protocolo institucional', linha: 'condicional', obs: 'não usar como regra universal para toda dor torácica ou toda SCA' },
+      { nome: 'Morfina IV',             dose: 'Somente se dor isquêmica refratária, com monitorização e protocolo institucional', linha: 'não rotineiro', obs: 'avaliar hipotensão, depressão respiratória e interação com absorção de antiagregantes' },
+      { nome: 'Nitroglicerina',         dose: 'Somente se isquemia/congestão e pressão arterial adequadas, conforme protocolo institucional', linha: 'condicional', obs: 'contraindicada em hipotensão, infarto de VD ou uso recente de inibidor de PDE-5' },
     ],
   },
   // EAP
   {
     diagnostico: 'Edema Agudo de Pulmão',
     medicamentos: [
-      { nome: 'Furosemida',    dose: '40-80mg IV bolus; repetir em 2h se sem resposta (dobrar dose)', linha: '1ª' },
-      { nome: 'Nitroglicerina', dose: 'Iniciar 10-20mcg/min IV; titular a cada 5min até alívio (se PAs > 100 mmHg)', linha: '1ª', obs: 'potente vasodilatador venoso — reduz pré-carga' },
-      { nome: 'Morfina IV',    dose: '2-4mg IV lento (ansiolítico + vasodilatador); usar com cautela', linha: 'adjuvante', obs: 'controverso — monitorizar depressão respiratória' },
+      { nome: 'Furosemida',    dose: 'Conforme congestão, uso prévio de diurético, função renal e protocolo institucional', linha: 'se congestão', obs: 'não é tratamento universal de toda insuficiência respiratória aguda' },
+      { nome: 'Nitroglicerina', dose: 'Conforme fenótipo hipertensivo/congestivo e pressão arterial adequada', linha: 'condicional', obs: 'evitar em hipotensão, infarto de VD e uso recente de inibidor de PDE-5' },
+      { nome: 'Morfina IV',    dose: 'Não recomendada rotineiramente', linha: 'evitar rotina', obs: 'pode causar depressão respiratória e piorar desfechos; usar somente por decisão especializada' },
     ],
   },
   // TSV
   {
     diagnostico: 'Taquicardia Supraventricular',
     medicamentos: [
-      { nome: 'Adenosina',   dose: '6mg IV bolus em acesso proximal + flush 20mL SF; se falhar: 12mg IV em 1-2 min', linha: '1ª', obs: 'dar em bolus rápido; avisar paciente sobre sensação de mal-estar breve' },
-      { nome: 'Amiodarona',  dose: '150mg IV em 10 min se instabilidade hemodinâmica; manutenção 1mg/min × 6h', linha: '2ª', obs: 'preferir cardioversão elétrica se instável' },
+      { nome: 'Adenosina',   dose: '6mg IV em bolus rápido + flush; considerar 12mg se falha, conforme protocolo institucional', linha: 'somente estável', obs: 'somente em taquicardia regular de QRS estreito estável; instabilidade requer cardioversão sincronizada e ritmos irregulares/polimórficos exigem outro fluxo' },
     ],
   },
   // Dissecção Aórtica
@@ -1642,17 +1641,16 @@ const relacoes = [
   {
     diagnostico: 'AVC Isquêmico',
     medicamentos: [
-      { nome: 'Alteplase', dose: '0,9mg/kg IV (máx 90mg): 10% em bolus em 1min + 90% em infusão 60min. Janela: < 4,5h do início', linha: '1ª', obs: 'contraindicado se: TC com hemorragia, cirurgia < 14d, AVC prévio + DM, PA > 185/110 não controlada' },
-      { nome: 'Ácido Acetilsalicílico', dose: '300mg VO/SNG nas primeiras 24-48h (se não trombolisado); se trombolisado, aguardar 24h + TC controle', linha: '2ª' },
-      { nome: 'Rivaroxabana', dose: '15-20mg VO 1x/dia (se FA como etiologia, iniciar após 7-14 dias do AVC)', linha: 'adjuvante', obs: 'para prevenção secundária em FA' },
+      { nome: 'Alteplase', dose: 'Conforme PCDT de AVC isquêmico agudo, checklist completo e unidade habilitada', linha: 'após elegibilidade', obs: 'exige horário de início/última vez bem, neuroimagem, pressão arterial, exames e avaliação de trombólise/trombectomia; não usar uma lista resumida de contraindicações' },
+      { nome: 'Ácido Acetilsalicílico', dose: 'Conforme PCDT e resultado de neuroimagem', linha: 'após elegibilidade', obs: 'não administrar antes da exclusão de hemorragia; após trombólise, seguir imagem de controle e protocolo da unidade' },
     ],
   },
   // AVC Hemorrágico
   {
     diagnostico: 'AVC Hemorrágico',
     medicamentos: [
-      { nome: 'Labetalol IV', dose: '10-20mg IV em 2 min; repetir a cada 10 min até PAs < 140 mmHg (meta Interact-2)', linha: '1ª', obs: 'meta: PAs < 140 mmHg em 1h' },
-      { nome: 'Manitol IV',   dose: '0,25-1g/kg IV em 15-20 min (se sinais de herniação)', linha: 'adjuvante', obs: 'reduz PIC temporariamente' },
+      { nome: 'Labetalol IV', dose: 'Conforme neuroimagem, pressão inicial e protocolo de AVC/UTI', linha: 'condicional', obs: 'priorizar redução suave e sustentada, evitando metas fixas para todos os pacientes' },
+      { nome: 'Manitol IV',   dose: 'Somente em sinais de hipertensão intracraniana/hernição e com suporte especializado', linha: 'resgate', obs: 'não substitui neurocirurgia, reversão de anticoagulação ou transferência para centro habilitado' },
     ],
   },
   // HSA
@@ -1683,18 +1681,14 @@ const relacoes = [
   // Pneumotórax Espontâneo
   {
     diagnostico: 'Pneumotórax Espontâneo',
-    medicamentos: [
-      { nome: 'Soro Fisiológico 0,9%', dose: 'Acesso venoso para suporte; O2 a 100% por máscara (acelera reabsorção do ar)', linha: 'suporte', obs: 'tratamento definitivo é exsuflaçao por agulha ou drenagem torácica' },
-    ],
+    medicamentos: [],
   },
   // Sepse
   {
     diagnostico: 'Sepse e Choque Séptico',
     medicamentos: [
-      { nome: 'Soro Fisiológico 0,9%', dose: '30mL/kg IV em 30-60 min (bolus inicial); reavaliar após cada 500mL', linha: '1ª', obs: 'bundle 1h — iniciar antes de ATB se possível' },
-      { nome: 'Noradrenalina',         dose: '0,01-3 mcg/kg/min IV infusão contínua (PAM-alvo ≥ 65 mmHg)', linha: '1ª', obs: 'vasopressor de escolha no choque séptico' },
-      { nome: 'Ceftriaxona',           dose: '2g IV 1x/dia (foco pulmonar/urinário/abdominal sem imunossupressão)', linha: '1ª', obs: 'ATB em < 1h do reconhecimento (bundle)' },
-      { nome: 'Metronidazol',          dose: '500mg IV 8/8h (se foco abdominal/pélvico suspeito de anaeróbios)', linha: '1ª', obs: 'associar à ceftriaxona em sepse abdominal' },
+      { nome: 'Soro Fisiológico 0,9%', dose: 'Bolus e reavaliação dinâmica conforme hipoperfusão, congestão, idade, IC e DRC', linha: 'ressuscitação', obs: 'não aplicar volume fixo sem reavaliação; seguir protocolo institucional e diretriz de sepse vigente' },
+      { nome: 'Noradrenalina',         dose: 'Titular conforme protocolo de choque, idealmente sem atrasar por acesso central quando instabilidade ameaça a vida', linha: 'choque persistente', obs: 'vasopressor de escolha após avaliação volêmica; meta hemodinâmica individualizada' },
       { nome: 'Hidrocortisona IV',     dose: '200mg/dia IV (50mg 6/6h ou infusão contínua) se choque refratário a vasopressores', linha: 'adjuvante' },
     ],
   },
@@ -1710,17 +1704,17 @@ const relacoes = [
   {
     diagnostico: 'Cetoacidose Diabética',
     medicamentos: [
-      { nome: 'Soro Fisiológico 0,9%', dose: '1L/h IV na 1ª hora; depois 250-500mL/h conforme status volêmico', linha: '1ª', obs: 'hidratação é a primeira medida — antes da insulina' },
-      { nome: 'Insulina Regular Humana', dose: '0,1 UI/kg/h IV infusão contínua (iniciar somente após K > 3,5 mEq/L)', linha: '1ª', obs: 'bolus inicial de 0,1 UI/kg IV opcional em CAD grave' },
-      { nome: 'Bicarbonato de Sódio 8,4%', dose: '100mL IV em 2h somente se pH < 6,9; NÃO usar rotineiramente', linha: 'adjuvante', obs: 'uso restrito — piora hipocalemia e paradoxalmente acidose intracelular' },
+      { nome: 'Soro Fisiológico 0,9%', dose: 'Taxa individualizada por estado volêmico, sódio, função cardíaca e renal', linha: 'ressuscitação', obs: 'hidratação precede insulina; preferir reavaliações frequentes e considerar solução balanceada conforme protocolo' },
+      { nome: 'Insulina Regular Humana', dose: 'Infusão IV conforme protocolo de CAD após reposição volêmica e avaliação de potássio', linha: 'após potássio seguro', obs: 'adiar insulina se K < 3,5 mEq/L; repor e monitorar potássio seriado durante todo o tratamento' },
+      { nome: 'Bicarbonato de Sódio 8,4%', dose: 'Somente em acidemia extrema, conforme protocolo especializado', linha: 'não rotineiro', obs: 'não usar rotineiramente; decisão depende de gasometria, potássio e monitorização intensiva' },
     ],
   },
   // EHH
   {
     diagnostico: 'Estado Hiperosmolar Hiperglicêmico',
     medicamentos: [
-      { nome: 'Soro Fisiológico 0,9%', dose: '1L/h IV na 1ª hora; depois 500mL/h por 2-4h; ajustar pelo status volêmico e osmolaridade', linha: '1ª', obs: 'hidratação agressiva é o principal tratamento' },
-      { nome: 'Insulina Regular Humana', dose: '0,05-0,1 UI/kg/h IV somente após hidratação inicial e glicemia < 300 mg/dL', linha: '2ª', obs: 'iniciar insulina tarde — hidratação primeiro reduz glicemia significativamente' },
+      { nome: 'Soro Fisiológico 0,9%', dose: 'Taxa individualizada por estado volêmico, osmolaridade, sódio e função cardíaca/renal', linha: 'ressuscitação', obs: 'evitar correção rápida de osmolaridade; requer reavaliações frequentes' },
+      { nome: 'Insulina Regular Humana', dose: 'Infusão IV conforme protocolo de EHH após reposição volêmica inicial e avaliação de potássio', linha: 'após avaliação', obs: 'monitorização de potássio, glicemia e osmolaridade é obrigatória; não usar um limiar isolado de glicemia como gatilho' },
     ],
   },
   // Hipoglicemia Grave
@@ -1791,7 +1785,7 @@ const relacoes = [
   {
     diagnostico: 'Intoxicação por Benzodiazepínico',
     medicamentos: [
-      { nome: 'Flumazenil', dose: '0,2mg IV em 30s; repetir 0,1mg a cada 1 min até resposta (máx 1mg)', linha: '1ª', obs: 'CUIDADO: não usar se BZD para controle de epilepsia (precipita convulsão); meia-vida curta — pode haver ressedação' },
+      { nome: 'Flumazenil', dose: 'Somente após avaliação toxicológica/especializada e protocolo institucional', linha: 'não rotineiro', obs: 'priorizar via aérea, ventilação e suporte; evitar em intoxicação mista, uso crônico de benzodiazepínico, epilepsia ou suspeita de antidepressivo tricíclico devido ao risco de convulsão' },
       { nome: 'Soro Fisiológico 0,9%', dose: 'Suporte volêmico IV se hipotensão', linha: 'suporte' },
     ],
   },

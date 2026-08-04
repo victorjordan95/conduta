@@ -10,6 +10,10 @@ require('dotenv').config();
 const driver = require('./neo4j');
 const { diagnosticos, medicamentos, relacoes } = require('./seeds/clinical-data');
 
+// Conteúdo clínico de seed é material de referência, não validação clínica.
+// A promoção para `verified` deve ocorrer somente no fluxo de revisão auditável.
+const SEEDED_STATUS = 'pending';
+
 async function seed() {
   const session = driver.session();
 
@@ -39,21 +43,26 @@ async function seed() {
       // Cria ou atualiza o nó Diagnostico
       await session.run(
         `MERGE (d:Diagnostico {nome: $nome})
-         SET d.cid = $cid,
-             d.sinonimos = $sinonimos,
-             d.status = 'verified'`,
-        { nome: d.nome, cid: d.cid || '', sinonimos: d.sinonimos || [] }
+         ON CREATE SET d.cid = $cid,
+                       d.sinonimos = $sinonimos,
+                       d.status = $status,
+                       d.seededAt = datetime()
+         ON MATCH SET d.cid = $cid,
+                      d.sinonimos = $sinonimos`,
+        { nome: d.nome, cid: d.cid || '', sinonimos: d.sinonimos || [], status: SEEDED_STATUS }
       );
 
       // Cria nós RedFlag e relaciona
       for (const rf of d.redFlags || []) {
         await session.run(
           `MERGE (r:RedFlag {descricao: $descricao})
-           SET r.status = 'verified'
+           ON CREATE SET r.status = $status,
+                         r.seededAt = datetime()
            WITH r
            MATCH (d:Diagnostico {nome: $nome})
-           MERGE (d)-[:TEM_RED_FLAG]->(r)`,
-          { descricao: rf, nome: d.nome }
+           MERGE (d)-[rel:TEM_RED_FLAG]->(r)
+           ON CREATE SET rel.status = $status`,
+          { descricao: rf, nome: d.nome, status: SEEDED_STATUS }
         );
       }
 
@@ -61,11 +70,13 @@ async function seed() {
       for (const excluir of d.excluir || []) {
         await session.run(
           `MERGE (dd:Diagnostico {nome: $excluirNome})
-           SET dd.status = 'verified'
+           ON CREATE SET dd.status = $status,
+                         dd.seededAt = datetime()
            WITH dd
            MATCH (d:Diagnostico {nome: $nome})
-           MERGE (d)-[:EXIGE_EXCLUSAO]->(dd)`,
-          { excluirNome: excluir, nome: d.nome }
+           MERGE (d)-[rel:EXIGE_EXCLUSAO]->(dd)
+           ON CREATE SET rel.status = $status`,
+          { excluirNome: excluir, nome: d.nome, status: SEEDED_STATUS }
         );
       }
     }
@@ -78,15 +89,20 @@ async function seed() {
     for (const m of medicamentos) {
       await session.run(
         `MERGE (m:Medicamento {nome: $nome})
-         SET m.classe = $classe,
-             m.apresentacoes = $apresentacoes,
-             m.viaAdmin = $viaAdmin,
-             m.status = 'verified'`,
+         ON CREATE SET m.classe = $classe,
+                       m.apresentacoes = $apresentacoes,
+                       m.viaAdmin = $viaAdmin,
+                       m.status = $status,
+                       m.seededAt = datetime()
+         ON MATCH SET m.classe = $classe,
+                      m.apresentacoes = $apresentacoes,
+                      m.viaAdmin = $viaAdmin`,
         {
           nome: m.nome,
           classe: m.classe || '',
           apresentacoes: m.apresentacoes || [],
           viaAdmin: m.viaAdmin || '',
+          status: SEEDED_STATUS,
         }
       );
     }
@@ -109,10 +125,12 @@ async function seed() {
           `MATCH (d:Diagnostico {nome: $diagnostico})
            MATCH (m:Medicamento {nome: $medicamento})
            MERGE (d)-[r:TRATA_COM]->(m)
-           SET r.dose = $dose, r.linha = $linha, r.obs = $obs, r.status = 'verified'
+           ON CREATE SET r.dose = $dose, r.linha = $linha, r.obs = $obs,
+                         r.status = $status, r.seededAt = datetime()
+           ON MATCH SET r.dose = $dose, r.linha = $linha, r.obs = $obs
            RETURN d.nome, m.nome`,
           { diagnostico: rel.diagnostico, medicamento: medNome,
-            dose: medDose, linha: medLinha, obs: medObs }
+            dose: medDose, linha: medLinha, obs: medObs, status: SEEDED_STATUS }
         );
 
         if (result.records.length === 0) {

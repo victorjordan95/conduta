@@ -1,6 +1,7 @@
 const mockCreate = jest.fn();
 const mockNeo4jRun = jest.fn().mockResolvedValue({ records: [] });
 const mockNeo4jClose = jest.fn().mockResolvedValue(undefined);
+const mockCreateProposal = jest.fn().mockResolvedValue({ id: 'proposal-1', status: 'pending_review' });
 
 jest.mock('openai', () =>
   jest.fn().mockImplementation(() => ({
@@ -12,11 +13,16 @@ jest.mock('../db/neo4j', () => ({
   session: jest.fn(() => ({ run: mockNeo4jRun, close: mockNeo4jClose })),
 }));
 
+jest.mock('../services/knowledge-proposals', () => ({
+  createProposal: mockCreateProposal,
+}));
+
 const { extractAndPersist } = require('../services/knowledge-extractor');
 
 beforeEach(() => {
   mockCreate.mockClear();
   mockNeo4jRun.mockClear();
+  mockCreateProposal.mockClear();
 });
 
 describe('extractAndPersist', () => {
@@ -32,7 +38,7 @@ describe('extractAndPersist', () => {
     expect(callArgs.messages[1].content).toContain('Paciente com SCA, usar AAS e heparina.');
   });
 
-  it('creates pending Diagnostico nodes for new diagnoses', async () => {
+  it('creates one pending proposal for extracted clinical knowledge', async () => {
     mockCreate.mockResolvedValue({
       choices: [{
         message: {
@@ -44,17 +50,18 @@ describe('extractAndPersist', () => {
         },
       }],
     });
-    // First call checks if node exists (returns empty), second creates it
-    mockNeo4jRun.mockResolvedValueOnce({ records: [] });
-
     await extractAndPersist('Texto clínico.', 'session-xyz');
 
-    const createCall = mockNeo4jRun.mock.calls.find(([q]) => q.includes('CREATE') && q.includes('Diagnostico'));
-    expect(createCall).toBeDefined();
-    expect(createCall[1]).toMatchObject({ nome: 'Novo Diagnóstico Raro', sourceSessionId: 'session-xyz' });
+    expect(mockCreateProposal).toHaveBeenCalledWith({
+      type: 'clinical_extraction',
+      sourceSessionId: 'session-xyz',
+      payload: expect.objectContaining({
+        diagnosticos: [expect.objectContaining({ nome: 'Novo Diagnóstico Raro' })],
+      }),
+    });
   });
 
-  it('skips nodes that already exist as verified', async () => {
+  it('keeps extracted entities pending even when a matching canonical node exists', async () => {
     mockCreate.mockResolvedValue({
       choices: [{
         message: {
@@ -66,13 +73,9 @@ describe('extractAndPersist', () => {
         },
       }],
     });
-    // Simulate node already existing
-    mockNeo4jRun.mockResolvedValueOnce({ records: [{ get: () => 'verified' }] });
-
     await extractAndPersist('Texto clínico.', 'session-exists');
 
-    const createCall = mockNeo4jRun.mock.calls.find(([q]) => q.includes('CREATE') && q.includes('Diagnostico'));
-    expect(createCall).toBeUndefined();
+    expect(mockCreateProposal).toHaveBeenCalledTimes(1);
   });
 
   it('does not throw if OpenRouter returns malformed JSON', async () => {

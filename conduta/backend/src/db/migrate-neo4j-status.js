@@ -1,6 +1,6 @@
 /**
  * migrate-neo4j-status.js
- * Adds status:"verified" to all existing nodes and relationships that lack it.
+ * Adds pending status to all existing nodes and relationships that lack it.
  * Idempotent — safe to run multiple times.
  *
  * Usage: node src/db/migrate-neo4j-status.js
@@ -11,13 +11,13 @@ const driver = require('./neo4j');
 async function migrate() {
   const session = driver.session();
   try {
-    console.log('\n=== Neo4j Migration: add status property ===\n');
+    console.log('\n=== Neo4j Migration: add pending status ===\n');
 
     const queries = [
-      `MATCH (n:Diagnostico) WHERE n.status IS NULL SET n.status = 'verified'`,
-      `MATCH (n:Medicamento)  WHERE n.status IS NULL SET n.status = 'verified'`,
-      `MATCH (n:RedFlag)      WHERE n.status IS NULL SET n.status = 'verified'`,
-      `MATCH ()-[r:TRATA_COM]->() WHERE r.status IS NULL SET r.status = 'verified'`,
+      `MATCH (n:Diagnostico) WHERE n.status IS NULL SET n.status = 'pending'`,
+      `MATCH (n:Medicamento)  WHERE n.status IS NULL SET n.status = 'pending'`,
+      `MATCH (n:RedFlag)      WHERE n.status IS NULL SET n.status = 'pending'`,
+      `MATCH ()-[r:TRATA_COM]->() WHERE r.status IS NULL SET r.status = 'pending'`,
     ];
 
     for (const q of queries) {

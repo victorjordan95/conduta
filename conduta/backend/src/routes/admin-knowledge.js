@@ -15,6 +15,110 @@ const upload = multer({
 
 const router = express.Router();
 
+function parsePayload(payload) {
+  try {
+    return JSON.parse(payload);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * GET /admin/knowledge/proposals
+ * Lista extrações da IA aguardando revisão humana. Propostas não são nós
+ * clínicos canônicos e não participam da recuperação usada nas respostas.
+ */
+router.get('/proposals', adminMiddleware, async (_req, res) => {
+  if (!driver) return res.status(503).json({ error: 'Neo4j não configurado.' });
+
+  const session = driver.session();
+  try {
+    const result = await session.run(
+      `MATCH (p:PropostaConhecimento {status: 'pending_review'})
+       RETURN p.id AS id, p.tipo AS tipo, p.payload AS payload,
+              p.sourceSessionId AS sourceSessionId, p.createdAt AS createdAt
+       ORDER BY p.createdAt ASC`
+    );
+
+    res.json(result.records.map((record) => ({
+      id: record.get('id'),
+      tipo: record.get('tipo'),
+      payload: parsePayload(record.get('payload')),
+      sourceSessionId: record.get('sourceSessionId'),
+      createdAt: record.get('createdAt'),
+    })));
+  } catch (err) {
+    console.error('[admin-knowledge] list proposals error:', err.message);
+    res.status(500).json({ error: 'Erro interno.' });
+  } finally {
+    await session.close();
+  }
+});
+
+/**
+ * Aprovação é uma decisão auditável de revisão. A promoção para o grafo
+ * canônico deverá ocorrer por fluxo clínico controlado, nunca pelo feedback.
+ */
+router.post('/proposals/:id/approve', adminMiddleware, async (req, res) => {
+  if (!driver) return res.status(503).json({ error: 'Neo4j não configurado.' });
+
+  const session = driver.session();
+  try {
+    const result = await session.run(
+      `MATCH (p:PropostaConhecimento {id: $id, status: 'pending_review'})
+       SET p.status = 'approved', p.reviewedBy = $reviewedBy,
+           p.reviewNote = $note, p.reviewedAt = $reviewedAt
+       RETURN p.id AS id`,
+      {
+        id: req.params.id,
+        reviewedBy: req.userId,
+        note: req.body.note?.trim() || null,
+        reviewedAt: new Date().toISOString(),
+      }
+    );
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ error: 'Proposta pendente não encontrada.' });
+    }
+    return res.json({ approved: true, id: result.records[0].get('id') });
+  } catch (err) {
+    console.error('[admin-knowledge] approve proposal error:', err.message);
+    return res.status(500).json({ error: 'Erro interno.' });
+  } finally {
+    await session.close();
+  }
+});
+
+router.post('/proposals/:id/reject', adminMiddleware, async (req, res) => {
+  if (!driver) return res.status(503).json({ error: 'Neo4j não configurado.' });
+
+  const session = driver.session();
+  try {
+    const result = await session.run(
+      `MATCH (p:PropostaConhecimento {id: $id, status: 'pending_review'})
+       SET p.status = 'rejected', p.reviewedBy = $reviewedBy,
+           p.reviewNote = $note, p.reviewedAt = $reviewedAt
+       RETURN p.id AS id`,
+      {
+        id: req.params.id,
+        reviewedBy: req.userId,
+        note: req.body.note?.trim() || null,
+        reviewedAt: new Date().toISOString(),
+      }
+    );
+
+    if (result.records.length === 0) {
+      return res.status(404).json({ error: 'Proposta pendente não encontrada.' });
+    }
+    return res.json({ rejected: true, id: result.records[0].get('id') });
+  } catch (err) {
+    console.error('[admin-knowledge] reject proposal error:', err.message);
+    return res.status(500).json({ error: 'Erro interno.' });
+  } finally {
+    await session.close();
+  }
+});
+
 /**
  * GET /admin/knowledge/pending
  * Returns all pending Diagnostico and Medicamento nodes.
