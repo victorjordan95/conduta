@@ -1,20 +1,17 @@
 /**
- * knowledge-extractor.js
- *
- * Async service that extracts clinical entities from an LLM response text
- * and persists them as status:"pending" nodes in Neo4j for admin review.
- *
- * Called fire-and-forget from analyze.js — never throws to the caller.
+ * Extracts candidate clinical knowledge from an LLM response.
+ * Candidates remain outside the canonical graph until an administrator reviews them.
  */
 const OpenAI = require('openai');
 const driver = require('../db/neo4j');
+const { createProposal } = require('./knowledge-proposals');
 
 function getClient() {
   return new OpenAI({
     baseURL: 'https://openrouter.ai/api/v1',
     apiKey: process.env.OPENROUTER_API_KEY,
     defaultHeaders: {
-      'HTTP-Referer': 'http://localhost:5173',
+      'HTTP-Referer': process.env.APP_URL || 'http://localhost:5173',
       'X-Title': 'Conduta',
     },
   });
@@ -30,19 +27,11 @@ Retorne SOMENTE JSON válido com o seguinte schema, sem nenhum texto extra:
 }
 Se não houver entidades novas, retorne {"diagnosticos":[],"medicamentos":[],"relacoes":[]}.`;
 
-/**
- * Extracts clinical entities from responseText and persists new ones
- * as pending nodes in Neo4j.
- *
- * @param {string} responseText - Full LLM response content
- * @param {string} sessionId    - PostgreSQL session ID (for traceability)
- */
 async function extractAndPersist(responseText, sessionId) {
   if (!driver) return;
-  const session = driver.session();
-  const client = getClient();
+
   try {
-    const completion = await client.chat.completions.create({
+    const completion = await getClient().chat.completions.create({
       model: process.env.OPENROUTER_MODEL || 'anthropic/claude-sonnet-4-5',
       messages: [
         { role: 'system', content: EXTRACTION_SYSTEM },
@@ -52,7 +41,6 @@ async function extractAndPersist(responseText, sessionId) {
     });
 
     const raw = completion.choices[0]?.message?.content || '';
-    // Remove markdown code fences que alguns modelos adicionam ao JSON
     const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
     let extracted;
     try {
@@ -63,112 +51,18 @@ async function extractAndPersist(responseText, sessionId) {
     }
 
     const { diagnosticos = [], medicamentos = [], relacoes = [] } = extracted;
-    const now = new Date().toISOString();
+    const entityCount = diagnosticos.length + medicamentos.length + relacoes.length;
+    if (entityCount === 0) return;
 
-    let createdDiag = 0, createdMed = 0, createdRel = 0;
+    await createProposal({
+      type: 'clinical_extraction',
+      payload: { diagnosticos, medicamentos, relacoes },
+      sourceSessionId: sessionId,
+    });
 
-    // Persist pending Diagnostico nodes
-    for (const d of diagnosticos) {
-      if (!d.nome) continue;
-      const exists = await session.run(
-        `MATCH (n:Diagnostico {nome: $nome}) RETURN n.status AS status LIMIT 1`,
-        { nome: d.nome }
-      );
-      if (exists.records.length > 0) {
-        // Nó já existe — apenas vincula esta sessão ao nó para aparecer no painel
-        await session.run(
-          `MATCH (n:Diagnostico {nome: $nome})
-           SET n.sessions = CASE
-             WHEN n.sessions IS NULL THEN [$sessionId]
-             ELSE [s IN n.sessions WHERE s <> $sessionId] + [$sessionId]
-           END`,
-          { nome: d.nome, sessionId }
-        );
-        continue;
-      }
-
-      await session.run(
-        `CREATE (n:Diagnostico {
-           nome: $nome, cid: $cid, sinonimos: $sinonimos,
-           status: 'pending', sourceSessionId: $sourceSessionId, sessions: [$sourceSessionId], createdAt: $createdAt
-         })`,
-        {
-          nome: d.nome,
-          cid: d.cid || '',
-          sinonimos: d.sinonimos || [],
-          sourceSessionId: sessionId,
-          createdAt: now,
-        }
-      );
-      createdDiag++;
-    }
-
-    // Persist pending Medicamento nodes
-    for (const m of medicamentos) {
-      if (!m.nome) continue;
-      const exists = await session.run(
-        `MATCH (n:Medicamento {nome: $nome}) RETURN n.status AS status LIMIT 1`,
-        { nome: m.nome }
-      );
-      if (exists.records.length > 0) {
-        // Nó já existe — apenas vincula esta sessão ao nó
-        await session.run(
-          `MATCH (n:Medicamento {nome: $nome})
-           SET n.sessions = CASE
-             WHEN n.sessions IS NULL THEN [$sessionId]
-             ELSE [s IN n.sessions WHERE s <> $sessionId] + [$sessionId]
-           END`,
-          { nome: m.nome, sessionId }
-        );
-        continue;
-      }
-
-      await session.run(
-        `CREATE (n:Medicamento {
-           nome: $nome, classe: $classe, viaAdmin: $viaAdmin,
-           status: 'pending', sourceSessionId: $sourceSessionId, sessions: [$sourceSessionId], createdAt: $createdAt
-         })`,
-        {
-          nome: m.nome,
-          classe: m.classe || '',
-          viaAdmin: m.viaAdmin || '',
-          sourceSessionId: sessionId,
-          createdAt: now,
-        }
-      );
-      createdMed++;
-    }
-
-    // Persist pending TRATA_COM relationships (only if both nodes exist)
-    for (const rel of relacoes) {
-      if (!rel.diagnostico || !rel.medicamento) continue;
-      const result = await session.run(
-        `MATCH (d:Diagnostico {nome: $diagnostico})
-         MATCH (m:Medicamento {nome: $medicamento})
-         MERGE (d)-[r:TRATA_COM]->(m)
-         ON CREATE SET r.dose = $dose, r.linha = $linha, r.obs = $obs,
-                       r.status = 'pending', r.sourceSessionId = $sourceSessionId, r.createdAt = $createdAt
-         ON MATCH SET r.status = CASE WHEN r.status IS NULL THEN 'pending' ELSE r.status END
-         RETURN r.status AS status`,
-        {
-          diagnostico: rel.diagnostico,
-          medicamento: rel.medicamento,
-          dose: rel.dose || '',
-          linha: rel.linha || '',
-          obs: rel.obs || '',
-          sourceSessionId: sessionId,
-          createdAt: now,
-        }
-      );
-      if (result.records.length > 0) createdRel++;
-    }
-
-    const total = createdDiag + createdMed + createdRel;
-    console.log(`[extractor] session ${sessionId}: ${createdDiag} diagnósticos, ${createdMed} medicamentos, ${createdRel} relações criados (${diagnosticos.length + medicamentos.length} extraídos).`);
+    console.log(`[extractor] session ${sessionId}: proposta clínica pendente criada (${entityCount} entidades/relações extraídas).`);
   } catch (err) {
     console.error('[extractor] Erro (non-fatal):', err.message);
-  } finally {
-    await session.close();
   }
 }
 

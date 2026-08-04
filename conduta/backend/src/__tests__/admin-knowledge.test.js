@@ -19,14 +19,14 @@ const JWT_SECRET = 'test-secret';
 process.env.JWT_SECRET = JWT_SECRET;
 
 function makeAdminToken() {
-  return jwt.sign({ sub: 'admin-user-id', role: 'admin' }, JWT_SECRET, { expiresIn: '1h' });
+  return jwt.sign({ sub: 'admin-user-id', role: 'admin', sv: 1 }, JWT_SECRET, { expiresIn: '1h' });
 }
 
 beforeEach(() => {
   mockRun.mockReset();
   pool.query.mockReset();
-  // adminMiddleware faz SELECT role FROM users WHERE id = $1
-  pool.query.mockResolvedValue({ rows: [{ role: 'admin' }] });
+  // O middleware é aplicado no app e na rota; ambos validam a sessão.
+  pool.query.mockResolvedValue({ rows: [{ role: 'admin', session_version: 1, active: true }] });
 });
 
 describe('GET /admin/knowledge/pending', () => {
@@ -36,7 +36,7 @@ describe('GET /admin/knowledge/pending', () => {
   });
 
   it('retorna 403 com token de user comum', async () => {
-    const userToken = jwt.sign({ sub: 'user-id', role: 'user' }, JWT_SECRET, { expiresIn: '1h' });
+    const userToken = jwt.sign({ sub: 'user-id', role: 'user', sv: 1 }, JWT_SECRET, { expiresIn: '1h' });
     pool.query.mockResolvedValueOnce({ rows: [{ role: 'user' }] });
     const res = await request(app)
       .get('/admin/knowledge/pending')
@@ -67,6 +67,49 @@ describe('GET /admin/knowledge/pending', () => {
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body[0]).toMatchObject({ tipo: 'Diagnostico', nome: 'Diagnóstico Novo' });
+  });
+});
+
+describe('knowledge proposals review queue', () => {
+  it('lists pending proposals for an admin', async () => {
+    mockRun.mockResolvedValueOnce({
+      records: [{
+        get: (key) => ({
+          id: 'proposal-1',
+          tipo: 'clinical_extraction',
+          payload: '{"diagnosticos":[{"nome":"Asma"}]}',
+          sourceSessionId: 'session-1',
+          createdAt: '2026-08-03T12:00:00.000Z',
+        }[key]),
+      }],
+    });
+
+    const res = await request(app)
+      .get('/admin/knowledge/proposals')
+      .set('Authorization', `Bearer ${makeAdminToken()}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual([expect.objectContaining({
+      id: 'proposal-1',
+      tipo: 'clinical_extraction',
+      payload: { diagnosticos: [{ nome: 'Asma' }] },
+    })]);
+  });
+
+  it('marks a proposal as approved without updating clinical nodes', async () => {
+    mockRun.mockResolvedValueOnce({ records: [{ get: () => 'proposal-1' }] });
+
+    const res = await request(app)
+      .post('/admin/knowledge/proposals/proposal-1/approve')
+      .set('Authorization', `Bearer ${makeAdminToken()}`)
+      .send({ note: 'Revisado pela equipe clínica' });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ approved: true, id: 'proposal-1' });
+    const cypher = mockRun.mock.calls[0][0];
+    expect(cypher).toContain('PropostaConhecimento');
+    expect(cypher).not.toContain('Diagnostico');
+    expect(cypher).not.toContain('Medicamento');
   });
 });
 

@@ -1,8 +1,8 @@
 const express = require('express');
 const pool = require('../db/pg');
-const driver = require('../db/neo4j');
 const authMiddleware = require('../middleware/auth');
 const adminMiddleware = require('../middleware/admin');
+const { recordKnowledgeFeedback } = require('../services/knowledge-feedback');
 
 const router = express.Router();
 
@@ -18,12 +18,11 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 
   try {
-    // Salva feedback + nota + obtém session_id
     const result = await pool.query(
       `UPDATE messages SET feedback = $1, feedback_note = $2
        WHERE id = $3
          AND session_id IN (SELECT id FROM sessions WHERE user_id = $4)
-       RETURNING session_id, content`,
+       RETURNING session_id`,
       [feedback, note || null, message_id, req.userId]
     );
 
@@ -31,12 +30,11 @@ router.post('/', authMiddleware, async (req, res) => {
       return res.status(404).json({ error: 'Mensagem não encontrada.' });
     }
 
-    const sessionId = result.rows[0].session_id;
-    const messageContent = result.rows[0].content;
-
-    applyKnowledgeFeedback(sessionId, feedback, note, messageContent).catch((err) =>
-      console.error('[feedback] erro ao aplicar no grafo:', err.message)
-    );
+    recordKnowledgeFeedback({
+      sessionId: result.rows[0].session_id,
+      feedback,
+      note,
+    }).catch((err) => console.error('[feedback] erro ao registrar sinal no grafo:', err.message));
 
     res.json({ ok: true });
   } catch (err) {
@@ -44,88 +42,6 @@ router.post('/', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Erro interno.' });
   }
 });
-
-/**
- * Positivo → aprova nós/relações pendentes da sessão no Neo4j.
- * Negativo → remove nós pendentes + cria Correcao node com keywords da nota.
- */
-async function applyKnowledgeFeedback(sessionId, feedback, note, messageContent) {
-  if (!driver) return;
-  const session = driver.session();
-  try {
-    if (feedback === 'positive') {
-      await session.run(
-        `MATCH (n {status: 'pending', sourceSessionId: $sessionId})
-         SET n.status = 'verified', n.approvedBy = 'feedback:positive', n.approvedAt = $now`,
-        { sessionId, now: new Date().toISOString() }
-      );
-      await session.run(
-        `MATCH ()-[r:TRATA_COM {status: 'pending', sourceSessionId: $sessionId}]->()
-         SET r.status = 'verified', r.approvedBy = 'feedback:positive', r.approvedAt = $now`,
-        { sessionId, now: new Date().toISOString() }
-      );
-    } else if (feedback === 'partial') {
-      // Mantém nós pendentes para revisão admin — resposta foi boa, só precisa de ajuste pontual
-      const notaFinal = note && note.trim().length > 0 ? note.trim() : null;
-      if (notaFinal) {
-        const keywords = extractKeywords(notaFinal);
-        await session.run(
-          `CREATE (c:Correcao {
-             sessionId: $sessionId,
-             nota: $nota,
-             keywords: $keywords,
-             tipo: 'partial',
-             status: 'pending_validation',
-             createdAt: $now
-           })`,
-          { sessionId, nota: notaFinal, keywords, now: new Date().toISOString() }
-        );
-        console.log(`[feedback] Ajuste parcial registrado para session ${sessionId}: "${notaFinal.slice(0, 60)}..."`);
-      }
-    } else {
-      await session.run(
-        `MATCH (n {status: 'pending', sourceSessionId: $sessionId}) DETACH DELETE n`,
-        { sessionId }
-      );
-
-      const notaFinal = (note && note.trim().length > 0)
-        ? note.trim()
-        : messageContent
-          ? `Resposta marcada como incorreta pelo médico: ${messageContent.trim().slice(0, 300)}`
-          : null;
-
-      if (notaFinal) {
-        const keywords = extractKeywords(notaFinal);
-        await session.run(
-          `CREATE (c:Correcao {
-             sessionId: $sessionId,
-             nota: $nota,
-             keywords: $keywords,
-             tipo: 'negative',
-             status: 'pending_validation',
-             createdAt: $now
-           })`,
-          { sessionId, nota: notaFinal, keywords, now: new Date().toISOString() }
-        );
-        console.log(`[feedback] Correcao pendente criada para session ${sessionId}: "${notaFinal.slice(0, 60)}..."`);
-      }
-    }
-  } finally {
-    await session.close();
-  }
-}
-
-/** Extrai termos com 4+ letras para indexação no grafo */
-function extractKeywords(text) {
-  return [...new Set(
-    text
-      .toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove acentos
-      .split(/\s+/)
-      .filter((w) => w.length >= 4)
-      .slice(0, 20)
-  )];
-}
 
 // GET /feedback/stats — resumo e breakdown diário (admin only)
 router.get('/stats', adminMiddleware, async (req, res) => {
@@ -156,16 +72,16 @@ router.get('/stats', adminMiddleware, async (req, res) => {
 
     res.json({
       summary: {
-        positive:           Number(summary.rows[0].positive),
-        negative:           Number(summary.rows[0].negative),
-        partial:            Number(summary.rows[0].partial),
-        negativeWithNote:   Number(summary.rows[0].negative_with_note),
+        positive: Number(summary.rows[0].positive),
+        negative: Number(summary.rows[0].negative),
+        partial: Number(summary.rows[0].partial),
+        negativeWithNote: Number(summary.rows[0].negative_with_note),
       },
       daily: daily.rows.map((r) => ({
-        day:      r.day,
+        day: r.day,
         positive: Number(r.positive),
         negative: Number(r.negative),
-        partial:  Number(r.partial),
+        partial: Number(r.partial),
       })),
     });
   } catch (err) {
