@@ -14,14 +14,14 @@ beforeAll(async () => {
 
   const adminHash = await bcrypt.hash('senha123', 10);
   const adminRow = await pool.query(
-    `INSERT INTO users (email, nome, senha_hash, role) VALUES ($1, 'Admin Teste', $2, 'admin') RETURNING id`,
+    `INSERT INTO users (email, nome, senha_hash, role, email_verified) VALUES ($1, 'Admin Teste', $2, 'admin', true) RETURNING id`,
     [ADMIN_EMAIL, adminHash]
   );
   adminId = adminRow.rows[0].id;
 
   const userHash = await bcrypt.hash('senha123', 10);
   const userRow = await pool.query(
-    `INSERT INTO users (email, nome, senha_hash) VALUES ($1, 'Usuário Teste', $2) RETURNING id`,
+    `INSERT INTO users (email, nome, senha_hash, email_verified) VALUES ($1, 'Usuário Teste', $2, true) RETURNING id`,
     [USER_EMAIL, userHash]
   );
   userId = userRow.rows[0].id;

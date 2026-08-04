@@ -11,12 +11,12 @@ beforeAll(async () => {
   require('dotenv').config();
   const hash = await bcrypt.hash('senha123', 10);
   const res = await pool.query(
-    `INSERT INTO users (email, nome, senha_hash)
-     VALUES ($1, $2, $3) RETURNING id`,
+    `INSERT INTO users (email, nome, senha_hash, email_verified)
+     VALUES ($1, $2, $3, true) RETURNING id, session_version`,
     ['sessions_test@conduta.dev', 'Dr. Sessao', hash]
   );
   testUserId = res.rows[0].id;
-  token = jwt.sign({ sub: testUserId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  token = jwt.sign({ sub: testUserId, sv: res.rows[0].session_version }, process.env.JWT_SECRET, { expiresIn: '1h' });
 });
 
 afterAll(async () => {
