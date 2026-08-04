@@ -1,4 +1,4 @@
-const { applyMigration, splitStatements } = require('../db/migrate-neo4j');
+const { applyMigration, loadMigrations, splitStatements } = require('../db/migrate-neo4j');
 
 describe('Neo4j migration runner', () => {
   it('skips an already applied migration', async () => {
@@ -37,5 +37,11 @@ describe('Neo4j migration runner', () => {
 
   it('splits semicolon-delimited Cypher files', () => {
     expect(splitStatements('A; B;')).toEqual(['A', 'B']);
+  });
+
+  it('includes the targeted migration that removes superseded high-risk guidance', () => {
+    const migrations = loadMigrations().map((migration) => migration.id);
+
+    expect(migrations).toContain('003_remove_superseded_high_risk_guidance');
   });
 });
