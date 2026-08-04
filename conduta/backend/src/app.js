@@ -19,6 +19,8 @@ const usageRoutes = require('./routes/usage');
 const billingRoutes = require('./routes/billing');
 const skinRoutes = require('./routes/skin');
 const { webhookHandler } = require('./routes/billing');
+const { getNeo4jHealth } = require('./services/neo4j-health');
+const pool = require('./db/pg');
 
 const app = express();
 
@@ -93,6 +95,30 @@ const analyzeLimiter = rateLimit({
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
+});
+
+app.get('/health/live', (_req, res) => {
+  res.json({ status: 'ok' });
+});
+
+app.get('/health/ready', async (_req, res) => {
+  const dependencies = { postgres: 'unavailable', neo4j: 'unavailable' };
+
+  try {
+    await pool.query('SELECT 1');
+    dependencies.postgres = 'ok';
+  } catch (err) {
+    console.warn('[Postgres] readiness check failed:', err.name || 'Error');
+  }
+
+  const neo4j = await getNeo4jHealth();
+  dependencies.neo4j = neo4j.status;
+  const ready = dependencies.postgres === 'ok' && neo4j.status !== 'unavailable';
+
+  res.status(ready ? 200 : 503).json({
+    status: ready ? 'ok' : 'unavailable',
+    dependencies,
+  });
 });
 
 app.use('/auth/login', loginLimiter);
