@@ -14,14 +14,14 @@ beforeAll(async () => {
 
   const hash = await bcrypt.hash('senha123', 10);
   const userRow = await pool.query(
-    `INSERT INTO users (email, nome, senha_hash) VALUES ($1, 'User Sessão', $2) RETURNING id`,
+    `INSERT INTO users (email, nome, senha_hash, email_verified) VALUES ($1, 'User Sessão', $2, true) RETURNING id`,
     [USER_EMAIL, hash]
   );
   userId = userRow.rows[0].id;
 
   const otherHash = await bcrypt.hash('senha123', 10);
   const otherRow = await pool.query(
-    `INSERT INTO users (email, nome, senha_hash) VALUES ($1, 'Outro User', $2) RETURNING id`,
+    `INSERT INTO users (email, nome, senha_hash, email_verified) VALUES ($1, 'Outro User', $2, true) RETURNING id`,
     [OTHER_EMAIL, otherHash]
   );
   otherId = otherRow.rows[0].id;
@@ -142,6 +142,16 @@ describe('DELETE /sessions/:id', () => {
 
     const checkMessages = await pool.query('SELECT id FROM messages WHERE session_id = $1', [sessionToDeleteId]);
     expect(checkMessages.rows.length).toBe(0);
+
+    const outboxEvent = await pool.query(
+      `SELECT event_type, payload FROM neo4j_outbox
+       WHERE dedupe_key = $1`,
+      [`delete_session_references:${sessionToDeleteId}`]
+    );
+    expect(outboxEvent.rows[0]).toMatchObject({
+      event_type: 'delete_session_references',
+      payload: { sessionId: sessionToDeleteId },
+    });
   });
 });
 
