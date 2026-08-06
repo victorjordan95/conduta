@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import AnalyticsTracker from './components/AnalyticsTracker';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -38,7 +37,6 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <AnalyticsTracker />
         <Routes>
           <Route path="/" element={<RootRoute />} />
           <Route path="/login" element={<Login />} />
