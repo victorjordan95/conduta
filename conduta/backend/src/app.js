@@ -32,16 +32,20 @@ const ALLOWED_ORIGINS = process.env.CORS_ORIGIN
 
 console.log(`[CORS] Allowed origins: ${ALLOWED_ORIGINS.join(', ')}`);
 
+const isAllowedOrigin = (origin) =>
+  !origin || ALLOWED_ORIGINS.includes(origin.replace(/\/$/, ''));
+
+// Origem não permitida: 403 explícito antes do cors().
+// Sem isto o callback do cors() lançava Error -> 500 + ruído no Sentry.
+app.use((req, res, next) => {
+  const { origin } = req.headers;
+  if (isAllowedOrigin(origin)) return next();
+  console.warn(`[CORS] Blocked origin: "${origin}" | allowed: ${ALLOWED_ORIGINS.join(', ')}`);
+  return res.status(403).json({ error: 'Origem não permitida.' });
+});
+
 const corsOptions = {
-  origin: (origin, callback) => {
-    const normalized = (origin || '').replace(/\/$/, '');
-    if (!origin || ALLOWED_ORIGINS.includes(normalized)) {
-      callback(null, true);
-    } else {
-      console.warn(`[CORS] Blocked origin: "${origin}" | allowed: ${ALLOWED_ORIGINS.join(', ')}`);
-      callback(new Error(`CORS: origin "${origin}" not allowed`));
-    }
-  },
+  origin: (origin, callback) => callback(null, isAllowedOrigin(origin)),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
