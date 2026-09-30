@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Sidebar from '../components/Sidebar';
 import CaseInput from '../components/CaseInput';
 import AnalysisResult from '../components/AnalysisResult';
 import UsageCounter from '../components/UsageCounter';
 import Coachmark from '../components/Coachmark';
 import ProntuarioModal from '../components/ProntuarioModal';
+import DeclaracaoObitoModal from '../components/DeclaracaoObitoModal';
 import ClinicalToolsPanel from '../components/ClinicalToolsPanel';
 import PlantaoQuickActions from '../components/PlantaoQuickActions';
 import Sheet from '../components/Sheet';
@@ -121,6 +122,8 @@ export default function Dashboard() {
   const [prontuarioLoading, setProntuarioLoading] = useState(false);
   const [prontuarioTexto, setProntuarioTexto] = useState(null);
   const [prontuarioError, setProntuarioError] = useState(null);
+  const [declaracaoOpen, setDeclaracaoOpen] = useState(false);
+  const closeDeclaracao = useCallback(() => setDeclaracaoOpen(false), []);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [sheet, setSheet] = useState(null); // null | 'quick' | 'actions'
   const [sheetAnchor, setSheetAnchor] = useState(null);
@@ -219,6 +222,7 @@ export default function Dashboard() {
     setPdfError(null);
     setPrefetchedEntities(null);
     setProntuarioOpen(false);
+    setDeclaracaoOpen(false);
     setProntuarioTexto(null);
     setProntuarioError(null);
     try {
@@ -243,6 +247,7 @@ export default function Dashboard() {
     setUserMsgCount(0);
     setPrefetchedEntities(null);
     setProntuarioOpen(false);
+    setDeclaracaoOpen(false);
     setProntuarioTexto(null);
     setProntuarioError(null);
     setSidebarOpen(false);
@@ -480,6 +485,11 @@ export default function Dashboard() {
               onAnalysisDone={() => {
                 const capturedId = activeSessionId;
                 setStreaming(false);
+                // falha no stream: remove o balão vazio (o erro aparece no CaseInput)
+                setMessages((prev) => {
+                  const last = prev[prev.length - 1];
+                  return last?.role === 'assistant' && !last.content ? prev.slice(0, -1) : prev;
+                });
                 refreshUsage();
                 getSession(capturedId)
                   .then((data) => {
@@ -487,11 +497,13 @@ export default function Dashboard() {
                       if (current !== capturedId) return current;
                       setActiveSession(data.session);
                       const msgs = data.messages;
-                      if (msgs.length > 0) {
-                        const last = msgs[msgs.length - 1];
+                      const last = msgs[msgs.length - 1];
+                      // só casa IDs assistente↔assistente; senão o feedback iria para a msg do usuário
+                      if (last?.role === 'assistant') {
                         setMessages((prev) => {
                           const updated = [...prev];
-                          updated[updated.length - 1] = { ...updated[updated.length - 1], id: last.id };
+                          const local = updated[updated.length - 1];
+                          if (local?.role === 'assistant') updated[updated.length - 1] = { ...local, id: last.id };
                           return updated;
                         });
                       }
@@ -521,6 +533,10 @@ export default function Dashboard() {
             onClose={() => setProntuarioOpen(false)}
             onRetry={handleProntuario}
           />
+        )}
+
+        {declaracaoOpen && activeSessionId && (
+          <DeclaracaoObitoModal sessionId={activeSessionId} onClose={closeDeclaracao} />
         )}
 
         {sheet === 'quick' && (
@@ -555,6 +571,12 @@ export default function Dashboard() {
                 hint={activeSession?.summary ? 'Caso completo com fontes' : 'Disponível após a primeira análise'}
                 onClick={handleDownloadPdf}
                 disabled={!activeSession?.summary || pdfLoading}
+              />
+              <Sheet.Item
+                label="Rascunho de Declaração de Óbito"
+                hint="Pré-preenche a DO a partir do caso para transcrição"
+                onClick={() => { setSheet(null); setDeclaracaoOpen(true); }}
+                disabled={!hasAnalysis || streaming}
               />
             </Sheet.Section>
 

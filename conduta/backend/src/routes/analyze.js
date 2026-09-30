@@ -1,4 +1,5 @@
 const express = require('express');
+const Sentry = require('@sentry/node');
 const pool = require('../db/pg');
 const { collectAnalysis, streamReview, streamQuick } = require('../services/openrouter');
 const { searchClinicalContext, searchFollowUpContext } = require('../services/neo4j-search');
@@ -8,6 +9,11 @@ const { generateAndSave } = require('../services/session-summarizer');
 const { embed } = require('../services/embeddings');
 
 const router = express.Router();
+
+// Keep-alive SSE: o modo completo passa dezenas de segundos sem emitir bytes
+// (fase 1 não-streaming) e a conexão ociosa era derrubada em ~20s em produção.
+const HEARTBEAT_MS = 5000;
+const ERRO_STREAM = 'Não foi possível concluir a análise. Tente novamente.';
 
 router.post('/', async (req, res) => {
   const { session_id, content, mode = 'completa' } = req.body;
@@ -78,25 +84,32 @@ router.post('/', async (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no'); // nginx: não bufferizar SSE
     res.flushHeaders();
     res.write(`data: ${JSON.stringify({ session_msg_count: sessionMsgCount })}\n\n`);
 
-    let fullReview;
-    if (mode === 'rapida') {
-      // ── Modo conduta rápida: chamada única streaming ──
-      fullReview = await streamQuick(history, content, context, summaryForStream, res).catch((err) => {
-        console.error('[analyze] quick error:', err.message);
-        return null;
-      });
-    } else {
-      // ── Fase 1: análise primária silenciosa (contexto interno) ──
-      const firstAnalysis = await collectAnalysis(history, content, context, summaryForStream);
+    const heartbeat = setInterval(() => res.write(': ping\n\n'), HEARTBEAT_MS);
+    let fullReview = null;
+    try {
+      if (mode === 'rapida') {
+        // ── Modo conduta rápida: chamada única streaming ──
+        fullReview = await streamQuick(history, content, context, summaryForStream, res);
+      } else {
+        // ── Fase 1: análise primária silenciosa (contexto interno) ──
+        const firstAnalysis = await collectAnalysis(history, content, context, summaryForStream);
 
-      // ── Fase 2: revisão final — única resposta visível ao usuário ──
-      fullReview = await streamReview(content, firstAnalysis || '', res, history).catch((err) => {
-        console.error('[analyze] review error:', err.message);
-        return null;
-      });
+        // ── Fase 2: revisão final — única resposta visível ao usuário ──
+        fullReview = await streamReview(content, firstAnalysis || '', res, history);
+      }
+      if (!fullReview) throw new Error(`[analyze] resposta vazia do modelo (modo ${mode})`);
+    } catch (err) {
+      // Antes: só console.error → Sentry nunca via; cliente recebia [DONE] vazio.
+      console.error(`[analyze] ${mode} error:`, err.message);
+      Sentry.captureException(err, { tags: { route: 'analyze', mode } });
+      fullReview = null;
+      res.write(`data: ${JSON.stringify({ error: ERRO_STREAM })}\n\n`);
+    } finally {
+      clearInterval(heartbeat);
     }
 
     if (fullReview) {
@@ -129,7 +142,12 @@ router.post('/', async (req, res) => {
       .catch((err) => console.error('[analyze] embed fire-and-forget error:', err.message));
   } catch (err) {
     console.error('Erro no /analyze:', err.message);
-    if (!res.headersSent) {
+    Sentry.captureException(err, { tags: { route: 'analyze' } });
+    if (res.headersSent) {
+      // Sem isto a conexão SSE ficava pendurada até o timeout do cliente.
+      res.write(`data: ${JSON.stringify({ error: ERRO_STREAM })}\n\n`);
+      res.end();
+    } else {
       const status = err?.status ?? err?.response?.status;
       if (status === 429) {
         return res.status(429).json({ error: 'Serviço temporariamente sobrecarregado. Tente novamente em alguns segundos.' });

@@ -132,6 +132,8 @@ app.use('/auth', authRoutes);
 app.use('/admin', adminMiddleware, adminRoutes);
 app.use('/admin/knowledge', adminMiddleware, adminKnowledgeRoutes);
 app.use('/admin/feedbacks', adminMiddleware, adminFeedbackRoutes);
+// DO chama LLM sem cache — mesmo limite do /analyze contra abuso de custo
+app.use('/sessions/:id/declaracao-obito', authMiddleware, analyzeLimiter);
 app.use('/sessions', sessionsRoutes);
 app.use('/analyze', authMiddleware, usageCheck, analyzeLimiter, analyzeRoutes);
 app.use('/usage', authMiddleware, usageRoutes);

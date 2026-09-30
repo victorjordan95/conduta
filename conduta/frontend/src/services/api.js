@@ -139,29 +139,42 @@ export async function analyzeCase(sessionId, content, onChunk, onSessionMsgCount
 
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
+  let buffer = '';
 
   while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
+    let chunk;
+    try {
+      chunk = await reader.read();
+    } catch {
+      throw new Error('Conexão interrompida durante a análise. Tente novamente.');
+    }
+    if (chunk.done) break;
 
-    const text = decoder.decode(value, { stream: true });
-    const lines = text.split('\n').filter((l) => l.startsWith('data: '));
+    // Um evento pode chegar partido entre dois reads — guarda a última linha incompleta.
+    buffer += decoder.decode(chunk.value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop();
 
     for (const line of lines) {
+      if (!line.startsWith('data: ')) continue; // inclui heartbeats ": ping"
       const data = line.slice(6);
       if (data === '[DONE]') return;
+      let parsed;
       try {
-        const parsed = JSON.parse(data);
-        if (parsed.session_msg_count !== undefined) {
-          onSessionMsgCount?.(parsed.session_msg_count);
-        } else if (parsed.content) {
-          onChunk(parsed.content);
-        }
+        parsed = JSON.parse(data);
       } catch {
-        // ignora linha malformada
+        continue; // ignora linha malformada
+      }
+      if (parsed.error) throw new Error(parsed.error);
+      if (parsed.session_msg_count !== undefined) {
+        onSessionMsgCount?.(parsed.session_msg_count);
+      } else if (parsed.content) {
+        onChunk(parsed.content);
       }
     }
   }
+
+  throw new Error('Conexão interrompida durante a análise. Tente novamente.');
 }
 
 export async function getUsage() {
@@ -398,6 +411,19 @@ export async function getSessionEntities(id) {
   });
   await checkUnauthorized(res);
   if (!res.ok) throw new Error('Erro ao buscar entidades.');
+  return res.json();
+}
+
+export async function gerarDeclaracaoObito(sessionId) {
+  const res = await fetch(`${BASE_URL}/sessions/${sessionId}/declaracao-obito`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  await checkUnauthorized(res);
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || 'Erro ao gerar rascunho da declaração de óbito.');
+  }
   return res.json();
 }
 

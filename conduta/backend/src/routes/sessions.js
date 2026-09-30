@@ -4,6 +4,8 @@ const authMiddleware = require('../middleware/auth');
 const driver = require('../db/neo4j');
 const PDFDocument = require('pdfkit');
 const { gerarResumoProntuario } = require('../services/prontuario');
+const { gerarDeclaracaoObito } = require('../services/declaracao-obito');
+const Sentry = require('@sentry/node');
 const { TOOL_NAMES, generateClinicalTool } = require('../services/clinical-tools');
 const { enqueueNeo4jEvent, DELETE_SESSION_REFERENCES } = require('../services/neo4j-outbox');
 
@@ -242,6 +244,36 @@ router.post('/:id/prontuario', async (req, res) => {
   } catch (err) {
     console.error('[sessions] prontuario:', err.message);
     res.status(500).json({ error: 'Erro ao gerar resumo para prontuário.' });
+  }
+});
+
+// Rascunho da DO — não persistido (contém dados pessoais do falecido; regenerar é barato).
+router.post('/:id/declaracao-obito', async (req, res) => {
+  try {
+    const sessionResult = await pool.query(
+      'SELECT id FROM sessions WHERE id = $1 AND user_id = $2',
+      [req.params.id, req.userId]
+    );
+    if (sessionResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Sessão não encontrada.' });
+    }
+
+    const msgResult = await pool.query(
+      `SELECT role, content FROM messages WHERE session_id = $1 ORDER BY created_at ASC`,
+      [req.params.id]
+    );
+    const messages = msgResult.rows;
+
+    if (!messages.some((m) => m.role === 'assistant')) {
+      return res.status(400).json({ error: 'Sessão ainda não possui análise para gerar a declaração.' });
+    }
+
+    const declaracao = await gerarDeclaracaoObito(messages);
+    res.json({ declaracao });
+  } catch (err) {
+    console.error('[sessions] declaracao-obito:', err.message);
+    Sentry.captureException(err, { tags: { route: 'declaracao-obito' } });
+    res.status(502).json({ error: 'Não foi possível gerar o rascunho da declaração. Tente novamente.' });
   }
 });
 

@@ -101,3 +101,20 @@ describe('POST /analyze — evento SSE session_msg_count', () => {
     expect(secondEvent).toHaveProperty('content');
   });
 });
+
+describe('POST /analyze — falha do modelo após headers SSE', () => {
+  it('emite evento error e encerra o stream quando a fase 1 falha', async () => {
+    const { collectAnalysis } = require('../services/openrouter');
+    collectAnalysis.mockRejectedValueOnce(new Error('timeout upstream'));
+
+    const res = await request(app)
+      .post('/analyze')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ session_id: sessionId, content: 'caso que falha' });
+
+    expect(res.status).toBe(200);
+    const events = res.text.split('\n').filter((l) => l.startsWith('data: ')).map((l) => l.slice(6));
+    expect(events.some((e) => e !== '[DONE]' && JSON.parse(e).error)).toBe(true);
+    expect(events).toContain('[DONE]');
+  });
+});
